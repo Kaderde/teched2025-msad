@@ -10,7 +10,13 @@ This repository contains the material for the **Mastering Secure Application Dev
 ## Overview
 
 In this session we will explore the OWASP Top 10 vulnerabilities within the context of the SAP Cloud Application Programming Model (CAP) and SAP Business Technology Platform (BTP). 
-Each exercise module will dissect a vulnerability, demonstrate how it can manifest in a CAP application, and provide clear, actionable steps to mitigate it using best practices and BTP services.
+
+### 🎯 Learning Objectives
+
+-	**Analyze** how the OWASP Top 10 vulnerabilities manifest in real-world SAP CAP Node.js applications.
+-	**Assess** the business risks and operational impact of these vulnerabilities on application consumed through SAP BTP.
+-	**Apply** effective mitigation strategies using a combination of SAP CAP's built-in security, and essential BTP services like XSUAA.
+-	**Validate** the effectiveness of security fixes through practical testing.
 
 
 ## Requirements
@@ -33,6 +39,14 @@ Now you are ready to start the exercises.
 💡In some of the exercises you will be asked to switch from one user to another. This works more reliable if you use the Incognito mode of your browser. Without the Incognito mode, you may run into situations where you are authenticated automatically with the wrong user.
 
 ## Exercises
+Each exercise focuses on a specific vulnerability and is organized into the following sections:
+- **Overview**: A brief description of the vulnerability.
+- **Vulnerable Code**: A code snippet demonstrating the flaw.
+- **Exploitation**: A practical example of how the vulnerability is exploited.
+- **Remediation**: The corrected code that patches the vulnerability.
+- **Verification**: Steps to confirm the fix is effective.
+
+Each exercise module will dissect a vulnerability, demonstrate how it can manifest in a CAP application, and provide clear, actionable steps to mitigate it using best practices and BTP services.
 
 - [Getting Started](exercises/ex0/)
 - [Exercise 1 - Enable Multi-Factor Authentication for applications](exercises/ex1/)

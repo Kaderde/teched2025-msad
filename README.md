@@ -9,7 +9,9 @@ This repository contains the material for the **Mastering Secure Application Dev
 
 ## Overview
 
-In this session attendees will learn about the security recommendations for BTP services and how to implement them. The [SAP BTP Security Recommendations](https://help.sap.com/docs/btp/sap-btp-security-recommendations-c8a9bb59fe624f0981efa0eff2497d7d/sap-btp-security-recommendations) are available in the SAP Help Portal in the sections for the SAP Business Technology Platform. These recommendations for the configuration of SAP BTP services help customers meet their compliance goals and secure their business.
+In this session we will explore the OWASP Top 10 vulnerabilities within the context of the SAP Cloud Application Programming Model (CAP) and SAP Business Technology Platform (BTP). 
+Each exercise module will dissect a vulnerability, demonstrate how it can manifest in a CAP application, and provide clear, actionable steps to mitigate it using best practices and BTP services.
+
 
 ## Requirements
 

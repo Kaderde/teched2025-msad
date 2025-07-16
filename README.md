@@ -1,11 +1,11 @@
 [![REUSE status](https://api.reuse.software/badge/github.com/sap-samples/teched2023-XP185v)](https://api.reuse.software/info/github.com/sap-samples/teched2023-XP185v)
 
 
-# Get Hands-On Security Recommendations for Your SAP BTP Environment
+# Mastering Secure Application Development in SAP BTP: A Practical Workshop
 
 ## Description
 
-This repository contains the material for the **Get Hands-On Security Recommendations for Your SAP BTP Environment** session.  
+This repository contains the material for the **Mastering Secure Application Development in SAP BTP: A Practical Workshop** session.  
 
 ## Overview
 

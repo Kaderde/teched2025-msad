@@ -44,7 +44,7 @@ Each exercise focuses on a specific vulnerability and is organized into the foll
 - **Vulnerable Code**: A code snippet demonstrating the flaw.
 - **Exploitation**: A practical example of how the vulnerability is exploited.
 - **Remediation**: The corrected code that patches the vulnerability.
-- **Verification**: Steps to confirm the fix is effective.
+- **Verification**: Steps to confirm the vulnerability has been resolved.
 
 Each exercise module will dissect a vulnerability, demonstrate how it can manifest in a CAP application, and provide clear, actionable steps to mitigate it using best practices and BTP services.
 

@@ -1,12 +1,11 @@
-# Exercise 1 - Enable Multi-Factor Authentication for applications
+# Exercise 1 - Broken Access Control
 
-In this exercise, we will show you how to enable Multi-Factor Authentication (MFA) using Time-based One-Time Passwords (TOTP) for application users. In general, we recommend to configure risk-based authentication methods, such as Multi-Factor Authentication, both for application users and for [platform users](https://help.sap.com/docs/btp/best-practices/basic-platform-concepts). Platform users are those that give access to the **SAP BTP Cockpit** and the **SAP Cloud Identity Services administration console**. However, in the trial version, it is not possible to set up a custom trust configuration for your BTP account on global account level, which would be required to configure your own Multi-Factor Authentication setup. For that reason, we focus on enabling Multi-Factor Authentication for application users in this exercise. The configuration in the **SAP Cloud Identity Services administration console** is the same, only for a different application. You will test the Multi-Factor-Authentication with **SAP Build Apps** as an example for a BTP-based application with configured risk-based authentication.
+## Explanation :
+Broken Access Control  is the most critical web application security risk, according to the [OWASP Top 10 2021 list](https://owasp.org/Top10/). It occurs when an application fails to enforce proper authorization, allowing users to access or modify resources they are not permitted to. When access control is broken, threat actors can act outside of their intended permissions. This can manifest in several ways:
+- Vertical Privilege Escalation: A threat actor with standard user privileges gains access to administrative functions.
+- Horizontal Privilege Escalation: A threat actor gains access to another user's data or resources (e.g., User A viewing User B's private information).
+- Insecure Direct Object References (IDOR): An application uses a user-supplied identifier to access a resource directly, without checking if the user is authorized to access that specific resource.
 
-:bulb: **What is Multi-Factor Authentication (MFA)?**
-
-Multi-Factor Authentication can be described as “An authentication mechanism that requires more than one distinct authentication factor for successful authentication”.
-When a user authenticates, the user must provide valid credentials, consisting of either one or multiple factors. It uses a variety of factors and information to verify the user identity. Many earlier systems use a single factor, such as a username and password, which is also known as basic authentication.
-Today, we strengthen the authentication process by using MFA, which acts as another layer of security for users and reduces the risk of unauthorized access.
 
 :bulb: **What is a Time-based One-Time Password (TOTP)?**
 

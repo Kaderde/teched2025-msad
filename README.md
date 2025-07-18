@@ -50,9 +50,9 @@ Each exercise module will dissect a vulnerability, demonstrate how it can manife
 
 - [Getting Started](exercises/ex0/)
 - [Exercise 1 - Broken Access Control](exercises/ex1/)
-    - [Exercise 1.1 - Setup SAP Build Apps and enter the application with your trial identity provider user](exercises/ex1#exercise-11---Setup-SAP-Build-Apps-and-enter-the-application-with-your-trial-identity-provider-user)
-    - [Exercise 1.2 - Configure Multi-Factor Authentication to access SAP Build Apps](exercises/ex1#exercise-12---Configure-Multi-Factor-Authentication-to-access-SAP-Build-Apps)
-    - [Exercise 1.3 - Enable MFA for your User](exercises/ex1#exercise-13---Enable-MFA-for-your-User)
+    - [Exercise 1.1 - Enter the application with your trial identity provider user](exercises/ex1#exercise-11---Setup-SAP-Build-Apps-and-enter-the-application-with-your-trial-identity-provider-user)
+    - [Exercise 1.2 - Horizontal Privilege Escalation](exercises/ex1#exercise-12---Configure-Multi-Factor-Authentication-to-access-SAP-Build-Apps)
+    - [Exercise 1.3 - vertical Privilege Escalation](exercises/ex1#exercise-13---Enable-MFA-for-your-User)
     
 - [Exercise 2 - Security Recommendations regarding user access and authentication](exercises/ex2/)
     - [Exercise 2.1 - Manage obsolete administrators](exercises/ex2#exercise-21-identify-obsolete-users)

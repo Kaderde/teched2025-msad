@@ -127,6 +127,15 @@ entity Incidents : cuid, managed {
 }
 ...
 ```
+**File**: `db/data/sap.capire.incidents-Incidents.csv`
+ *   Add the `assignedTo` column and assign incidents to our test users.
+ *   **Note:** Use the actual user IDs from your IdP. For this lab, we'll use their email addresses as a stand-in.
+ * 
+
+
+
+
+
 
 :bulb: **What is a Time-based One-Time Password (TOTP)?**
 

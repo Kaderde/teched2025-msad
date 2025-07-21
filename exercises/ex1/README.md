@@ -1,11 +1,93 @@
 # Exercise 1 - Broken Access Control
 
-## Explanation :
+## 1. Explanation :
 Broken Access Control  is the most critical web application security risk, according to the [OWASP Top 10 2021 list](https://owasp.org/Top10/). It occurs when an application fails to enforce proper authorization, allowing users to access or modify resources they are not permitted to. When access control is broken, threat actors can act outside of their intended permissions. This can manifest in several ways:
-- Vertical Privilege Escalation: A threat actor with standard user privileges gains access to administrative functions.
-- Horizontal Privilege Escalation: A threat actor gains access to another user's data or resources (e.g., User A viewing User B's private information).
-- Insecure Direct Object References (IDOR): An application uses a user-supplied identifier to access a resource directly, without checking if the user is authorized to access that specific resource.
+- **Horizontal Privilege Escalation:** A threat actor gains access to another user's data or resources (e.g., User A viewing User B's private information).
+- **Vertical Privilege Escalation:** A threat actor with standard user privileges gains access to administrative functions.
+- **Insecure Direct Object References (IDOR):** An application uses a user-supplied identifier to access a resource directly, without checking if the user is authorized to access that specific resource.
 
+In the "Incident Management" application used by a support team. The business rules are:
+1.  Users with the `support` role can view all incidents to have context.
+2.  `Support` user can only **modify** an incident that is explicitly **assigned to them**.
+3.  Only users with the `admin` role can **close** incidents marked with **High** urgency.
+
+**Objective:** identify, exploit, and fix critical privilege escalation vulnerabilities in a Node.js-based SAP CAP application.
+
+## 🚨 2. Vulnerable Code Analysis :
+
+**File**: `srv/services.cds`
+
+```cds
+// VULNERABLE CODE - No access restrictions
+service ProcessorService { 
+    entity Incidents as projection on my.Incidents;      // ❌ All incidents visible AND modifiable
+    @readonly
+    entity Customers as projection on my.Customers;      // ❌ All customer data visible
+}
+
+annotate ProcessorService.Incidents with @odata.draft.enabled; 
+annotate ProcessorService with @(requires: 'support');  // ❌ Only role check, no data filtering
+
+service AdminService {
+    entity Customers as projection on my.Customers;      // ❌ Full customer access
+    entity Incidents as projection on my.Incidents;     // ❌ Full incident access
+}
+annotate AdminService with @(requires: 'admin');        // ❌ Role exists but no enforcement
+```
+
+**File**: `srv/services.js`
+
+```javascript
+// VULNERABLE CODE - No user-based filtering
+const cds = require('@sap/cds')
+
+class ProcessorService extends cds.ApplicationService {
+  init() {
+    this.before("UPDATE", "Incidents", (req) => this.onUpdate(req)); // ❌ Missing: Check if incident is assigned to current user
+    this.before("CREATE", "Incidents", (req) => this.changeUrgencyDueToSubject(req.data));
+    return super.init();
+  }
+
+  // ❌ Missing: check if user is assigned to the incident
+  async onUpdate (req) {
+    const { status_code } = await SELECT.one(req.subject, i => i.status_code).where({ID: req.data.ID})
+    if (status_code === 'C')   // 
+      return req.reject(`Can't modify a closed incident`)
+  }
+}
+```
+
+the above vulnerabilities  violate the principle of least privilege and can lead to data breaches and unauthorized modifications.
+
+## 🚨 Exploit Demonstration :
+
+### Step 1: Configure Custom Identity Service Users:
+  - Create users in your custom SAP Identity Service:
+     - support.user1@company.com (Support role)
+     - support.user2@company.com (Support role)
+     - manager.user@company.com (Admin role)
+  - Add support.user1@company.com and support.user2@company.com to role collection 'Incident Management Support'
+  - Add manager.user@company.com to role collection 'Incident Management Admin'
+  
+### Step 2: Demonstrate the Vulnerability
+- Login as support.user1@company.com through SAP Build Work Zone launchpad. 
+- **Access the Incident Management application** through Work Zone launchpad
+- **Observe:** You can see ALL incidents (this is correct per business rules)
+- **Exploit:** You can modify any incidents assigned to other support users
+   - User can see ALL incidents in the system
+   - Can view customer details for incidents not assigned to them
+   - Can modify incidents assigned to other support users
+- Expected Vulnerable Behavior:
+   Incidents List shows:
+   ✅ "Inverter not functional" (Customer: Daniel Watts) - NOT assigned to support1
+   ✅ "No current on a sunny day" (Customer: Stormy Weathers) - NOT assigned to support1  
+   ✅ "Strange noise when switching off Inverter" (Customer: Stormy Weathers) - NOT assigned to support1
+   ✅ "Solar panel broken" (Customer: Sunny Sunshine) - NOT assigned to support1
+
+**Login as support2@company.com:**
+- Can see the exact same incidents
+- Can modify incidents that support1 was working on
+- Has access to all customer information
 
 :bulb: **What is a Time-based One-Time Password (TOTP)?**
 

@@ -1,19 +1,21 @@
 # Exercise 1 - Broken Access Control
 
 ## 📖 1. Explanation :
-Broken Access Control  is the most critical web application security risk, according to the [OWASP Top 10 2021 list](https://owasp.org/Top10/). It occurs when an application fails to enforce proper authorization, allowing users to access or modify resources they are not permitted to. When access control is broken, threat actors can act outside of their intended permissions. This can manifest in several ways:
+Broken Access Control  is the most critical web application security risk, according to the [OWASP Top 10 2021 list](https://owasp.org/Top10/). It occurs when an application fails to enforce proper authorization, allowing users to access or modify resources they are not permitted to. When access control is broken, threat actors can act outside of their intended permissions. When access control is broken, threat actors can act outside of their intended permissions. This can manifest in several ways:
+
 - **Horizontal Privilege Escalation:** A threat actor gains access to another user's data or resources (e.g., User A viewing User B's private information).
 - **Vertical Privilege Escalation:** A threat actor with standard user privileges gains access to administrative functions.
 - **Insecure Direct Object References (IDOR):** An application uses a user-supplied identifier to access a resource directly, without checking if the user is authorized to access that specific resource.
 
-In the "Incident Management" application used by a support team. The business rules are:
-1.  Users with the `support` role can view all incidents to have context.
-2.  `Support` user can only **modify** an incident that is explicitly **assigned to them**.
-3.  Only users with the `admin` role can **close** incidents marked with **High** urgency.
+In the "Incident Management" application used by a support team. The business rules are :
+- Support users can view all incidents (for context).
+- Support users can only modify incidents assigned to them.
+- Only admin users can close high-urgency incidents.
 
-**Objective:** identify, exploit, and fix critical privilege escalation vulnerabilities in a Node.js-based SAP CAP application.
+### Exercise 1.1 - Horizontal Privilege Escalation
+occurs when a user gains access to resources belonging to another user at the same privilege level. In our incident management system, this means a support user could potentially modify incidents assigned to other support users, violating the business rule that support users can only modify incidents explicitly assigned to them.
 
-## 🚨 2. Vulnerable Code Analysis :
+### 🚨 2. Vulnerable Code Analysis :
 
 **File**: `srv/services.cds`
 ```cds
@@ -64,7 +66,7 @@ entity Incidents : cuid, managed {
     title        : String  @title : 'Title';
     urgency      : Association to Urgency default 'M';
     status       : Association to Status default 'N';
-    // ❌ MISSING: assignedTo, assignedAt fields for tracking assignments
+    // ❌ MISSING: assignedTo field for tracking assignments
     conversation : Composition of many {
         key ID    : UUID;
         timestamp : type of managed:createdAt;
@@ -138,6 +140,8 @@ ID,customer_ID,title,urgency_code,status_code,assignedTo
 3ccf474c-3881-44b7-99fb-59a2a4668418,1004161,Strange noise when switching off Inverter,M,N,support.user2@company.com
 3583f982-d7df-4aad-ab26-301d4a157cd7,1004100,Solar panel broken,H,I,support.user2@company.com
 ```
+
+
 
 :bulb: **What is a Time-based One-Time Password (TOTP)?**
 

@@ -27,7 +27,7 @@ service ProcessorService {
 }
 
 annotate ProcessorService.Incidents with @odata.draft.enabled; 
-annotate ProcessorService with @(requires: 'support');   // ❌ Only role check, no assignment-based modification control
+annotate ProcessorService with @(requires: 'support');   // ⚠️  Only role check, no assignment-based modification control
 
 service AdminService {
     entity Customers as projection on my.Customers;      // ✅ Admin full access (correct)
@@ -35,6 +35,7 @@ service AdminService {
 }
 annotate AdminService with @(requires: 'admin');        
 ```
+⚠️ Issue: The onUpdate method lacks checks to ensure that the authenticated support user matches the assignedTo field of the incident or that only admins can close high-urgency incidents.
 
 **File**: `srv/services.js`
 ```
@@ -43,30 +44,31 @@ const cds = require('@sap/cds')
 
 class ProcessorService extends cds.ApplicationService {
   init() {
-    this.before("UPDATE", "Incidents", (req) => this.onUpdate(req)); // ❌ Missing: Check if incident is assigned to current user
+    this.before("UPDATE", "Incidents", (req) => this.onUpdate(req)); // ⚠️  Missing: Check if incident is assigned to current user
     this.before("CREATE", "Incidents", (req) => this.changeUrgencyDueToSubject(req.data));
     return super.init();
   }
 
-  // ❌ Only checks if incident is closed, NOT if user is assigned to it
+  // ⚠️  Only checks if incident is closed, NOT if user is assigned to it
   async onUpdate (req) {
     const { status_code } = await SELECT.one(req.subject, i => i.status_code).where({ID: req.data.ID})
     if (status_code === 'C')   // 
       return req.reject(`Can't modify a closed incident`)
-    // ❌ MISSING: Check if current user is assigned to this incident
-    // ❌ MISSING: Check if user has admin role for high urgency closure.
+    // ⚠️  MISSING: Check if current user is assigned to this incident
+    // ⚠️  MISSING: Check if user has admin role for high urgency closure.
   }
 }
 ```
+
 **File**: db/schema.cds (Missing assignment tracking)
 ```
-// ❌ MISSING: No assignment tracking fields
+// ⚠️  MISSING: No assignment tracking fields
 entity Incidents : cuid, managed {  
     customer     : Association to Customers;
     title        : String  @title : 'Title';
     urgency      : Association to Urgency default 'M';
     status       : Association to Status default 'N';
-    // ❌ MISSING: assignedTo field for tracking assignments
+    // ⚠️ MISSING: assignedTo field for tracking assignments
     conversation : Composition of many {
         key ID    : UUID;
         timestamp : type of managed:createdAt;
@@ -75,35 +77,35 @@ entity Incidents : cuid, managed {
     };
 }
 ```
-What's Missing:
+⚠️ What's Missing:
+- No 'assignedTo' field definition for tracking assignments in db/schema.cds.
 - No validation to ensure an incident is assigned to the current user when it's being updated.
-- No code to populate assignedTo field when creating/updating incidents
+- No code to populate assignedTo field when creating/updating incidents.
+- No Check if user has admin role for high urgency closure.
 
 The above vulnerabilities violate the principle of least privilege and can lead to data breaches and unauthorized modifications.
 
 ## 🚨 3. Exploit Horizontal Privilege Escalation Vulnerability :
 
 ### Step 1: Configure Custom Identity Service Users:
-  - Create users in your custom SAP Identity Service:
+- Create users in your custom SAP Identity Service:
      - support.user1@company.com (Support role)
      - support.user2@company.com (Support role)
      - manager.user@company.com (Admin role)
   - Assign support.user1@company.com and support.user2@company.com to role collection 'Incident Management Support'
   - Assign manager.user@company.com to role collection 'Incident Management Admin'
-  
-### Step 2: Demonstrate Privilege Escalation Vulnerability :
-We will test with two support users to show that while they should be able to see all incidents, they should not be able to modify incidents they don't own.
 
-**A. Test with the first user:** support.user1@company.com
- - **Login** as support.user1@company.com through SAP Build Work Zone launchpad. 
- - **Access the Incident Management application** through Work Zone launchpad
- - **Observe:** User can see ALL incidents (✅ this is correct per business rules)
- - **Exploit:** User can modify any incidents. ❌ (This is the vulnerability)
-   
-**B. Test with the first user:** support.user1@company.com
-- Log out and then log back in as support.user2@company.com.
-- Navigate to the Incident Management application again.
-- Verify that this user can also modify any incident, confirming the vulnerability is not isolated to a single user.
+### Step 2: Demonstrate Privilege Escalation Vulnerability : 
+We will test with two support users to show that they can modify incidents they don't own, which should not be permitted. 
+
+- **Login as bob.support@company.com** in SAP Build Work Zone
+- **Navigate to Incident Management application**
+- **Observe:** User can see all incidents (✅ this is correct per business rules)
+- **Select incident assigned to alice.support@company.com** (Title: Strange noise when switching off Inverter)
+- **Attempt to modify** the incident title or add conversation entries.
+- **Result:** ⚠️ Modification succeeds (VULNERABILITY)
+- **Attempt to close high-urgency incident** (H status)
+- **Result:** ⚠️ Closure succeeds without admin role check (VULNERABILITY)
 
 ##  ✅ 4. Fix Implementation
 
@@ -121,8 +123,11 @@ entity Incidents : cuid, managed {
     urgency      : Association to Urgency default 'M';
     status       : Association to Status default 'N';
     
-    // ✅ ADD: User assignment field
+    // ✅ ADD: User assignment fields
     assignedTo   : String(255);  // Email of assigned support user
+    assignedAt   : Timestamp;    // When assignment was made
+    assignedBy   : String(255);  // Who made the assignment
+
     conversation : Composition of many {
         key ID    : UUID;
         timestamp : type of managed:createdAt;
@@ -133,17 +138,17 @@ entity Incidents : cuid, managed {
 ...
 
 **File**: `db/data/sap.capire.incidents-Incidents.csv`
- *   Add the `assignedTo` column and assign incidents to our test users.
+ *   Add the `assignedTo`,'assignedAt', 'assignedBy' columns and assign incidents to our test users.
  *   **Note:** Use the actual user IDs from your IdP. For this lab, we'll use their email addresses as a stand-in.
 
 ```csv
 // MODIFIED FILE: db/data/sap.capire.incidents-Incidents.csv
-ID,customer_ID,title,urgency_code,status_code,assignedTo
-3b23bb4b-4ac7-4a24-ac02-aa10cabd842c,1004155,Inverter not functional,H,C,support.user1@company.com
-3a4ede72-244a-4f5f-8efa-b17e032d01ee,1004161,No current on a sunny day,H,N,support.user1@company.com
-3ccf474c-3881-44b7-99fb-59a2a4668418,1004161,Strange noise when switching off Inverter,M,N,support.user2@company.com
-3583f982-d7df-4aad-ab26-301d4a157cd7,1004100,Solar panel broken,H,I,support.user2@company.com
-
+# File: db/data/sap.capire.incidents-Incidents.csv - UPDATED WITH ASSIGNMENT DATA
+ID,customer_ID,title,urgency_code,status_code,assignedTo,assignedAt,assignedBy
+3b23bb4b-4ac7-4a24-ac02-aa10cabd842c,1004155,Inverter not functional,H,C,bob.support@company.com,2024-01-15T09:00:00.000Z,bob.support@company.com
+3a4ede72-244a-4f5f-8efa-b17e032d01ee,1004161,No current on a sunny day,H,N,bob.support@company.com,2024-01-16T10:30:00.000Z,bob.support@company.com
+3ccf474c-3881-44b7-99fb-59a2a4668418,1004161,Strange noise when switching off Inverter,M,N,alice.support@company.com,2024-01-17T14:15:00.000Z,alice.support@company.com
+3583f982-d7df-4aad-ab26-301d4a157cd7,1004100,Solar panel broken,H,I,alice.support@company.com,2024-01-18T11:45:00.000Z,alice.support@company.com
 ```
 
 // File: srv/services.js
@@ -158,11 +163,15 @@ class ProcessorService extends cds.ApplicationService {
         
         // ✅ Validate user can only modify assigned incidents
         this.before("UPDATE", "Incidents", (req) => this.validateUserAccess(req));
+
+        // ✅ Add authorization checks for all modification operations
+        this.before(['UPDATE', 'DELETE'], 'Incidents', (req) => this.checkAssignmentAccess(req));
+        this.before('UPDATE', 'Incidents', (req) => this.checkHighUrgencyClose(req));
         
         return super.init();
     }
 
-    // ✅ NEW: Auto-assign incident to creator
+// ✅ NEW: Auto-assign incident to creator
     async autoAssignIncident(req) {
         const incident = req.data;
         const currentUser = req.user?.id;
@@ -180,6 +189,75 @@ class ProcessorService extends cds.ApplicationService {
         this.changeUrgencyDueToSubject(incident);
     }
 
+// ✅ NEW : Assignment-based access control
+  async checkAssignmentAccess(req) {
+    const user = req.user;
+    const userEmail = user.id; // Get user email from authenticated session
+    
+    // Admin users can modify any incident
+    if (user.is('admin')) {
+      return; // Allow admin access
+    }
+    
+    // For support users, check assignment
+    if (user.is('support')) {
+      const incident = await SELECT.one('Incidents', i => i.assignedTo)
+        .where({ ID: req.data.ID || req.params[0] });
+      
+      if (!incident) {
+        return req.reject(404, 'Incident not found');
+      }
+      
+      // ✅ Check if incident is assigned to current user
+      if (incident.assignedTo !== userEmail) {
+        return req.reject(403, 
+          `Access denied. This incident is assigned to ${incident.assignedTo}. ` +
+          `You can only modify incidents assigned to you.`
+        );
+      }
+    }
+  }
+
+// ✅ SECURITY FIX: High urgency closure control
+  async checkHighUrgencyClose(req) {
+    const user = req.user;
+    
+    // Check if status is being changed to 'Closed'
+    if (req.data.status_code === 'C') {
+      const incident = await SELECT.one('Incidents', i => i.urgency_code)
+        .where({ ID: req.data.ID });
+      
+      // ✅ Only admins can close high urgency incidents
+      if (incident.urgency_code === 'H' && !user.is('admin')) {
+        return req.reject(403, 
+          'Only administrators can close high urgency incidents. ' +
+          'Please escalate to an admin user.'
+        );
+      }
+    }
+  }
+
+// ✅ Existing urgency logic
+    changeUrgencyDueToSubject(data) {
+        if (data) {
+            const incidents = Array.isArray(data) ? data : [data];
+            incidents.forEach((incident) => {
+                if (incident.title?.toLowerCase().includes("urgent")) {
+                    incident.urgency = { code: "H", descr: "High" };
+                }
+            });
+        }
+    }
+
+  async onUpdate(req) {
+    const { status_code } = await SELECT.one(req.subject, i => i.status_code)
+      .where({ID: req.data.ID})
+    
+    if (status_code === 'C')
+      return req.reject(`Can't modify a closed incident`)
+  }
+
+module.exports = { ProcessorService }
 
 ```
 

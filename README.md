@@ -9,7 +9,7 @@ This repository contains the material for the **Mastering Secure Application Dev
 
 ## Overview
 
-In this session we will explore the OWASP Top 10 vulnerabilities within the context of the SAP Cloud Application Programming Model (CAP) and SAP Business Technology Platform (BTP). 
+In this session we will explore the [OWASP Top 10 vulnerabilities](https://owasp.org/Top10/) within the context of the SAP Cloud Application Programming Model (CAP) and SAP Business Technology Platform (BTP). 
 
 ### 🎯 Learning Objectives
 

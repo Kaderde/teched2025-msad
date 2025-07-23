@@ -1,7 +1,7 @@
 # Exercise 1 - Broken Access Control
 
 ## 📖 1. Explanation :
-Broken Access Control  is the most critical web application security risk, according to the [OWASP Top 10 2021 list](https://owasp.org/Top10/). It occurs when an application fails to enforce proper authorization, allowing users to access or modify resources they are not permitted to. When access control is broken, threat actors can act outside of their intended permissions. When access control is broken, threat actors can act outside of their intended permissions. This can manifest in several ways:
+Broken Access Control  is the most critical web application security risk, according to the [OWASP Top 10 2021 list](https://owasp.org/Top10/). It occurs when an application fails to enforce proper authorization, allowing users to access or modify resources they are not permitted to. When access control is broken, threat actors can act outside of their intended permissions. This can manifest in several ways:
 
 - **Horizontal Privilege Escalation:** A threat actor gains access to another user's data or resources (e.g., User A viewing User B's private information).
 - **Vertical Privilege Escalation:** A threat actor with standard user privileges gains access to administrative functions.
@@ -75,6 +75,9 @@ entity Incidents : cuid, managed {
     };
 }
 ```
+What's Missing:
+- No validation to ensure an incident is assigned to the current user when it's being updated.
+- No code to populate assignedTo field when creating/updating incidents
 
 The above vulnerabilities violate the principle of least privilege and can lead to data breaches and unauthorized modifications.
 
@@ -129,10 +132,10 @@ entity Incidents : cuid, managed {
 }
 ...
 
-```
 **File**: `db/data/sap.capire.incidents-Incidents.csv`
  *   Add the `assignedTo` column and assign incidents to our test users.
  *   **Note:** Use the actual user IDs from your IdP. For this lab, we'll use their email addresses as a stand-in.
+
 ```csv
 // MODIFIED FILE: db/data/sap.capire.incidents-Incidents.csv
 ID,customer_ID,title,urgency_code,status_code,assignedTo
@@ -140,10 +143,44 @@ ID,customer_ID,title,urgency_code,status_code,assignedTo
 3a4ede72-244a-4f5f-8efa-b17e032d01ee,1004161,No current on a sunny day,H,N,support.user1@company.com
 3ccf474c-3881-44b7-99fb-59a2a4668418,1004161,Strange noise when switching off Inverter,M,N,support.user2@company.com
 3583f982-d7df-4aad-ab26-301d4a157cd7,1004100,Solar panel broken,H,I,support.user2@company.com
-```
-
 
 ```
+
+// File: srv/services.js
+```
+const cds = require('@sap/cds');
+
+class ProcessorService extends cds.ApplicationService {
+    
+    init() {
+        // ✅ Auto-assign new incidents to current user
+        this.before("CREATE", "Incidents", (req) => this.autoAssignIncident(req));
+        
+        // ✅ Validate user can only modify assigned incidents
+        this.before("UPDATE", "Incidents", (req) => this.validateUserAccess(req));
+        
+        return super.init();
+    }
+
+    // ✅ NEW: Auto-assign incident to creator
+    async autoAssignIncident(req) {
+        const incident = req.data;
+        const currentUser = req.user?.id;
+        
+        if (currentUser && !incident.assignedTo) {
+            // ✅ Assign to current user creating the incident
+            incident.assignedTo = currentUser;
+            incident.assignedAt = new Date();
+            incident.assignedBy = currentUser;
+            
+            console.log(`📝 Auto-assigned incident to ${currentUser}`);
+        }
+        
+        // Handle urgency logic
+        this.changeUrgencyDueToSubject(incident);
+    }
+
+
 ```
 
 

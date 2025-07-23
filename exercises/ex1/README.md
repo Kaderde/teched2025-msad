@@ -135,15 +135,14 @@ entity Incidents : cuid, managed {
         message   : String;
     };
 }
-...
 
-**File**: `db/data/sap.capire.incidents-Incidents.csv`
+```
+
+File: `db/data/sap.capire.incidents-Incidents.csv`
  *   Add the `assignedTo`,'assignedAt', 'assignedBy' columns and assign incidents to our test users.
  *   **Note:** Use the actual user IDs from your IdP. For this lab, we'll use their email addresses as a stand-in.
 
-```csv
-// MODIFIED FILE: db/data/sap.capire.incidents-Incidents.csv
-# File: db/data/sap.capire.incidents-Incidents.csv - UPDATED WITH ASSIGNMENT DATA
+```
 ID,customer_ID,title,urgency_code,status_code,assignedTo,assignedAt,assignedBy
 3b23bb4b-4ac7-4a24-ac02-aa10cabd842c,1004155,Inverter not functional,H,C,bob.support@company.com,2024-01-15T09:00:00.000Z,bob.support@company.com
 3a4ede72-244a-4f5f-8efa-b17e032d01ee,1004161,No current on a sunny day,H,N,bob.support@company.com,2024-01-16T10:30:00.000Z,bob.support@company.com

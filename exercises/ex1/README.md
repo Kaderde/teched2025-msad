@@ -151,16 +151,27 @@ ID,customer_ID,title,urgency_code,status_code,assignedTo,assignedAt,assignedBy
 3583f982-d7df-4aad-ab26-301d4a157cd7,1004100,Solar panel broken,H,I,alice.support@company.com,2024-01-18T11:45:00.000Z,alice.support@company.com
 ```
 
-// File: srv/services.js
+File: srv/services.js
 ```
 const cds = require('@sap/cds');
 
 class ProcessorService extends cds.ApplicationService {
     
     init() {
-        // ✅ Auto-assign new incidents to current user
-        this.before("CREATE", "Incidents", (req) => this.autoAssignIncident(req));
         
+        // ✅ NEW FIX: Auto-assign incident to creator
+        this.before('CREATE', Incidents, async (req) => {
+        const incident = req.data;
+        if (req.user.is('support') || req.user.is('admin'))  {
+            incident.assignedTo = req.user.id; // Set assignedTo to the current user
+            incident.assignedAt = new Date();
+            incident.assignedBy = req.user.id;
+            console.log(`📝 Auto-assigned incident to ${req.user.id}`);
+            // Handle urgency logic
+            this.changeUrgencyDueToSubject(incident);
+        }
+        });
+
         // ✅ Validate user can only modify assigned incidents
         this.before("UPDATE", "Incidents", (req) => this.validateUserAccess(req));
 
@@ -168,76 +179,68 @@ class ProcessorService extends cds.ApplicationService {
         this.before(['UPDATE', 'DELETE'], 'Incidents', (req) => this.checkAssignmentAccess(req));
         this.before('UPDATE', 'Incidents', (req) => this.checkHighUrgencyClose(req));
         
+        // ✅ Add the onUpdate method
+        this.before("UPDATE", "Incidents", (req) => this.onUpdate(req));
+        
         return super.init();
     }
 
-// ✅ NEW: Auto-assign incident to creator
-    async autoAssignIncident(req) {
-        const incident = req.data;
-        const currentUser = req.user?.id;
+    // ✅ NEW: Validate user access for updates
+    async validateUserAccess(req) {
+        // This can contain additional validation logic if needed
+        // For now, the main logic is in checkAssignmentAccess
+        console.log(`🔍 Validating access for user: ${req.user?.id}`);
+    }
+
+    // ✅ NEW FIX: Assignment-based access control
+    async checkAssignmentAccess(req) {
+        const user = req.user;
+        const userEmail = user.id; // Get user email from authenticated session
         
-        if (currentUser && !incident.assignedTo) {
-            // ✅ Assign to current user creating the incident
-            incident.assignedTo = currentUser;
-            incident.assignedAt = new Date();
-            incident.assignedBy = currentUser;
-            
-            console.log(`📝 Auto-assigned incident to ${currentUser}`);
+        // Admin users can modify any incident
+        if (user.is('admin')) {
+            return; // Allow admin access
         }
         
-        // Handle urgency logic
-        this.changeUrgencyDueToSubject(incident);
+        // For support users, check assignment
+        if (user.is('support')) {
+            const incident = await SELECT.one('Incidents', i => i.assignedTo)
+                .where({ ID: req.data.ID || req.params[0] });
+            
+            if (!incident) {
+                return req.reject(404, 'Incident not found');
+            }
+            
+            // ✅ Check if incident is assigned to current user
+            if (incident.assignedTo !== userEmail) {
+                return req.reject(403, 
+                    `Access denied. This incident is assigned to ${incident.assignedTo}. ` +
+                    `You can only modify incidents assigned to you.`
+                );
+            }
+        }
     }
 
-// ✅ NEW : Assignment-based access control
-  async checkAssignmentAccess(req) {
-    const user = req.user;
-    const userEmail = user.id; // Get user email from authenticated session
-    
-    // Admin users can modify any incident
-    if (user.is('admin')) {
-      return; // Allow admin access
+    // ✅ NEW FIX: High urgency closure control
+    async checkHighUrgencyClose(req) {
+        const user = req.user;
+        
+        // Check if status is being changed to 'Closed'
+        if (req.data.status_code === 'C') {
+            const incident = await SELECT.one('Incidents', i => i.urgency_code)
+                .where({ ID: req.data.ID });
+            
+            // ✅ Only admins can close high urgency incidents
+            if (incident.urgency_code === 'H' && !user.is('admin')) {
+                return req.reject(403, 
+                    'Only administrators can close high urgency incidents. ' +
+                    'Please escalate to an admin user.'
+                );
+            }
+        }
     }
-    
-    // For support users, check assignment
-    if (user.is('support')) {
-      const incident = await SELECT.one('Incidents', i => i.assignedTo)
-        .where({ ID: req.data.ID || req.params[0] });
-      
-      if (!incident) {
-        return req.reject(404, 'Incident not found');
-      }
-      
-      // ✅ Check if incident is assigned to current user
-      if (incident.assignedTo !== userEmail) {
-        return req.reject(403, 
-          `Access denied. This incident is assigned to ${incident.assignedTo}. ` +
-          `You can only modify incidents assigned to you.`
-        );
-      }
-    }
-  }
 
-// ✅ SECURITY FIX: High urgency closure control
-  async checkHighUrgencyClose(req) {
-    const user = req.user;
-    
-    // Check if status is being changed to 'Closed'
-    if (req.data.status_code === 'C') {
-      const incident = await SELECT.one('Incidents', i => i.urgency_code)
-        .where({ ID: req.data.ID });
-      
-      // ✅ Only admins can close high urgency incidents
-      if (incident.urgency_code === 'H' && !user.is('admin')) {
-        return req.reject(403, 
-          'Only administrators can close high urgency incidents. ' +
-          'Please escalate to an admin user.'
-        );
-      }
-    }
-  }
-
-// ✅ Existing urgency logic
+    // ✅ Existing urgency logic
     changeUrgencyDueToSubject(data) {
         if (data) {
             const incidents = Array.isArray(data) ? data : [data];
@@ -249,16 +252,18 @@ class ProcessorService extends cds.ApplicationService {
         }
     }
 
-  async onUpdate(req) {
-    const { status_code } = await SELECT.one(req.subject, i => i.status_code)
-      .where({ID: req.data.ID})
-    
-    if (status_code === 'C')
-      return req.reject(`Can't modify a closed incident`)
-  }
+    // ✅ Existing update validation
+    async onUpdate(req) {
+
+        const incident = await SELECT.one(req.subject, i => ({ status_code: i.status_code }))
+        .where({ ID: req.data.ID });
+   
+        if (status_code === 'C' && !req.user.id.is('admin'))
+            return req.reject(`Can't modify a closed incident`)
+    }
+}
 
 module.exports = { ProcessorService }
-
 ```
 
 

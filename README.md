@@ -9,17 +9,20 @@ This repository contains the material for the **Mastering Secure Application Dev
 
 ## Overview
 
-In this session we will explore the [OWASP Top 10 vulnerabilities](https://owasp.org/Top10/) within the context of the SAP Cloud Application Programming Model (CAP) and SAP Business Technology Platform (BTP). 
+Welcome to this hands-on workshop dedicated to embedding security into your SAP BTP applications. 
+In an era where data breaches and cyber threats are constant, building secure software is not an option—it's a requirement. This lab is designed for developers working with the SAP Cloud Application Programming Model (CAP) and Node.js. 
+
+By completing the exercises, you will gain the practical skills to identify and mitigate common security risks as defined by the [OWASP Top 10 vulnerabilities](https://owasp.org/Top10/). 
 
 ### 🎯 Learning Objectives
 
--	**Analyze** how the OWASP Top 10 vulnerabilities manifest in real-world SAP CAP Node.js applications.
--	**Assess** the business risks and operational impact of these vulnerabilities on application consumed through SAP BTP.
--	**Apply** effective mitigation strategies using a combination of SAP CAP's built-in security, and essential BTP services like XSUAA.
+-	**Identify and Mitigate** a critical OWASP Top 10 vulnerability in a real-world scenario.
+-	**Leverage**  the SAP Cloud Application Programming Model (CAP) for secure, cloud-native development.
+-	**Implement** BTP's comprehensive, built-in security services to protect your data and business logic.
 -	**Validate** the effectiveness of security fixes through practical testing.
 
 
-## Requirements
+## Requirements (TBD)
 
 The requirements to follow the exercises in this repository are active trial accounts for SAP BTP and for the SAP Cloud Identity Services. 
 

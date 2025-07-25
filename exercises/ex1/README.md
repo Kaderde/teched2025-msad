@@ -9,7 +9,7 @@ Broken Access Control  is the most critical web application security risk, accor
 
 In the "Incident Management" application used by a support team. The business rules are :
 - Support users can view all incidents (for context).
-- Support users can only modify incidents assigned to them.
+- Support users can modify incidents that are either assigned to them or unassigned.
 - Only admin users can close high-urgency incidents.
 
 ### Exercise 1.1 - Horizontal Privilege Escalation

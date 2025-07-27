@@ -1,7 +1,7 @@
 [![REUSE status](https://api.reuse.software/badge/github.com/sap-samples/teched2023-XP185v)](https://api.reuse.software/info/github.com/sap-samples/teched2023-XP185v)
 
 
-# Mastering Secure Application Development in SAP BTP: A Practical Workshop
+# Mastering Secure Application Development in SAP BTP : A Practical Workshop
 
 ## Description
 
@@ -42,14 +42,15 @@ Now you are ready to start the exercises.
 💡In some of the exercises you will be asked to switch from one user to another. This works more reliable if you use the Incognito mode of your browser. Without the Incognito mode, you may run into situations where you are authenticated automatically with the wrong user.
 
 ## Exercises
-Each exercise focuses on a specific vulnerability and is organized into the following sections:
-- **Overview**: A brief description of the vulnerability.
-- **Vulnerable Code**: A code snippet demonstrating the flaw.
-- **Exploitation**: A practical example of how the vulnerability is exploited.
-- **Remediation**: The corrected code that patches the vulnerability.
-- **Verification**: Steps to confirm the vulnerability has been resolved.
+Every exercise module is a self-contained lab focused on a specific vulnerability. All modules adhere to the following standard structure:
 
-Each exercise module will dissect a vulnerability, demonstrate how it can manifest in a CAP application, and provide clear, actionable steps to mitigate it using best practices and BTP services.
+- 🐛 **Overview:** A high-level description of the vulnerability, its impact, and why it's a security risk.
+- 👨‍💻 **Vulnerable Code:** A snippet of code containing the specific security flaw. We'll analyze why it's insecure.
+- 💥 **Exploitation:** A step-by-step guide on how to exploit the vulnerability, demonstrating its real-world impact.
+- 🛡️ **Remediation:** The corrected version of the code that patches the vulnerability, along with an explanation of the fix.
+- ✅ **Verification:** A simple procedure to confirm that the patch has successfully mitigated the vulnerability and the exploit no longer works.
+
+This structure is designed to help you understand a vulnerability from an attacker's perspective and a defender's, see how it can impact a CAP application, and learn actionable steps to mitigate it with BTP best practices. 
 
 - [Getting Started](exercises/ex0/)
 - [Exercise 1 - Broken Access Control](exercises/ex1/)

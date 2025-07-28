@@ -44,8 +44,8 @@ Now you are ready to start the exercises.
 ## Exercises
 Every exercise module is a self-contained lab focused on a specific vulnerability. All modules adhere to the following standard structure:
 
-- 🐛 **Overview:** A high-level description of the vulnerability, its impact, and why it's a security risk.
-- 👨‍💻 **Vulnerable Code:** A snippet of code containing the specific security flaw. We'll analyze why it's insecure.
+- 📖 **Overview:** A high-level description of the vulnerability, its impact, and why it's a security risk.
+- 🚨 **Vulnerable Code:** A snippet of code containing the specific security flaw. We'll analyze why it's insecure.
 - 💥 **Exploitation:** A step-by-step guide on how to exploit the vulnerability, demonstrating its real-world impact.
 - 🛡️ **Remediation:** The corrected version of the code that patches the vulnerability, along with an explanation of the fix.
 - ✅ **Verification:** A simple procedure to confirm that the patch has successfully mitigated the vulnerability and the exploit no longer works.

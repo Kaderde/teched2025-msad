@@ -13,9 +13,9 @@ In the "Incident Management" application used by a support team. The business ru
 - Only admin users can close high-urgency incidents.
 
 ### Exercise 1.1 - Horizontal Privilege Escalation
-occurs when a user gains access to resources belonging to another user at the same privilege level. In our incident management system, this means a support user could potentially modify incidents assigned to other support users, violating the business rule that support users can only modify incidents explicitly assigned to them.
+Occurs when a user gains access to resources belonging to another user at the same privilege level. In our incident management system, this means a support user could potentially modify incidents assigned to other support users, violating the business rule that support users can only modify incidents explicitly assigned to them.
 
-### 🚨 2. Vulnerable Code Analysis :
+#### 🚨 2. Vulnerable Code Analysis :
 
 **File**: `srv/services.cds`
 ```cds
@@ -48,19 +48,17 @@ class ProcessorService extends cds.ApplicationService {
     this.before("CREATE", "Incidents", (req) => this.changeUrgencyDueToSubject(req.data));
     return super.init();
   }
-
   // ⚠️  Only checks if incident is closed, NOT if user is assigned to it
   async onUpdate (req) {
     const { status_code } = await SELECT.one(req.subject, i => i.status_code).where({ID: req.data.ID})
     if (status_code === 'C')   // 
       return req.reject(`Can't modify a closed incident`)
     // ⚠️  MISSING: Check if current user is assigned to this incident
-    // ⚠️  MISSING: Check if user has admin role for high urgency closure.
   }
 }
 ```
 
-**File**: db/schema.cds (Missing assignment tracking)
+**File**: db/schema.cds
 ```
 // ⚠️  MISSING: No assignment tracking fields
 entity Incidents : cuid, managed {  
@@ -81,33 +79,32 @@ entity Incidents : cuid, managed {
 - No 'assignedTo' field definition for tracking assignments in db/schema.cds.
 - No validation to ensure an incident is assigned to the current user when it's being updated.
 - No code to populate assignedTo field when creating/updating incidents.
-- No Check if user has admin role for high urgency closure.
 
 The above vulnerabilities violate the principle of least privilege and can lead to data breaches and unauthorized modifications.
 
-## 🚨 3. Exploit Horizontal Privilege Escalation Vulnerability :
+####  💥  3. Exploit Horizontal Privilege Escalation Vulnerability :
 
-### Step 1: Configure Custom Identity Service Users:
+##### Step 1: Configure Custom Identity Service Users:
 - Create users in your custom SAP Identity Service:
-     - support.user1@company.com (Support role)
-     - support.user2@company.com (Support role)
-     - manager.user@company.com (Admin role)
-  - Assign support.user1@company.com and support.user2@company.com to role collection 'Incident Management Support'
-  - Assign manager.user@company.com to role collection 'Incident Management Admin'
+     - bob.support@company.com (Support user)
+     - alice.support@company.com (Support user)
+     - david.admin@company.com (Admin user)
 
-### Step 2: Demonstrate Privilege Escalation Vulnerability : 
-We will test with two support users to show that they can modify incidents they don't own, which should not be permitted. 
+  - Assign bob.support and alice.support to role collection 'Incident Management Support'
+
+  - Assign david.admin to role collection 'Incident Management Admin'
+
+##### Step 2: Demonstrate Privilege Escalation Vulnerability : 
+This test will verify that a support user can modify incidents created by others, a behavior that violates our security policy.
 
 - **Login as bob.support@company.com** in SAP Build Work Zone
 - **Navigate to Incident Management application**
 - **Observe:** User can see all incidents (✅ this is correct per business rules)
-- **Select incident assigned to alice.support@company.com** (Title: Strange noise when switching off Inverter)
+- **Select any incident** (for example incident with Title: Strange noise when switching off Inverter)
 - **Attempt to modify** the incident title or add conversation entries.
 - **Result:** ⚠️ Modification succeeds (VULNERABILITY)
-- **Attempt to close high-urgency incident** (H status)
-- **Result:** ⚠️ Closure succeeds without admin role check (VULNERABILITY)
 
-##  ✅ 4. Fix Implementation
+##   🛡️  4. Fix Implementation
 
 File: db/schema.cds (Add missing field : assignedTo)
 
@@ -144,9 +141,9 @@ File: `db/data/sap.capire.incidents-Incidents.csv`
 
 ```
 ID,customer_ID,title,urgency_code,status_code,assignedTo,assignedAt,assignedBy
-3b23bb4b-4ac7-4a24-ac02-aa10cabd842c,1004155,Inverter not functional,H,C,bob.support@company.com,2024-01-15T09:00:00.000Z,bob.support@company.com
-3a4ede72-244a-4f5f-8efa-b17e032d01ee,1004161,No current on a sunny day,H,N,bob.support@company.com,2024-01-16T10:30:00.000Z,bob.support@company.com
-3ccf474c-3881-44b7-99fb-59a2a4668418,1004161,Strange noise when switching off Inverter,M,N,alice.support@company.com,2024-01-17T14:15:00.000Z,alice.support@company.com
+3b23bb4b-4ac7-4a24-ac02-aa10cabd842c,1004155,Inverter not functional,H,C,bob.support@company.com,2025-01-15T09:00:00.000Z,bob.support@company.com
+3a4ede72-244a-4f5f-8efa-b17e032d01ee,1004161,No current on a sunny day,H,N,bob.support@company.com,2025-01-16T10:30:00.000Z,bob.support@company.com
+3ccf474c-3881-44b7-99fb-59a2a4668418,1004161,Strange noise when switching off Inverter,M,N,alice.support@company.com,2025-01-17T14:15:00.000Z,alice.support@company.com
 3583f982-d7df-4aad-ab26-301d4a157cd7,1004100,Solar panel broken,H,I,alice.support@company.com,2024-01-18T11:45:00.000Z,alice.support@company.com
 ```
 

@@ -1,6 +1,6 @@
 # Exercise 1 - Broken Access Control
 
-## 📖 1. Explanation :
+## 📖 Explanation :
 Broken Access Control  is the most critical web application security risk, according to the [OWASP Top 10 2021 list](https://owasp.org/Top10/). It occurs when an application fails to enforce proper authorization, allowing users to access or modify resources they are not permitted to. When access control is broken, threat actors can act outside of their intended permissions. This can manifest in several ways:
 
 - Horizontal Privilege Escalation.
@@ -13,9 +13,36 @@ The business rules for the "Incident Management" application are as follows:
 - **Close:** Only admin users have the authority to close high-urgency incidents.
 
 ### Exercise 1.1 - Horizontal Privilege Escalation
+
+#### 📖  1. Overview :
+
 Occurs when a user gains access to resources belonging to another user at the same privilege level. In our incident management system, this means a support user could potentially modify incidents assigned to other support users, violating the business rule that support users can only modify incidents explicitly assigned to them.
 
-#### 🚨 2. Vulnerable Code Analysis :
+#### 🚨 2. Vulnerable Code :
+
+**File**: `db/schema.cds`
+```cds
+// VULNERABLE CODE - Missing assignedTo field
+using { cuid, managed, sap.common.CodeList } from '@sap/cds/common';
+namespace sap.capire.incidents; 
+
+/**
+* Incidents created by Customers.
+*/
+entity Incidents : cuid, managed {  
+  customer     : Association to Customers;
+  title        : String  @title : 'Title';
+  urgency      : Association to Urgency default 'M';
+  status       : Association to Status default 'N';
+  // ❌ MISSING: assignedTo field - no way to track incident ownership
+  conversation : Composition of many {
+    key ID    : UUID;
+    timestamp : type of managed:createdAt;
+    author    : type of managed:createdBy;
+    message   : String;
+  };
+}
+```
 
 **File**: `srv/services.cds`
 ```cds
@@ -35,32 +62,61 @@ service AdminService {
 }
 annotate AdminService with @(requires: 'admin');        
 ```
-**Why this is vulnerable:***
-
+**Why this is vulnerable:**
+- The database schema lacks an assignedTo field to track incident ownership
 - The @(requires: 'support') annotation only checks if the user has the support role
 - No restrictions on which specific incidents a support user can modify
 - Any support user can UPDATE/DELETE any incident, regardless of assignment
-  
-**File**: `srv/services.js`
-```
-// VULNERABLE CODE - No user-based filtering
-const cds = require('@sap/cds')
 
-class ProcessorService extends cds.ApplicationService {
-  init() {
-    this.before("UPDATE", "Incidents", (req) => this.onUpdate(req)); // ⚠️  Missing: Check if incident is assigned to current user
-    this.before("CREATE", "Incidents", (req) => this.changeUrgencyDueToSubject(req.data));
-    return super.init();
-  }
-  // ⚠️  Only checks if incident is closed, NOT if user is assigned to it
-  async onUpdate (req) {
-    const { status_code } = await SELECT.one(req.subject, i => i.status_code).where({ID: req.data.ID})
-    if (status_code === 'C')   // 
-      return req.reject(`Can't modify a closed incident`)
-    // ⚠️  MISSING: Check if current user is assigned to this incident
-  }
-}
-```
+
+### 💥 3. Exploitation: (TBD with screenshots)
+At this stage, the database doesn't have an assignedTo field, so there's no concept of incident ownership. This means ANY support user can modify ANY incident, which violates our business rules.
+
+#### Step 1: User and Role configuration Incident Management:
+
+- Create users in your custom SAP Identity Service:
+     - bob.support@company.com (Support user)
+     - alice.support@company.com (Support user)
+     - aavid.admin@company.com (Admin user)
+
+- Configure User Roles in BTP cockpit
+    - Assign bob.support and alice.support to role collection 'Incident Management Support' (TBD with screenshots)
+    - Assign david.admin to role collection 'Incident Management Admin' (TBD with screenshots)
+
+#### Step 2: Login as Alice (Support User) :
+- Access SAP Build Work Zone
+- Login with alice.support@company.com
+- Navigate to Incident Management application
+
+#### Step 3: Exploit the Vulnerability
+- View the incidents list - Alice can see all incidents
+- Click on any incident to open it (e.g., "No current on a sunny day")
+- Click "Edit" button - **This works because there are no ownership restrictions**
+- Modify the incident:
+    - Change title to "URGENT - Modified by Alice"
+    - Change status to "In Process"
+    - Add a conversation entry: "Alice was here"
+- Click "Save"
+
+#### Step 4: Verify Exploitation Success
+- ✅ The system allows Alice to modify ANY incident
+- ✅ Changes are saved successfully to any incident Alice chooses
+- ✅ Root Cause: No assignedTo field means no ownership tracking possible
+
+#### Step 5: Test with Another User
+- Login as Bob (bob.support@company.com)
+- Bob can also modify the same incident Alice just modified
+- Bob can modify ANY incident in the system
+- Conclusion: All support users have identical, unrestricted access
+
+#### Current Vulnerability Summary:
+- Missing Data Model: No assignedTo field to track ownership
+- No Access Control: Cannot implement "assigned to me" restrictions
+- Business Rule Violation: Support users can modify incidents they shouldn't have access to
+
+### 🛡️ 4. Remediation:
+
+
 
 **File**: db/schema.cds
 ```
@@ -88,25 +144,6 @@ The above vulnerabilities violate the principle of least privilege and can lead 
 
 ####  💥  3. Exploit Horizontal Privilege Escalation Vulnerability :
 
-##### Step 1: Configure Custom Identity Service Users:
-- Create users in your custom SAP Identity Service:
-     - bob.support@company.com (Support user)
-     - alice.support@company.com (Support user)
-     - david.admin@company.com (Admin user)
-
-  - Assign bob.support and alice.support to role collection 'Incident Management Support'
-
-  - Assign david.admin to role collection 'Incident Management Admin'
-
-##### Step 2: Demonstrate Privilege Escalation Vulnerability : 
-This test will verify that a support user can modify incidents created by others, a behavior that violates our security policy.
-
-- **Login as bob.support@company.com** in SAP Build Work Zone
-- **Navigate to Incident Management application**
-- **Observe:** User can see all incidents (✅ this is correct per business rules)
-- **Select any incident** (for example incident with Title: Strange noise when switching off Inverter)
-- **Attempt to modify** the incident title or add conversation entries.
-- **Result:** ⚠️ Modification succeeds (VULNERABILITY)
 
 ##   🛡️  4. Fix Implementation
 

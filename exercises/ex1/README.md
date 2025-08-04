@@ -18,7 +18,7 @@ The business rules for the "Incident Management" application are as follows:
 
 Occurs when a user gains access to resources belonging to another user at the same privilege level. In our incident management system, this means a support user could potentially modify incidents assigned to other support users, violating the business rule that support users can only modify incidents explicitly assigned to them.
 
-#### 🚨 2. Vulnerable Code :
+### 🚨 2. Vulnerable Code :
 
 **File**: `db/schema.cds`
 ```cds
@@ -115,6 +115,99 @@ At this stage, the database doesn't have an assignedTo field, so there's no conc
 - Business Rule Violation: Support users can modify incidents they shouldn't have access to
 
 ### 🛡️ 4. Remediation:
+The fix requires both database schema changes and service-level security implementation.
+
+#### Step 1: Add Assignment Tracking to Database Schema
+
+**File**: `db/schema.cds`
+```cds
+// db/schema.cds - FIXED VERSION
+using { cuid, managed, sap.common.CodeList } from '@sap/cds/common';
+namespace sap.capire.incidents; 
+
+/**
+* Incidents created by Customers.
+*/
+entity Incidents : cuid, managed {  
+  customer     : Association to Customers;
+  title        : String  @title : 'Title';
+  urgency      : Association to Urgency default 'M';
+  status       : Association to Status default 'N';
+
+  // ✅ NEW: ADD User assignment fields
+  assignedTo   : String(255);  // Email of assigned support user
+
+  conversation : Composition of many {
+    key ID    : UUID;
+    timestamp : type of managed:createdAt;
+    author    : type of managed:createdBy;
+    message   : String;
+  };
+}
+```
+#### Step 2: Update Test Data with Assignments
+
+File: `db/data/sap.capire.incidents-Incidents.csv`
+ *   Add the `assignedTo` column and assign incidents to our test users.
+ *   **Note:** Use the actual user IDs from your IdP. For this lab, we'll use their email addresses as a stand-in.
+
+```
+ID,customer_ID,title,urgency_code,status_code,assignedTo,assignedAt,assignedBy
+3b23bb4b-4ac7-4a24-ac02-aa10cabd842c,1004155,Inverter not functional,H,C,bob.support@company.com
+3a4ede72-244a-4f5f-8efa-b17e032d01ee,1004161,No current on a sunny day,H,N,bob.support@company.com
+3ccf474c-3881-44b7-99fb-59a2a4668418,1004161,Strange noise when switching off Inverter,M,N,alice.support@company.com
+3583f982-d7df-4aad-ab26-301d4a157cd7,1004100,Solar panel broken,H,I,alice.support@company.com
+```
+#### Step 3: Implement Service-Level Security
+File: `srv/services.cds`
+
+```
+using { sap.capire.incidents as my } from '../db/schema';
+
+/**
+ * Service used by support personel, i.e. the incidents' 'processors'.
+ */
+// ✅ SECURED: ProcessorService with proper access controls
+
+    service ProcessorService {
+    
+// ✅ Support users can view ALL incidents and create/modify (custom logic handles restrictions)
+    @restrict: [
+        
+        { grant: ['READ', 'CREATE'], to: 'support' },                   // ✅ Can view and create incidents
+
+        // ✅ THIS IS THE KEY CHANGE:
+        // Support users can only UPDATE or DELETE incidents that are either
+        // unassigned (assignedTo is null) or assigned to themselves.
+        { 
+            grant: ['UPDATE', 'DELETE'], 
+            to: 'support', 
+            where: 'assignedTo is null or assignedTo = $user' 
+        },
+
+        { grant: '*', to: 'admin' }                          // ✅ Admin has full access
+    ]
+    entity Incidents as projection on my.Incidents;    
+
+    @readonly
+    entity Customers as projection on my.Customers;        
+}
+
+    annotate ProcessorService.Incidents with @odata.draft.enabled; 
+    annotate ProcessorService with @(requires: ['support', 'admin']);
+
+/**
+ * Service used by administrators to manage customers and incidents.
+ */
+service AdminService {
+    entity Customers as projection on my.Customers;
+    entity Incidents as projection on my.Incidents;
+    }
+annotate AdminService with @(requires: 'admin');
+```
+
+
+#### Step 4: Update UI to Show Assignment
 
 
 

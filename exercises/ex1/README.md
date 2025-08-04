@@ -3,14 +3,14 @@
 ## 📖 1. Explanation :
 Broken Access Control  is the most critical web application security risk, according to the [OWASP Top 10 2021 list](https://owasp.org/Top10/). It occurs when an application fails to enforce proper authorization, allowing users to access or modify resources they are not permitted to. When access control is broken, threat actors can act outside of their intended permissions. This can manifest in several ways:
 
-- **Horizontal Privilege Escalation:** A threat actor gains access to another user's data or resources (e.g., User A viewing User B's private information).
-- **Vertical Privilege Escalation:** A threat actor with standard user privileges gains access to administrative functions.
-- **Insecure Direct Object References (IDOR):** An application uses a user-supplied identifier to access a resource directly, without checking if the user is authorized to access that specific resource.
+- Horizontal Privilege Escalation.
+- Vertical Privilege Escalation.
+- Insecure Direct Object References (IDOR).
 
-In the "Incident Management" application used by a support team. The business rules are :
-- Support users can view all incidents (for context).
-- Support users can modify incidents that are either assigned to them or unassigned.
-- Only admin users can close high-urgency incidents.
+The business rules for the "Incident Management" application are as follows:
+- **View:** All support users can view all incidents (for context).
+- **Modify:** Support users can modify incidents that are either unassigned or assigned to them.
+- **Close:** Only admin users have the authority to close high-urgency incidents.
 
 ### Exercise 1.1 - Horizontal Privilege Escalation
 Occurs when a user gains access to resources belonging to another user at the same privilege level. In our incident management system, this means a support user could potentially modify incidents assigned to other support users, violating the business rule that support users can only modify incidents explicitly assigned to them.
@@ -27,7 +27,7 @@ service ProcessorService {
 }
 
 annotate ProcessorService.Incidents with @odata.draft.enabled; 
-annotate ProcessorService with @(requires: 'support');   // ⚠️  Only role check, no assignment-based modification control
+annotate ProcessorService with @(requires: 'support');   // ❌   VULNERABILITY: Only basic role check - no granular access control
 
 service AdminService {
     entity Customers as projection on my.Customers;      // ✅ Admin full access (correct)
@@ -35,8 +35,12 @@ service AdminService {
 }
 annotate AdminService with @(requires: 'admin');        
 ```
-⚠️ Issue: The onUpdate method lacks checks to ensure that the authenticated support user matches the assignedTo field of the incident or that only admins can close high-urgency incidents.
+**Why this is vulnerable:***
 
+- The @(requires: 'support') annotation only checks if the user has the support role
+- No restrictions on which specific incidents a support user can modify
+- Any support user can UPDATE/DELETE any incident, regardless of assignment
+  
 **File**: `srv/services.js`
 ```
 // VULNERABLE CODE - No user-based filtering

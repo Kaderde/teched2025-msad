@@ -18,7 +18,7 @@ The business rules for the "Incident Management" application are as follows:
 
 Occurs when a user gains access to resources belonging to another user at the same privilege level. In our incident management system, this means a support user could potentially modify incidents assigned to other support users, violating the business rule that support users can only modify incidents explicitly assigned to them.
 
-### 🚨 2. Vulnerable Code :
+#### 🚨 2. Vulnerable Code :
 
 **File**: `db/schema.cds`
 ```cds
@@ -69,10 +69,10 @@ annotate AdminService with @(requires: 'admin');
 - Any support user can UPDATE/DELETE any incident, regardless of assignment
 
 
-### 💥 3. Exploitation: (TBD with screenshots)
+#### 💥 3. Exploitation: (TBD with screenshots)
 At this stage, the database doesn't have an assignedTo field, so there's no concept of incident ownership. This means ANY support user can modify ANY incident, which violates our business rules.
 
-#### Step 1: User and Role configuration Incident Management:
+##### Step 1: User and Role configuration Incident Management:
 
 - Create users in your custom SAP Identity Service:
      - bob.support@company.com (Support user)
@@ -83,12 +83,12 @@ At this stage, the database doesn't have an assignedTo field, so there's no conc
     - Assign bob.support and alice.support to role collection 'Incident Management Support' (TBD with screenshots)
     - Assign david.admin to role collection 'Incident Management Admin' (TBD with screenshots)
 
-#### Step 2: Login as Alice (Support User) :
+##### Step 2: Login as Alice (Support User) :
 - Access SAP Build Work Zone
 - Login with alice.support@company.com
 - Navigate to Incident Management application
 
-#### Step 3: Exploit the Vulnerability
+##### Step 3: Exploit the Vulnerability
 - View the incidents list - Alice can see all incidents
 - Click on any incident to open it (e.g., "No current on a sunny day")
 - Click "Edit" button - **This works because there are no ownership restrictions**
@@ -98,23 +98,23 @@ At this stage, the database doesn't have an assignedTo field, so there's no conc
     - Add a conversation entry: "Alice was here"
 - Click "Save"
 
-#### Step 4: Verify Exploitation Success
+##### Step 4: Verify Exploitation Success
 - ✅ The system allows Alice to modify ANY incident
 - ✅ Changes are saved successfully to any incident Alice chooses
 - ✅ Root Cause: No assignedTo field means no ownership tracking possible
 
-#### Step 5: Test with Another User
+##### Step 5: Test with Another User
 - Login as Bob (bob.support@company.com)
 - Bob can also modify the same incident Alice just modified
 - Bob can modify ANY incident in the system
 - Conclusion: All support users have identical, unrestricted access
 
-#### Current Vulnerability Summary:
+##### Current Vulnerability Summary:
 - Missing Data Model: No assignedTo field to track ownership
 - No Access Control: Cannot implement "assigned to me" restrictions
 - Business Rule Violation: Support users can modify incidents they shouldn't have access to
 
-### 🛡️ 4. Remediation:
+#### 🛡️ 4. Remediation:
 The fix requires both database schema changes and service-level security implementation.
 
 #### Step 1: Add Assignment Tracking to Database Schema
@@ -159,6 +159,7 @@ ID,customer_ID,title,urgency_code,status_code,assignedTo,assignedAt,assignedBy
 3583f982-d7df-4aad-ab26-301d4a157cd7,1004100,Solar panel broken,H,I,alice.support@company.com
 ```
 #### Step 3: Implement Service-Level Security
+
 File: `srv/services.cds`
 
 ```
@@ -171,10 +172,11 @@ using { sap.capire.incidents as my } from '../db/schema';
 
     service ProcessorService {
     
-// ✅ Support users can view ALL incidents and create/modify (custom logic handles restrictions)
-    @restrict: [
+// ✅ Support users can view ALL incidents and create/modify
+
+  @restrict: [
         
-        { grant: ['READ', 'CREATE'], to: 'support' },                   // ✅ Can view and create incidents
+        { grant: ['READ', 'CREATE'], to: 'support' },                   // ✅ Support users Can view and create incidents
 
         // ✅ THIS IS THE KEY CHANGE:
         // Support users can only UPDATE or DELETE incidents that are either
@@ -185,7 +187,7 @@ using { sap.capire.incidents as my } from '../db/schema';
             where: 'assignedTo is null or assignedTo = $user' 
         },
 
-        { grant: '*', to: 'admin' }                          // ✅ Admin has full access
+        { grant: '*', to: 'admin' }                          // ✅ Admin users has full access
     ]
     entity Incidents as projection on my.Incidents;    
 
@@ -208,7 +210,6 @@ annotate AdminService with @(requires: 'admin');
 
 
 #### Step 4: Update UI to Show Assignment
-
 
 
 **File**: db/schema.cds

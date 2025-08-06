@@ -210,7 +210,50 @@ annotate AdminService with @(requires: 'admin');
 
 
 #### Step 4: Update UI to Show Assignment
+To make the new assignedTo field visible and usable in your Fiori Elements application, you need to
+add the foloowing parts in the code:
 
+**annotations.cds file:**
+  - General Information: Add assignedTo field to UI.FieldGroup #GeneratedGroup
+  - Details Section: Add assignedTo field to UI.FieldGroup #i18nDetails
+  - Selection Fields: Added assignedTo to UI.SelectionFields for filtering/sorting
+
+**i18n.properties file:**
+- Added new property: AssignedTo=Assigned To
+
+
+**File**: app/incidents/annotations.cds changes:
+
+- **1. General Information Section : Added assignedTo field to UI.FieldGroup #GeneratedGroup**
+
+```
+UI.FieldGroup #GeneratedGroup : {
+    $Type : 'UI.FieldGroupType',
+    Data : [
+        {
+            $Type : 'UI.DataField',
+            Value : title,
+        },
+        {
+            $Type : 'UI.DataField',
+            Label : '{i18n>Customer}',
+            Value : customer_ID,
+        },
+        // ✅ ADDED: Use consistent i18n label for assigned user in general info
+        {
+            $Type : 'UI.DataField',
+            Label : '{i18n>AssignedTo}',
+            Value : assignedTo,
+        },
+    ],
+},
+```
+
+
+
+
+
+Here is the complete, updated file with the necessary additions. I've marked each new line with // ✅ ADDED so you can see exactly what changed.
 
 **File**: db/schema.cds
 ```

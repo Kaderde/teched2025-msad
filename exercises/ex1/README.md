@@ -63,10 +63,9 @@ service AdminService {
 annotate AdminService with @(requires: 'admin');        
 ```
 **Why this is vulnerable:**
-- The database schema lacks an assignedTo field to track incident ownership
-- The @(requires: 'support') annotation only checks if the user has the support role
-- No restrictions on which specific incidents a support user can modify
-- Any support user can UPDATE/DELETE any incident, regardless of assignment
+- The database schema lacks an assignedTo field to track incident ownership.
+- The @(requires: 'support') annotation only checks if the user has the support role.
+- Any support user can UPDATE/DELETE any incident, regardless of assignment.
 
 
 #### 💥 3. Exploitation: (TBD with screenshots)
@@ -75,28 +74,28 @@ At this stage, the database doesn't have an assignedTo field, so there's no conc
 ##### Step 1: User and Role configuration Incident Management:
 
 - Create users in your custom SAP Identity Service:
-     - bob.support@company.com (Support user)
-     - alice.support@company.com (Support user)
-     - aavid.admin@company.com (Admin user)
+     - bob.support@company.com (Support user).
+     - alice.support@company.com (Support user).
+     - david.admin@company.com (Admin user).
 
 - Configure User Roles in BTP cockpit
-    - Assign bob.support and alice.support to role collection 'Incident Management Support' (TBD with screenshots)
-    - Assign david.admin to role collection 'Incident Management Admin' (TBD with screenshots)
+    - Assign bob.support and alice.support to role collection 'Incident Management Support' (TBD with screenshots).
+    - Assign david.admin to role collection 'Incident Management Admin' (TBD with screenshots).
 
 ##### Step 2: Login as Alice (Support User) :
-- Access SAP Build Work Zone
-- Login with alice.support@company.com
-- Navigate to Incident Management application
+- Access SAP Build Work Zone.
+- Login with alice.support@company.com.
+- Navigate to Incident Management application.
 
 ##### Step 3: Exploit the Vulnerability
-- View the incidents list - Alice can see all incidents
-- Click on any incident to open it (e.g., "No current on a sunny day")
-- Click "Edit" button - **This works because there are no ownership restrictions**
+- View the incidents list - Alice can see all incidents.
+- Click on any incident to open it (e.g., "No current on a sunny day").
+- Click "Edit" button - **This works because there are no ownership restrictions**.
 - Modify the incident:
-    - Change title to "URGENT - Modified by Alice"
-    - Change status to "In Process"
-    - Add a conversation entry: "Alice was here"
-- Click "Save"
+    - Change title to "URGENT - Modified by Alice".
+    - Change status to "In Process".
+    - Add a conversation entry: "Alice was here".
+- Click "Save".
 
 ##### Step 4: Verify Exploitation Success
 - ✅ The system allows Alice to modify ANY incident
@@ -104,15 +103,15 @@ At this stage, the database doesn't have an assignedTo field, so there's no conc
 - ✅ Root Cause: No assignedTo field means no ownership tracking possible
 
 ##### Step 5: Test with Another User
-- Login as Bob (bob.support@company.com)
-- Bob can also modify the same incident Alice just modified
-- Bob can modify ANY incident in the system
-- Conclusion: All support users have identical, unrestricted access
+- Login as Bob (bob.support@company.com).
+- Bob can also modify the same incident Alice just modified.
+- Bob can modify ANY incident in the system.
+- Conclusion: All support users have identical, unrestricted access.
 
 ##### Current Vulnerability Summary:
-- Missing Data Model: No assignedTo field to track ownership
-- No Access Control: Cannot implement "assigned to me" restrictions
-- Business Rule Violation: Support users can modify incidents they shouldn't have access to
+- Missing Data Model: No assignedTo field to track ownership.
+- No Access Control: Cannot implement "assigned to me" restrictions.
+- Business Rule Violation: Support users can modify incidents they shouldn't have access to.
 
 #### 🛡️ 4. Remediation:
 The fix requires both database schema changes and service-level security implementation.
@@ -170,13 +169,11 @@ using { sap.capire.incidents as my } from '../db/schema';
  */
 // ✅ SECURED: ProcessorService with proper access controls
 
-    service ProcessorService {
+  service ProcessorService {
     
-// ✅ Support users can view ALL incidents and create/modify
-
-  @restrict: [
+  @restrict: [ // You can use the @restrict annotation to define authorizations on a fine-grained level.
         
-        { grant: ['READ', 'CREATE'], to: 'support' },                   // ✅ Support users Can view and create incidents
+        { grant: ['READ', 'CREATE'], to: 'support' },          // ✅ Support users Can view and create incidents
 
         // ✅ THIS IS THE KEY CHANGE:
         // Support users can only UPDATE or DELETE incidents that are either
@@ -196,7 +193,7 @@ using { sap.capire.incidents as my } from '../db/schema';
 }
 
     annotate ProcessorService.Incidents with @odata.draft.enabled; 
-    annotate ProcessorService with @(requires: ['support', 'admin']);
+    annotate ProcessorService with @(requires: ['support']);
 
 /**
  * Service used by administrators to manage customers and incidents.
@@ -208,26 +205,22 @@ service AdminService {
 annotate AdminService with @(requires: 'admin');
 ```
 
-
 #### Step 4: Update UI to Show Assignment
 To make the new assignedTo field visible and usable in your Fiori Elements application, you need to
 add the foloowing parts in the code:
 
 **annotations.cds file:**
   - General Information: Add assignedTo field to UI.FieldGroup #GeneratedGroup
-  - Details Section: Add assignedTo field to UI.FieldGroup #i18nDetails
   - Selection Fields: Added assignedTo to UI.SelectionFields for filtering/sorting
 
 **i18n.properties file:**
 - Added new property: AssignedTo=Assigned To
 
-
 **File**: app/incidents/annotations.cds changes:
-
-- **1. General Information Section : Added assignedTo field to UI.FieldGroup #GeneratedGroup**
 
 ```
 UI.FieldGroup #GeneratedGroup : {
+
     $Type : 'UI.FieldGroupType',
     Data : [
         {
@@ -239,19 +232,62 @@ UI.FieldGroup #GeneratedGroup : {
             Label : '{i18n>Customer}',
             Value : customer_ID,
         },
-        // ✅ ADDED: Use consistent i18n label for assigned user in general info
+        // ✅ ADDED: assignedTo field to UI.FieldGroup #GeneratedGroup
         {
             $Type : 'UI.DataField',
-            Label : '{i18n>AssignedTo}',
+            Label : '{i18n>AssignedTo}', // Use consistent i18n label for assigned user in general info
             Value : assignedTo,
         },
     ],
 },
+...
+  UI.LineItem : [
+      {
+          $Type : 'UI.DataField',
+          Value : title,
+          Label : '{i18n>Title}',
+      },
+      {
+          $Type : 'UI.DataField',
+          Value : customer.name,
+          Label : '{i18n>Customer}',
+      },
+      {
+          $Type : 'UI.DataField',
+          Value : status.descr,
+          Label : '{i18n>Status}',
+          Criticality : status.criticality,
+      },
+      {
+          $Type : 'UI.DataField',
+          Value : urgency.descr,
+          Label : '{i18n>Urgency}',
+      },
+      // ✅ ADDED: Show assigned user in the list view
+      {
+          $Type : 'UI.DataField',
+          Value : assignedTo,
+          Label : '{i18n>AssignedTo}',
+      },
+
+  ],
+  // ✅ ADDED: Add 'assignedTo' field to selection fields for filtering/sorting
+  UI.SelectionFields : [
+      status_code,
+      urgency_code,
+      assignedTo, 
+  ],
+
+...
+
 ```
+**File**: app/incidents/annotations.cds changes:
 
+```
+// ✅ ADDED: #XFLD: Label for assigned user field
+AssignedTo=Assigned To
 
-
-
+```
 
 Here is the complete, updated file with the necessary additions. I've marked each new line with // ✅ ADDED so you can see exactly what changed.
 

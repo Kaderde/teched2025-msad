@@ -160,7 +160,7 @@ ID,customer_ID,title,urgency_code,status_code,assignedTo,assignedAt,assignedBy
 3ccf474c-3881-44b7-99fb-59a2a4668418,1004161,Strange noise when switching off Inverter,M,N,alice.support@company.com
 3583f982-d7df-4aad-ab26-301d4a157cd7,1004100,Solar panel broken,H,I,alice.support@company.com
 ```
-Copy the complete file from this link: [sap.capire.incidents-Incidents.csv](https://github.com/Kaderde/teched2025-msad/blob/main/exercises/ex1/ex1.1/sap.capire.incidents-Incidents.csv).
+Copy the complete file from this link: [sap.capire.incidents-Incidents.csv](https://raw.githubusercontent.com/Kaderde/teched2025-msad/refs/heads/main/exercises/ex1/ex1.1/sap.capire.incidents-Incidents.csv).
 
 #### Step 3: Implement Service-Level Security
 

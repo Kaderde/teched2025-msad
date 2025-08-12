@@ -195,14 +195,8 @@ using { sap.capire.incidents as my } from '../db/schema';
     annotate ProcessorService.Incidents with @odata.draft.enabled; 
     annotate ProcessorService with @(requires: ['support']);
 
-/**
- * Service used by administrators to manage customers and incidents.
- */
-service AdminService {
-    entity Customers as projection on my.Customers;
-    entity Incidents as projection on my.Incidents;
-    }
-annotate AdminService with @(requires: 'admin');
+...
+
 ```
 
 #### Step 4: Update UI to Show Assignment
@@ -242,22 +236,7 @@ UI.FieldGroup #GeneratedGroup : {
 },
 ...
   UI.LineItem : [
-      {
-          $Type : 'UI.DataField',
-          Value : title,
-          Label : '{i18n>Title}',
-      },
-      {
-          $Type : 'UI.DataField',
-          Value : customer.name,
-          Label : '{i18n>Customer}',
-      },
-      {
-          $Type : 'UI.DataField',
-          Value : status.descr,
-          Label : '{i18n>Status}',
-          Criticality : status.criticality,
-      },
+      ...
       {
           $Type : 'UI.DataField',
           Value : urgency.descr,
@@ -288,8 +267,6 @@ UI.FieldGroup #GeneratedGroup : {
 AssignedTo=Assigned To
 
 ```
-
-
 
 :bulb: **What is a Time-based One-Time Password (TOTP)?**
 

@@ -279,169 +279,39 @@ AssignedTo=Assigned To
 ```
 Copy the complete code from this link: [i18n.properties](https://github.com/Kaderde/teched2025-msad/blob/main/exercises/ex1/ex1.1/i18n.properties).
 
-:bulb: **What is a Time-based One-Time Password (TOTP)?**
+#### ✅ 5. Verification:
+This section outlines the steps to confirm that the remediation for the Horizontal Privilege Escalation vulnerability in the Incident Management application has been successfully implemented. The goal is to ensure that support users can only modify incidents assigned to them or unassigned incidents, and that admin users retain full access, as per the business rules.
 
-A Time-based One-Time Password (TOTP) is a numerical code, which is generated with a standard algorithm that uses the current time and a key as input. It is user friendly and available offline in a generator application of the user’s choice, usually on a mobile device. A TOTP is a six-digit number that is updated every 30 seconds.
+#### Step 1: Deploy the Updated Application to Cloud Foundry
 
+```
+mbt build
+cf deploy mta_archives/incident-management_1.0.0.mtar
+```
 
-## Relevant Security Recommendations
-- [SAP BTP Security Recommendations](https://help.sap.com/docs/btp/sap-btp-security-recommendations-c8a9bb59fe624f0981efa0eff2497d7d/sap-btp-security-recommendations)
-- BTP-UAA-0001
+#### Step 2: Login as Alice (Support User)
 
+- Access SAP Build Work Zone.
+- Login with alice.support@company.com.
+- Navigate to Incident Management application.
 
-## Exercise 1.1 - Setup SAP Build Apps and enter the application with your trial identity provider user
+#### Step 3: Verify Access to an Incident Assigned to Alice
+- In the incident list, find an incident assigned to Alice, for example, "Strange noise when switching off Inverter".
+- Click on the incident to open its details page.
+- Click the "Edit" button.
 
+✅ **Expected Result:** The application enters edit mode. Alice can successfully modify the title, status, or add a conversation entry because the incident is assigned to her (assignedTo = $user is true). This confirms that legitimate access is still working. You can cancel the edit without saving.
 
-1. Open the **SAP BTP Cockpit** and navigate to your global account. You should have bookmarked the URL in the **Getting started** exercise.
+#### Step 4: Attempt to Exploit the Vulnerability (as Alice)
+Now, we will try to perform the original attack.
+- Go back to the incident list.
+- Find an incident that is explicitly assigned to Bob, for example, "No current on a sunny day".
+- Click on the incident to open its details page.
+- Click the "Edit" button.
 
-2. Navigate to **Boosters**
 
-<br><img src="/exercises/ex1/images/BoostersMenu.png" width="70%">
+#### Step 5: Redeploy the Application
 
-3. Enter SAP Build Apps in the search field. Click on **Get started with SAP Build Apps**.
-
-<br><img src="/exercises/ex1/images/BoosterTileApps.png" width="70%">
-
-4. An overview page provides details on the booster. Click on **Start**.
-
-<br><img src="/exercises/ex1/images/WizardOverview.png" width="70%">
-
-5. Now a wizard opens. On the first page, the prerequisites are checked. Click on **Next**.
-
-<br><img src="/exercises/ex1/images/WizardStep1.png" width="70%">
-
-6. Select the second option, **Select subaccount** and click on **Next**.
-
-<br><img src="/exercises/ex1/images/WizardStep2.png" width="70%">
-
-7. You can leave the default values in place. Click on **Next**.
-
-<br><img src="/exercises/ex1/images/WizardStep3.png" width="70%">
-
-8. Enter your email address for **Administrators** and **Developers**. Then click on **Next**.
-
-<br><img src="/exercises/ex1/images/WizardStep4.png" width="70%">
-
-9. Review your entries and click on **Finish**.
-
-<br><img src="/exercises/ex1/images/WizardStep5.png" width="70%">
-
-10. **Success!** The booster has created the SAP Build Apps setup. Click on the link to navigate to the subaccount.
-
-<br><img src="/exercises/ex1/images/WizardStep6.png" width="70%">
-
-11. Go to **Services --> Instances and Subscriptions** in your Subaccount - Click on the icon to open **SAP Build Apps**.
-
-<br><img src="/exercises/ex1/images/BuildAppsLink.png" width="70%">
-
-12. A logon page opens. Use your **Trial Account Identity Provider** to logon. There is the Default Identity Provider (SAP ID Service ) shown and your Trial Account Identity provider (SAP Cloud Identity Services).
-
-<br><img src="/exercises/ex1/images/IdPSelection.png" width="70%">
-
-13.  A pop-up will ask for **Email** and **Password**. Enter the email of your SAP Cloud Identity Services user and her password.
-
-<br><img src="/exercises/ex1/images/IdPLogonPage.png" width="70%"> 
-
-14. The authorizations should be in place as your user was assigned to the required role collections during the booster creation process. You will see the entry page of the **SAP Build App** application.
-
-<br><img src="/exercises/ex1/images/SAPBuild.png" width="70%">
-
-15. **Sign-out** from SAP Build Apps and close the browser window.
-
-<br><img src="/exercises/ex1/images/SAPBuildLogout.png" width="70%">
-
-
-## Exercise 1.2 - Configure Multi-Factor Authentication to access SAP Build Apps
-
-In exercise 1.1 we enabled SAP Build Apps, and the configured users are now able to authenticate with the custom identity provider when they try to access the application. However, we want to restrict the access to the application and only allow access with a second authentication factor.
-
-1. Logout of the SAP Build application and close the browser window if you haven't done already.
-
-<br><img src="/exercises/ex1/images/SAPBuildLogout.png" width="70%">
-
-2. Open the **SAP Cloud Identity Services administration console**, either from your bookmark or from the **BTP cockpit** (In the BTP Cockpit navigate to  --> **Instances and Subscriptions** --> click on the icon next to SAP Cloud Identity Services).
-
-<br><img src="/exercises/ex1/images/IdPLink.png" width="70%">
-
-3. In the pop-up window, sign-in with your email and password to the **SAP Cloud Identity Services administration console**.
-   
-<br><img src="/exercises/ex1/images/IdPLogonPageAdminConsole.png" width="70%">
-
-4. In the **SAP Cloud Identity Services administration console**, navigate to **Applications & Resources --> Applications**.
-
-<br><img src="/exercises/ex1/images/SCIConsoleApps.png" width="70%">
-
-5. On the left side you see bundled and system applications. In **Bundled Applications** you find the application **SAP BTP subaccount trial**. This application represents most of the business applications that are part of the SAP BTP subaccount, including SAP Build Apps. You will find more details below in the note on XSUAA. Click on the application **SAP BTP subaccount trial** to see the configuration data of this application.
-
-<br><img src="/exercises/ex1/images/Applications.png" width="70%">
-
-💡  **XSUAA** is a service broker for the OAuth authorization server provided by the Cloud Foundry UAA (User Account and Authentication server). It offers authentication and authorization services for microservice-style applications. It is used by almost all applications running on SAP BTP in the Cloud Foundry environment. When we configure two-factor authentication for this application, all applications running on SAP BTP in the Cloud Foundry environment will have to provide a second factor for authentication. 
-   
-6. In the configuration screen of the **SAP BTP subaccount trial** application, navigate to **Authentication and Access**.
-   
-<br><img src="/exercises/ex1/images/AppConfig.png" width="70%">
-
-7. Now you can see the line where **Risk-Based Authentication** can be configured. Click on the little arrow on the right.
-
-<br><img src="/exercises/ex1/images/AppConfigRBA.png" width="70%">
-
-8. In the **Risk-Based Authentication** frame you have the possibility to create Authentication Rules, and you can see the Default Authentication Rule, which is **Allow**.
-
- <br><img src="/exercises/ex1/images/AppConfigRBA_MFA.png" width="70%">
-
-9. Change the Default Authentication Rule to **Default Action = Two-Factor Authentication** and **Two-Factor Method = TOTP**. Do not forget to **save** at the top right of the page the new configuration. Now the access to applications on your SAP BTP subaccount that use the XSUAA for authentication requires a Time-based One-time Password (TOTP) as second factor.
-
-<br><img src="/exercises/ex1/images/AppConfigRBA_MFA_TOTP.png" width="70%">
-
-Once the configuration is complete, the system prompts the user to select any of the available MFA options after the initial username and password are provided.
-
-## Exercise 1.3 - Enable MFA for your user
-
-1. Navigate to your user's profile page in **SAP Cloud Identity Services**. You can access it through the following link in the trial environment: 
-
-**https://"trialtenant-ID".trial-accounts.ondemand.com/ui/protected/profilemanagement**
-
-Add **ui/protected/profilemanagement** in your browser after **https://"trialtenant-ID".trial-accounts.ondemand.com/**
-
-<br><img src="/exercises/ex1/images/Profilemanagement.png" width="70%">
-
-Your user profile shows you the authentication methods set up for you. Here you can add or remove authentication methods. 
-
-3. Open the Multi-Factor Authentication section. Click on **Activate TOTP Two-Factor Authentication**.
-
-<br><img src="/exercises/ex1/images/SCIProfileActivateTOTP.png" width="70%">
-
-4. Scan the QR code using the authenticator app (such as Google Authenticator or Microsoft Authenticator) on your device or enter the key manually. Once you have scanned or entered the key, enter the passcode generated by the authenticator app on your device below and click **Activate**.
-
-<br><img src="/exercises/ex1/images/TOTPKey2.png" width="70%">
-
-5. Now you have configured your device for TOTP two-factor authentication.
-
-<br><img src="/exercises/ex1/images/TOTPKey3.png" width="70%">
-
-6. Log out of the identity provider.
-
-<br><img src="/exercises/ex1/images/SCILogout.png" width="70%">
-
-7. Navigate to **SAP BTP Cockpit --> Instances and Subscriptions --> SAP Build Apps --> Go to Application**
-
-<br><img src="/exercises/ex1/images/BuildAppsLink.png" width="70%">
-
-8. Select your SAP Cloud Identity Services tenant to logon.
-
-<br><img src="/exercises/ex1/images/IdPSelection.png" width="70%">
-
-9. A pop-up will ask for **Email** and **Password**. Enter the email of your SAP Cloud Identity Services user and her password.
-
-<br><img src="/exercises/ex1/images/IdPLogonPage.png" width="70%"> 
-
-10. The next pop-up will ask for a **passcode**. Open the **authenticator app** you are using on our mobile device. To proceed, please enter the time-based passcode generated by your mobile device for the application. Then continue.
-
-<br><img src="/exercises/ex1/images/TOTPLogin.png" width="70%">
-
-11. **Success!** The SAP Build App opens.
-
-<br><img src="/exercises/ex1/images/SAPBuild.png" width="70%">
 
 
 ## Summary

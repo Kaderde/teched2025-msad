@@ -205,6 +205,40 @@ using { sap.capire.incidents as my } from '../db/schema';
 ```
 Copy the complete code from this link: [services.cds](https://github.com/Kaderde/teched2025-msad/blob/main/exercises/ex1/ex1.1/services.cds).
 
+File: `srv/services.cds`
+
+```
+const cds = require('@sap/cds')
+
+class ProcessorService extends cds.ApplicationService {
+  /** Registering custom event handlers */
+  init() {
+    this.before("UPDATE", "Incidents", (req) => this.onUpdate(req));
+    this.before("CREATE", "Incidents", (req) => this.changeUrgencyDueToSubject(req.data));
+
+  // ✅ NEW:Handle the creation of new Incidents, triggering auto-assignment by the processor.
+    this.on("CREATE", "Incidents", (req) => this.handleIncidentCreation(req));
+
+    return super.init();
+  }
+
+...
+
+  // ✅ NEW: Handle incident creation with auto-assignment 
+  async handleIncidentCreation(req) {
+      const incident = req.data;      if (incident.status_code === 'A' && (req.user.is('support') || req.user.is('admin'))) {
+          incident.assignedTo = req.user.id;
+          console.log(`📝 Auto-assigned incident to ${req.user.id}`);
+      }
+      this.changeUrgencyDueToSubject(incident);
+  }
+}
+
+module.exports = { ProcessorService }
+
+```
+Copy the complete code from this link: [services.js]([https://github.com/Kaderde/teched2025-msad/blob/main/exercises/ex1/ex1.1/services.cds](https://github.com/Kaderde/teched2025-msad/blob/main/exercises/ex1/ex1.1/services.js)).
+
 #### Step 4: Update UI to Show Assignment
 To make the new assignedTo field visible and usable in your Fiori Elements application, you need to
 add the foloowing parts in the code:

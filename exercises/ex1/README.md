@@ -354,8 +354,10 @@ Now, we will try to perform the original attack.
 
 ## Summary
 
-In this exercise you learned how to setup SAP Build and how to enable Multi-Factor Authentication (MFA) using a Time-based One-Time Password (TOTP). You will find the detailed documentation on how to set up Multi-Factor-Authentication in SAP Cloud Identity Services in the [help portal](https://help.sap.com/docs/cloud-identity-services/cloud-identity-services/user-management-multi-factor-authentication).
+In these exercises, you have learned how:
 
-
+* To address Horizontal Privilege Escalation by implementing crucial data ownership field (assignedTo) and enforcing granular authorization rules.
+* To leverage CAP's native @restrict annotation and the $user context to declaratively define and enforce security policies directly within the service definition.
+* To secure the application by ensuring support users can only modify incidents assigned to them, thereby reinforcing business logic and mitigating a critical OWASP Top 10 vulnerability.
 
 Continue to - [Exercise 2 - Security Recommendations regarding user access and authentication](../ex2/README.md)

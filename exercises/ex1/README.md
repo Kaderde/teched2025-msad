@@ -349,7 +349,7 @@ Now, we will try to perform the original attack.
 6. ❌ Expected Result: The application should prevent Alice from editing this incident. clicking Edit mode will trigger an authorization error message (e.g., "Error - Forbidden"). This confirms that the **where: 'assignedTo is null or assignedTo = $user'** clause is correctly blocking Alice's unauthorized modification attempts on incidents assigned to Bob.
 
 > **Note:**  
-> If you run into a generic **"Forbidden"** error, you can replace it with a more descriptive message by handling the error in your `services.js` file.  
+> If you run into a generic **"Forbidden"** error message, you can replace it with a more descriptive message by handling the error in your `services.js` file.  
 > Since the `@restrict` annotation does not support custom messages by default, you’ll need to implement your own logic to provide clearer, user-friendly feedback to the end user.
 
 ## Summary

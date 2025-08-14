@@ -348,53 +348,9 @@ Now, we will try to perform the original attack.
 4. Click the **Edit** button.
 6. ❌ Expected Result: The application should prevent Alice from editing this incident. clicking Edit mode will trigger an authorization error message (e.g., "Error - Forbidden"). This confirms that the **where: 'assignedTo is null or assignedTo = $user'** clause is correctly blocking Alice's unauthorized modification attempts on incidents assigned to Bob.
 
-When a generic "Forbidden" error occurs, you can implement custom error handling in your services.js file to provide more informative messages to users. Since the @restrict annotation only performs authorization checks without offering built-in custom messaging capabilities, you'll need to create your own error handling logic that delivers targeted, user-friendly error messages explaining what went wrong and how to resolve the issue
-
-File: `srv/services.js`
-
-```
-const cds = require('@sap/cds')
-
-...
-
-async onUpdate(req) {
-    // Query incident with all needed fields to avoid multiple database calls
-    const incident = await SELECT.one(req.subject, i => ({ 
-        assignedTo: i.assignedTo,
-        status_code: i.status_code 
-    })).where({ ID: req.data.ID });
-    
-    // Check if incident exists
-    if (!incident) {
-        return req.reject(404, 'Incident not found');
-    }
-    
-    // ✅ Check if incident is closed (existing logic)
-    if (incident.status_code === 'C' && !req.user.is('admin')) {
-        return req.reject(403, `Can't modify a closed incident`);
-    }
-    
-    // ✅ For support users, check assignment
-    if (req.user.is('support')) {
-        const userEmail = req.user.id; // or req.user.attr.email depending on your setup
-       
-        if (incident.assignedTo && incident.assignedTo !== userEmail) {
-            return req.reject(403, 
-                `Access denied. This incident is assigned to ${incident.assignedTo}. ` +
-                `You can only modify incidents assigned to you.`
-            );
-        }
-    }
-}
-
-module.exports = { ProcessorService }
-
-```
-Copy the complete code from this link: [services.js]([./services_custom_message.js) to services.js file.
-
-#### Step 5: Redeploy the Application
-
-
+> **Note:**  
+> If you run into a generic **"Forbidden"** error, you can replace it with a more descriptive message by handling the error in your `services.js` file.  
+> Since the `@restrict` annotation does not support custom messages by default, you’ll need to implement your own logic to provide clearer, user-friendly feedback to the end user.
 
 ## Summary
 

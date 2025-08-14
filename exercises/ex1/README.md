@@ -324,25 +324,33 @@ cf deploy mta_archives/incident-management_1.0.0.mtar
 ```
 
 #### Step 2: Login as Alice (Support User)
-
 - Access SAP Build Work Zone.
 - Login with alice.support@company.com.
 - Navigate to Incident Management application.
 
-#### Step 3: Verify Access to an Incident Assigned to Alice
-- In the incident list, find an incident assigned to Alice, for example, "Strange noise when switching off Inverter".
-- Click on the incident to open its details page.
-- Click the "Edit" button.
+#### Step 3: Verify Alice Can Modify Her Own Incident
+1. In the incident list, locate an incident assigned to **Alice**  *(e.g., "Strange noise when switching off Inverter")*
+2. Verify the UI shows the assignment: The **Assigned To** column should display `alice.support@company.com`.
+3. Click on the incident to open its details page.
+4. Click the **Edit** button.
+5. Attempt to modify the incident:
+   1. Change the title to **"UPDATED BY ALICE - Test"**
+   2. Add a conversation entry: `"Alice updated this incident"`
+   3. Click **Save**
 
-✅ **Expected Result:** The application enters edit mode. Alice can successfully modify the title, status, or add a conversation entry because the incident is assigned to her (assignedTo = $user is true). This confirms that legitimate access is still working. You can cancel the edit without saving.
+6. ✅ **Expected Result:** The incident is now in edit mode. Alice can successfully change fields such as the title, status, or add a conversation message. This confirms that the **@restrict** rule **assignedTo = $user** evaluates to true for Alice's assigned incidents.
 
-#### Step 4: Attempt to Exploit the Vulnerability (as Alice)
+#### Step 4: Verify Alice Cannot Modify Another User's Incident
 Now, we will try to perform the original attack.
-- Go back to the incident list.
-- Find an incident that is explicitly assigned to Bob, for example, "No current on a sunny day".
-- Click on the incident to open its details page.
-- Click the "Edit" button.
+1. Return to the incident list.
+2. Locate an incident that is explicitly assigned to Bob, for example, "No current on a sunny day".
+3. Click on this incident to view its details.
+4. Click the **Edit** button.
+6. ❌ Expected Result: The application should prevent Alice from editing this incident. clicking Edit mode will trigger an authorization error message (e.g., "Error - Forbidden"). This confirms that the **where: 'assignedTo is null or assignedTo = $user'** clause is correctly blocking Alice's unauthorized modification attempts on incidents assigned to Bob.
 
+   
+
+   
 
 #### Step 5: Redeploy the Application
 

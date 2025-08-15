@@ -346,4 +346,4 @@ In these exercises, you have learned how:
 * To leverage CAP's native @restrict annotation and the $user context to declaratively define and enforce security policies directly within the service definition.
 * To secure the application by ensuring support users can only modify incidents assigned to them, thereby reinforcing business logic and mitigating a critical OWASP Top 10 vulnerability.
 
-Continue to - [Exercise 2 - Security Recommendations regarding user access and authentication](../ex2/README.md)
+Continue to - [Exercise 1.2 - Vertical Privilege Escalation](../ex1.2/README.md)

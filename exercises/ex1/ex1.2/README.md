@@ -342,8 +342,8 @@ Now, we will try to perform the original attack.
 
 In these exercises, you have learned how:
 
-* To address Horizontal Privilege Escalation by implementing crucial data ownership field (assignedTo) and enforcing granular authorization rules.
-* To leverage CAP's native @restrict annotation and the $user context to declaratively define and enforce security policies directly within the service definition.
-* To secure the application by ensuring support users can only modify incidents assigned to them, thereby reinforcing business logic and mitigating a critical OWASP Top 10 vulnerability.
+* To address Horizontal Privilege Escalation by implementing **crucial data ownership field (assignedTo)** and enforcing granular authorization rules.
+* To leverage CAP's native **@restrict annotation and the $user context** to declaratively define and enforce security policies directly within the service definition.
+* To secure the application by ensuring support users can **only modify incidents assigned to them**, thereby reinforcing business logic and mitigating a critical OWASP Top 10 vulnerability.
 
 Continue to - [Exercise 1.2 - Vertical Privilege Escalation](./ex1.2/README.md)

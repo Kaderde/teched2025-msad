@@ -21,8 +21,6 @@ using { sap.capire.incidents as my } from '../db/schema';
             to: 'support', 
             where: 'assignedTo is null or assignedTo = $user' 
         },
-
-        { grant: '*', to: 'admin' }                          // ✅ Admin users has full access
     ]
     entity Incidents as projection on my.Incidents;    
 
@@ -40,4 +38,5 @@ service AdminService {
     entity Customers as projection on my.Customers;
     entity Incidents as projection on my.Incidents;
     }
+
 annotate AdminService with @(requires: 'admin');

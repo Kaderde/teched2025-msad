@@ -1,59 +1,53 @@
-# Exercise 1.1 - Horizontal Privilege Escalation
+# Exercise 1.2 - Vertical Privilege Escalation
 
 ## 📖  1. Overview :
 
-Occurs when a user gains access to resources belonging to another user at the same privilege level. In our incident management system, this means a support user could potentially modify incidents assigned to other support users, violating the business rule that support users can only modify incidents explicitly assigned to them.
+Vertical Privilege Escalation occurs when a user gains access to higher-privileged functions they shouldn't have. In our Incident Management system, this means a support user could close high-urgency incidents, violating the business rule:
+
+"Only users with the admin role can close high-urgency incidents."
+
+### Why This Matters
+
+* Business Impact: Unauthorized closures could lead to critical incidents being ignored or improperly resolved.
+* Compliance Risk: Violates the principle of least privilege, a fundamental security concept
+* Security Risk: Support users could maliciously or accidentally close high-urgency incidents without proper authorization.
+  
+In this lab, we'll focus on instance-based authorization to enforce that **"Only admin users have the authority to close high-urgency incidents."**
 
 ## 🚨 2. Vulnerable Code :
 
-**File**: `db/schema.cds`
-```cds
-// VULNERABLE CODE - Missing assignedTo field
-using { cuid, managed, sap.common.CodeList } from '@sap/cds/common';
-namespace sap.capire.incidents; 
-
-/**
-* Incidents created by Customers.
-*/
-entity Incidents : cuid, managed {  
-  customer     : Association to Customers;
-  title        : String  @title : 'Title';
-  urgency      : Association to Urgency default 'M';
-  status       : Association to Status default 'N';
-  // ❌ MISSING: assignedTo field - no way to track incident ownership
-  conversation : Composition of many {
-    key ID    : UUID;
-    timestamp : type of managed:createdAt;
-    author    : type of managed:createdBy;
-    message   : String;
-  };
-}
-```
-
 **File**: `srv/services.cds`
 ```cds
-// VULNERABLE CODE - No access restrictions
-service ProcessorService { 
-    entity Incidents as projection on my.Incidents;      // ✅ Can view all (correct)
-    @readonly
-    entity Customers as projection on my.Customers;      // ✅ Read-only customers (correct)
+using { sap.capire.incidents as my } from '../db/schema';
+
+service ProcessorService {
+  @restrict: [
+    { grant: ['READ', 'CREATE'], to: 'support' },  // ✅ Support can view all incidents
+    { grant: ['UPDATE', 'DELETE'],  // ❌ NO CHECK FOR URGENCY WHEN CLOSING
+      to: 'support',
+      where: 'assignedTo is null or assignedTo = $user'  // ✅ Horizontal control (correct)
+    }
+  ]
+  entity Incidents as projection on my.Incidents;
 }
 
-annotate ProcessorService.Incidents with @odata.draft.enabled; 
-annotate ProcessorService with @(requires: 'support');   // ❌   VULNERABILITY: Only basic role check - no granular access control
+annotate ProcessorService with @(requires: 'support');  // ❌ Only support role required
 
-service AdminService {
-    entity Customers as projection on my.Customers;      // ✅ Admin full access (correct)
-    entity Incidents as projection on my.Incidents;      // ✅ Admin full access (correct)
-}
-annotate AdminService with @(requires: 'admin');        
 ```
-**Why this is vulnerable:**
-- The database schema lacks an assignedTo field to track incident ownership.
-- The @(requires: 'support') annotation only checks if the user has the support role.
-- Any support user can UPDATE/DELETE any incident, regardless of assignment.
+**Why This is Vulnerable:**
 
+✅ What Works:
+  * @restrict annotation prevents support users from modifying incidents not assigned to them (horizontal escalation privilege). it'spowerful for row-level filtering (which records you can access) but has limitations:
+    1. It filters based on existing data in the database
+    2. It cannot evaluate the changes being made in an update operation.
+    3. It cannot compare "old value vs. new value" to enforce transition rules.
 
+❌ What’s Missing:
+
+  * No check for incident urgency when a support user tries to close an incident.
+  * No validation prevents them from changing the status to "Closed" for high-urgency incidents.
+  * Admin privileges are not automatically enforced at the ProcessorService and operation level
+    
 ## 💥 3. Exploitation: (TBD with screenshots)
 At this stage, the database doesn't have an assignedTo field, so there's no concept of incident ownership. This means ANY support user can modify ANY incident, which violates our business rules.
 

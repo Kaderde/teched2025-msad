@@ -49,33 +49,16 @@ annotate ProcessorService with @(requires: 'support');  // ❌ Only support role
   * Admin privileges are not automatically enforced at the ProcessorService and operation level
     
 ## 💥 3. Exploitation: (TBD with screenshots)
-At this stage, the database doesn't have an assignedTo field, so there's no concept of incident ownership. This means ANY support user can modify ANY incident, which violates our business rules.
 
-### Step 1: User and Role configuration Incident Management:
-
-- Create users in your custom SAP Identity Service:
-     - bob.support@company.com (Support user).
-     - alice.support@company.com (Support user).
-     - david.admin@company.com (Admin user).
-
-- Configure User Roles in BTP cockpit
-    - Assign bob.support and alice.support to role collection 'Incident Management Support' (TBD with screenshots).
-    - Assign david.admin to role collection 'Incident Management Admin' (TBD with screenshots).
-
-### Step 2: Login as Alice (Support User) :
+### Step 1: Login as Alice (Support User) :
 - Access SAP Build Work Zone.
 - Login with alice.support@company.com.
 - Navigate to Incident Management application.
 
-### Step 3: Exploit the Vulnerability
-- View the incidents list - Alice can see all incidents.
-- Click on any incident to open it (e.g., "No current on a sunny day").
-- Click "Edit" button - **This works because there are no ownership restrictions**.
-- Modify the incident:
-    - Change title to "URGENT - Modified by Alice".
-    - Change status to "In Process".
-    - Add a conversation entry: "Alice was here".
-- Click "Save".
+### Step 2: Exploit the Vulnerability
+- Find a high-urgency incident assigned to Alice (e.g., "Strange noise when switching off Inverter").
+- Click "Edit" → Change Status to "Closed".
+- Save changes → The system allows it! ❌
 
 ### Step 4: Verify Exploitation Success
 - ✅ The system allows Alice to modify ANY incident

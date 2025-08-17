@@ -7,6 +7,14 @@ Broken Access Control  is the most critical web application security risk, accor
 - Vertical Privilege Escalation.
 - Insecure Direct Object References (IDOR).
 
+## CAP Security Concept: CAP provides a multi-layered security approach:
+
+1. Authentication: Verifies user identity (managed by XSUAA/IAS)
+2. Authorization: Controls what authenticated users can do
+    - Role-based (@requires annotations)
+    - Instance-based (@restrict annotations)
+    - Programmatic checks (in service handlers)
+
 The business rules for the "Incident Management" application are as follows:
 - **View:** All support users can view all incidents (for context).
 - **Modify:** Support users can modify incidents that are either unassigned or assigned to them.

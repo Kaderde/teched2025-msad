@@ -174,8 +174,6 @@ using { sap.capire.incidents as my } from '../db/schema';
             to: 'support', 
             where: 'assignedTo is null or assignedTo = $user' 
         },
-
-        { grant: '*', to: 'admin' }                          // ✅ Admin users has full access
     ]
     entity Incidents as projection on my.Incidents;    
 
@@ -276,6 +274,29 @@ UI.FieldGroup #GeneratedGroup : {
       },
 
   ],
+
+// ✅ ADDED: PresentationVariant to explicitly control column order and visibility in the table
+    UI.PresentationVariant: {
+        $Type: 'UI.PresentationVariantType',
+        Visualizations: [
+            {
+                $Type: 'UI.Chart', // Or 'UI.Table' if your main visualization is a table
+                Qualifier: 'IncidentsList', // Use the correct qualifier if different (e.g., your list report's qualifier)
+                Visualization: {
+                    $Type: 'UI.Table',
+                    // ✅ NEW: Explicitly define the default visible columns and their order
+                    ColumnOrder: [
+                        { Value: title },
+                        { Value: customer.name },
+                        { Value: urgency.descr },
+                        { Value: status.descr },
+                        { Value: assignedTo } // Make sure 'assignedTo' is included here
+                    ]
+                }
+            }
+        ]
+    },
+
   // ✅ ADDED: Add 'assignedTo' field to selection fields for filtering/sorting
   UI.SelectionFields : [
       status_code,

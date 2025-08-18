@@ -83,61 +83,70 @@ class ProcessorService extends cds.ApplicationService {
 
 ### Step 1: Login as Alice (Support User) :
 - Access SAP Build Work Zone.
-- Login with alice.support@company.com.
+- Login with alice.support@company.com. This user is set up from the from the previous exercise.
 - Navigate to Incident Management application.
 
 ### Step 2: Exploit the Vulnerability
 - Find a high-urgency incident assigned to Alice (e.g., "Strange noise when switching off Inverter").
 - Click "Edit" → Change Status to "Closed".
-- Save changes → The system allows it! ❌
+- Add a conversation message: "Closing this high-urgency incident as support user"
+- Click "Save"
 
 ### Step 4: Verify Exploitation Success
-- ✅ The system allows Alice to modify ANY incident
-- ✅ Changes are saved successfully to any incident Alice chooses
-- ✅ Root Cause: No assignedTo field means no ownership tracking possible
+- ✅ The system allows Alice to a high-urgency incident.
+- ✅ Changes are saved successfully.
+- ✅ Root Cause: No vertical privilege check to enforce the "admin-only" rule for closing high-urgency incidents.
 
-### Step 5: Test with Another User
-- Login as Bob (bob.support@company.com).
-- Bob can also modify the same incident Alice just modified.
-- Bob can modify ANY incident in the system.
-- Conclusion: All support users have identical, unrestricted access.
+### Step 5: Login as Admin User
+- Access SAP Build Work Zone
+- Login with admin credentials (e.g., admin.user@company.com)
+- Navigate to Incident Management application
+- UI Vulnerability: No 403 Forbidden error appears despite the admin user lacking proper authorization to access ProcessorService.
+- Instead of seeing an access denied message, the admin user sees a loading indicator on blank screen.
 
-### Current Vulnerability Summary:
-- Missing Data Model: No assignedTo field to track ownership.
-- No Access Control: Cannot implement "assigned to me" restrictions.
-- Business Rule Violation: Support users can modify incidents they shouldn't have access to.
+### 📌Critical Vulnerability Summary
+
+* ❌ Support users can close high-urgency incidents despite business rules.
+* ❌ No vertical privilege escalation guardrails in @restrict or services.js.
+* ❌ CAP row-level filtering cannot evaluate dynamic status transitions.
+* ❌ Admin users are excluded entirely, leading to operational deadlocks.
+* ❌ Silent 403 errors for admins reduce transparency and hinder troubleshooting.
 
 ## 🛡️ 4. Remediation:
-The fix requires both database schema changes and service-level security implementation.
+The fixes follow the principle of least privilege, ensuring support users are blocked from unauthorized actions while admins retain elevated permissions.
 
-### Step 1: Add Assignment Tracking to Database Schema
+### Key Remediation Steps
 
-**File**: `db/schema.cds`
-```cds
-// db/schema.cds - FIXED VERSION
-using { cuid, managed, sap.common.CodeList } from '@sap/cds/common';
-namespace sap.capire.incidents; 
+* Enhance Service-Level and Entity-Level Authorization: Update services.cds to include explicit grants for admins and ensure proper role requirements.
+* Implement Custom Validation Logic: Add checks in services.js to validate urgency and user roles during UPDATE operations, rejecting invalid closures.
+* Improve UI Error Handling: Modify the frontend to display meaningful error messages for forbidden actions.
 
-/**
-* Incidents created by Customers.
-*/
-entity Incidents : cuid, managed {  
-  customer     : Association to Customers;
-  title        : String  @title : 'Title';
-  urgency      : Association to Urgency default 'M';
-  status       : Association to Status default 'N';
+### Step 1: Updated Code: services.cds
 
-  // ✅ NEW: ADD User assignment fields
-  assignedTo   : String(255);  // Email of assigned support user
+Update the ProcessorService definition to explicitly grant admins full access (including closing incidents) while keeping support restrictions. This ensures admins can override rules, but we'll enforce the urgency check in the JS handler.
 
-  conversation : Composition of many {
-    key ID    : UUID;
-    timestamp : type of managed:createdAt;
-    author    : type of managed:createdBy;
-    message   : String;
-  };
+```
+// Updated srv/services.cds
+
+using { sap.capire.incidents as my } from '../db/schema';
+
+service ProcessorService {
+  @restrict: [
+    { grant: ['READ', 'CREATE'], to: 'support' },  // Support can view and create
+    { grant: ['UPDATE', 'DELETE'], 
+      to: 'support',
+      where: 'assignedTo is null or assignedTo = $user'  // Horizontal control for support
+    },
+    { grant: '*', to: 'admin' }  // ✅ NEW: Explicit full access for admins (CREATE, READ, UPDATE, DELETE)
+  ]
+  entity Incidents as projection on my.Incidents;
+
 }
+
+annotate ProcessorService with @(requires: ['support', 'admin']);  // ✅ NEW: Allow both roles at service level
+
 ...
+
 ```
 Copy the complete code from this link: [schema.cds](./schema.cds).
 

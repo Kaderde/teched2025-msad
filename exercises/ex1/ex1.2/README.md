@@ -23,7 +23,7 @@ using { sap.capire.incidents as my } from '../db/schema';
 service ProcessorService {
   @restrict: [
     { grant: ['READ', 'CREATE'], to: 'support' },  // ✅ Support can view all incidents
-    { grant: ['UPDATE', 'DELETE'],  // ❌ NO CHECK FOR URGENCY WHEN CLOSING
+    { grant: ['UPDATE', 'DELETE'],  // 
       to: 'support',
       where: 'assignedTo is null or assignedTo = $user'  // ✅ Horizontal control (correct)
     }
@@ -34,6 +34,37 @@ service ProcessorService {
 annotate ProcessorService with @(requires: 'support');  // ❌ Only support role required
 
 ```
+**File**: `srv/services.js`
+```
+const cds = require('@sap/cds')
+
+class ProcessorService extends cds.ApplicationService {
+  init() {
+    this.before("UPDATE", "Incidents", (req) => this.onUpdate(req));
+    this.before("CREATE", "Incidents", (req) => this.changeUrgencyDueToSubject(req.data));
+    this.on("CREATE", "Incidents", (req) => this.handleIncidentCreation(req));
+    return super.init();
+  }
+
+
+  // ❌ VULNERABILITY: No check for high-urgency incidents when status is changed to 'closed'
+  async onUpdate(req) {
+    // The current implementation doesn't validate if the incident has high urgency
+    // when a support user tries to close it
+    
+    // Example validation that doesn't check urgency when closing
+    const { status_code } = await SELECT.one(req.subject, i => i.status_code).where({ID: req.data.ID})
+    if (status_code === 'C')
+      return req.reject(`Can't modify a closed incident`)
+  }
+
+  // Other methods...
+}
+
+...
+
+```
+
 **Why This is Vulnerable:**
 
 ✅ What Works:
@@ -46,7 +77,7 @@ annotate ProcessorService with @(requires: 'support');  // ❌ Only support role
 
   * No check for incident urgency when a support user tries to close an incident.
   * No validation prevents them from changing the status to "Closed" for high-urgency incidents.
-  * Admin privileges are not automatically enforced at the ProcessorService and operation level
+  * Admin privileges are not automatically enforced at both service (ProcessorService) and CRUD operation level.
     
 ## 💥 3. Exploitation: (TBD with screenshots)
 

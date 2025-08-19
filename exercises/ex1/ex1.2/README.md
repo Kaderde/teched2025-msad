@@ -148,7 +148,7 @@ annotate ProcessorService with @(requires: ['support', 'admin']);  // ✅ NEW: A
 ...
 
 ```
-Copy the complete code from this link: [schema.cds](./services.cds).
+Copy the complete code from this link: [services.cds](./services.cds).
 
 ### Step 2: Update Test Data with Assignments
 

@@ -117,9 +117,9 @@ The fixes follow the principle of least privilege, ensuring support users are bl
 
 ### Key Remediation Steps
 
-* Enhance Service-Level and Entity-Level Authorization: Update services.cds to include explicit grants for admins and ensure proper role requirements.
-* Implement Custom Validation Logic: Add checks in services.js to validate urgency and user roles during UPDATE operations, rejecting invalid closures.
-* Improve UI Error Handling: Modify the frontend to display meaningful error messages for forbidden actions.
+* **Enhance Service-Level and Entity-Level Authorization:** Update services.cds to include explicit grants for admins and ensure proper role requirements.
+* **Implement Custom Validation Logic:** Add checks in services.js to validate urgency and user roles during UPDATE operations, rejecting invalid closures.
+* **Improve UI Error Handling:** Modify the frontend to display meaningful error messages for forbidden actions.
 
 ### Step 1: Updated Code: services.cds
 
@@ -143,12 +143,12 @@ service ProcessorService {
 
 }
 
-annotate ProcessorService with @(requires: ['support', 'admin']);  // ✅ NEW: Allow both roles at service level
+annotate ProcessorService with @(requires: ['support', 'admin']);  // ✅ NEW: Allow both roles support and admin at service level.
 
 ...
 
 ```
-Copy the complete code from this link: [schema.cds](./schema.cds).
+Copy the complete code from this link: [schema.cds](./services.cds).
 
 ### Step 2: Update Test Data with Assignments
 

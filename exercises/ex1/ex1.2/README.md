@@ -6,13 +6,14 @@ Vertical Privilege Escalation occurs when a user gains access to higher-privileg
 
 - Only users with the admin role can close high-urgency incidents.
 - Closed incidents can only be modified by administrators.
+- Only administrators can delete incidents.
 
 
 ### Why This Matters
 
 * Business Impact: Unauthorized closures could lead to critical incidents being ignored or improperly resolved.
 * Compliance Risk: Violates the OWASP Top 10 A01 and the principle of least privilege, a fundamental security concept
-* Security Risk: Support users have the ability to close critical incidents or change closed ones without approval, either intentionally or accidentally.
+* Security Risk: Support users could close critical incidents, modify closed ones, or delete evidence without approval.
 
 * In this lab, we'll focus on instance-based authorization to enforce the above business rules.
 
@@ -25,7 +26,7 @@ using { sap.capire.incidents as my } from '../db/schema';
 service ProcessorService {
   @restrict: [
     { grant: ['READ', 'CREATE'], to: 'support' },  // ✅ Support can view all incidents
-    { grant: ['UPDATE', 'DELETE'],  // 
+    { grant: ['UPDATE', 'DELETE'],                 // ❌ VULNERABILITY: DELETE granted to support users
       to: 'support',
       where: 'assignedTo is null or assignedTo = $user'  // ✅ Horizontal control (correct)
     }
@@ -43,6 +44,7 @@ const cds = require('@sap/cds')
 class ProcessorService extends cds.ApplicationService {
   init() {
     this.before("UPDATE", "Incidents", (req) => this.onUpdate(req));
+    // ❌ VULNERABILITY: No DELETE handler at all
     this.before("CREATE", "Incidents", (req) => this.changeUrgencyDueToSubject(req.data));
     this.on("CREATE", "Incidents", (req) => this.handleIncidentCreation(req));
     return super.init();
@@ -50,9 +52,11 @@ class ProcessorService extends cds.ApplicationService {
 
   // ❌ VULNERABILITY:
   // No check for admin role and for high-urgency incidents when status is changed to 'closed'
-  // No check that only admins can modify closed incidents
-  async onUpdate(req) {
-   
+  // No check that only admins can modify closed incidents.
+  // No DELETE validation
+
+async onUpdate(req) {
+  
     // Example validation that doesn't check urgency and admin role when closing
     const { status_code } = await SELECT.one(req.subject, i => i.status_code).where({ID: req.data.ID})
     if (status_code === 'C')
@@ -69,15 +73,16 @@ class ProcessorService extends cds.ApplicationService {
 **Why This is Vulnerable:**
 
 ✅ What Works:
-  * @restrict annotation prevents support users from modifying incidents not assigned to them (horizontal escalation privilege). it'spowerful for row-level filtering (which records you can access) but has limitations:
+  * @restrict prevents support users from modifying incidents not assigned to them (horizontal escalation privilege). it'spowerful for row-level filtering (which records you can access) but has limitations:
     1. It filters based on existing data in the database
     2. It cannot evaluate the changes being made in an update operation.
     3. It cannot compare "old value vs. new value" to enforce transition rules.
 
 ❌ What’s Missing:
-
+  * DELETE permission granted to support users in CDS.
+  * No DELETE validation in JavaScript to enforce admin-only deletion.
   * No check for incident urgency when a support user tries to close an incident.
-  * The system lacks validation to prevent support users from changing the status of high-urgency incidents to "Closed" and from modifying a closed incident.
+  * Prevent support users from changing the status of high-urgency incidents to "Closed" and from modifying a closed incident.
   * Admin privileges are not automatically enforced at both service (ProcessorService) and CRUD operation level.
     
 ## 💥 3. Exploitation: (TBD with screenshots)
@@ -103,6 +108,13 @@ class ProcessorService extends cds.ApplicationService {
   - Click Save.
 - Result:
   - The system accepts the modification, violating the "Closed incidents can only be modified by administrators" rule.
+ 
+### Step 4: Exploit Deleting an Incident
+- Action:
+  - Navigate to an incident assigned to Alice (e.g., "Printer issue in Office").
+  - Click Delete (or select incident and click Delete button).
+  - Confirm deletion when prompted.
+- Result: ✅ System allows Alice to delete the incident, violating the "Only administrators can delete incidents" rule.
     
 ### Step 4: Verify Exploitation Success
   * Observation:

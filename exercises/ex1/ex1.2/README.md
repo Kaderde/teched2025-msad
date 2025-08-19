@@ -60,7 +60,7 @@ async onUpdate(req) {
     // Example validation that doesn't check urgency and admin role when closing
     const { status_code } = await SELECT.one(req.subject, i => i.status_code).where({ID: req.data.ID})
     if (status_code === 'C')
-      return req.reject(`Can't modify a closed incident`)
+      return req.reject(403, "Cannot modify a closed, incident");
   }
 
   // Other methods...

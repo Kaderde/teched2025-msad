@@ -9,7 +9,7 @@ Vertical Privilege Escalation occurs when a user gains access to higher-privileg
 ### Why This Matters
 
 * Business Impact: Unauthorized closures could lead to critical incidents being ignored or improperly resolved.
-* Compliance Risk: Violates the principle of least privilege, a fundamental security concept
+* Compliance Risk: Violates the OWASP Top 10 A01 and the principle of least privilege, a fundamental security concept
 * Security Risk: Support users could maliciously or accidentally close high-urgency incidents without proper authorization.
   
 In this lab, we'll focus on instance-based authorization to enforce that **"Only admin users have the authority to close high-urgency incidents."**

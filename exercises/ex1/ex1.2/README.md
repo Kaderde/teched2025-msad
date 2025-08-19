@@ -4,15 +4,17 @@
 
 Vertical Privilege Escalation occurs when a user gains access to higher-privileged functions they shouldn't have. In our Incident Management system, this means a support user could close high-urgency incidents, violating the business rule:
 
-"Only users with the admin role can close high-urgency incidents."
+- Only users with the admin role can close high-urgency incidents.
+- Closed incidents can only be modified by administrators.
+
 
 ### Why This Matters
 
 * Business Impact: Unauthorized closures could lead to critical incidents being ignored or improperly resolved.
 * Compliance Risk: Violates the OWASP Top 10 A01 and the principle of least privilege, a fundamental security concept
-* Security Risk: Support users could maliciously or accidentally close high-urgency incidents without proper authorization.
-  
-In this lab, we'll focus on instance-based authorization to enforce that **"Only admin users have the authority to close high-urgency incidents."**
+* Security Risk: Support users have the ability to close critical incidents or change closed ones without approval, either intentionally or accidentally.
+
+* In this lab, we'll focus on instance-based authorization to enforce the above business rules.
 
 ## 🚨 2. Vulnerable Code :
 
@@ -31,7 +33,7 @@ service ProcessorService {
   entity Incidents as projection on my.Incidents;
 }
 
-annotate ProcessorService with @(requires: 'support');  // ❌ Only support role required
+annotate ProcessorService with @(requires: 'support');  // ❌ Only support role required, Admins excluded
 
 ```
 **File**: `srv/services.js`
@@ -47,12 +49,12 @@ class ProcessorService extends cds.ApplicationService {
   }
 
 
-  // ❌ VULNERABILITY: No check for high-urgency incidents when status is changed to 'closed'
+  // ❌ VULNERABILITY:
+  // No check for admin role and for high-urgency incidents when status is changed to 'closed'
+  // No check that only admins can modify closed incidents
   async onUpdate(req) {
-    // The current implementation doesn't validate if the incident has high urgency
-    // when a support user tries to close it
-    
-    // Example validation that doesn't check urgency when closing
+   
+    // Example validation that doesn't check urgency and admin role when closing
     const { status_code } = await SELECT.one(req.subject, i => i.status_code).where({ID: req.data.ID})
     if (status_code === 'C')
       return req.reject(`Can't modify a closed incident`)
@@ -76,7 +78,7 @@ class ProcessorService extends cds.ApplicationService {
 ❌ What’s Missing:
 
   * No check for incident urgency when a support user tries to close an incident.
-  * No validation prevents them from changing the status to "Closed" for high-urgency incidents.
+  * The system lacks validation to prevent support users from changing the status of high-urgency incidents to "Closed" and from modifying a closed incident.
   * Admin privileges are not automatically enforced at both service (ProcessorService) and CRUD operation level.
     
 ## 💥 3. Exploitation: (TBD with screenshots)
@@ -86,31 +88,44 @@ class ProcessorService extends cds.ApplicationService {
 - Login with alice.support@company.com. This user is set up from the from the previous exercise.
 - Navigate to Incident Management application.
 
-### Step 2: Exploit the Vulnerability
-- Find a high-urgency incident assigned to Alice (e.g., "Strange noise when switching off Inverter").
-- Click "Edit" → Change Status to "Closed".
-- Add a conversation message: "Closing this high-urgency incident as support user"
-- Click "Save"
+### Step 2: Exploit Closing High-Urgency Incident
+- Action: 
+  - Find a high-urgency incident assigned to Alice (e.g., "Strange noise when switching off Inverter").
+  - Click "Edit" → Change Status to "Closed".
+  - Add a conversation message: "Closing this high-urgency incident as support user"
+  - Click "Save"
+- Result:
+  - ❌ The system allows Alice to close the incident, violating the business rule.
 
+### Step 3: Exploit Modifying a Closed Incident
+- Action:
+  - Locate the closed incident Alice just closed.
+  - Click Edit → Change Description to "Resolved by support team."
+  - Click Save.
+- Result:
+  - The system accepts the modification, violating the "Closed incidents can only be modified by administrators" rule.
+    
 ### Step 4: Verify Exploitation Success
-- ✅ The system allows Alice to a high-urgency incident.
-- ✅ Changes are saved successfully.
-- ✅ Root Cause: No vertical privilege check to enforce the "admin-only" rule for closing high-urgency incidents.
+  * Observation:
+    - ✅ Alice closed a high-urgency incident and modified a closed incident despite lacking admin privileges.
 
 ### Step 5: Login as Admin User
-- Access SAP Build Work Zone
-- Login with admin credentials (e.g., admin.user@company.com)
-- Navigate to Incident Management application
-- UI Vulnerability: No 403 Forbidden error appears despite the admin user lacking proper authorization to access ProcessorService.
-- Instead of seeing an access denied message, the admin user sees a loading indicator on blank screen.
+
+- Action:
+  - Log out and log in as david.admin@company.com (admin role).
+  - Navigate to the closed incident modified by Alice.
+  - Attempt to edit the closed incident (e.g., add a comment).
+- Result:
+  - ❌ UI displays a blank loading screen (no error message).
+  - ❌ Root Cause: @requires: 'support' in services.cds blocks admin access to the service.
 
 ### 📌Critical Vulnerability Summary
-
-* ❌ Support users can close high-urgency incidents despite business rules.
-* ❌ No vertical privilege escalation guardrails in @restrict or services.js.
-* ❌ CAP row-level filtering cannot evaluate dynamic status transitions.
-* ❌ Admin users are excluded entirely, leading to operational deadlocks.
-* ❌ Silent 403 errors for admins reduce transparency and hinder troubleshooting.
+- ❌ Support users can close high-urgency incidents and modify closed incidents.
+- ❌ Admins are excluded entirely from modifying closed incidents due to misconfigured @requires.
+- ❌ No validation in services.js for:
+  - Admin role when closing high-urgency incidents.
+  - Admin role when modifying closed incidents.
+- ❌ Silent errors for admins reduce transparency and hinder operations.
 
 ## 🛡️ 4. Remediation:
 The fixes follow the principle of least privilege, ensuring support users are blocked from unauthorized actions while admins retain elevated permissions.

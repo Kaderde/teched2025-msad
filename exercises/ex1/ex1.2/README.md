@@ -48,7 +48,6 @@ class ProcessorService extends cds.ApplicationService {
     return super.init();
   }
 
-
   // ❌ VULNERABILITY:
   // No check for admin role and for high-urgency incidents when status is changed to 'closed'
   // No check that only admins can modify closed incidents
@@ -165,18 +164,16 @@ annotate ProcessorService with @(requires: ['support', 'admin']);  // ✅ NEW: A
 ```
 Copy the complete code from this link: [services.cds](./services.cds).
 
-### Step 2: Update Test Data with Assignments
+Key Changes:
 
-File: `db/data/sap.capire.incidents-Incidents.csv`
- *   Add the `assignedTo` column and assign incidents to our test users.
- *   **Note:** Use the actual user IDs from your IdP. For this lab, we'll use their email addresses as a stand-in.
+* ✅ Admin Full Access: { grant: '*', to: 'admin' } grants admins complete CRUD permissions.
+* ✅ Service-Level Role Requirements: @requires: ['support', 'admin'] allows both roles to access the service.
+
+### Step 2: Updated Code: services.js
+Implement custom validation logic to enforce both business rules using role-based and state-based checks.
 
 ```
-ID,customer_ID,title,urgency_code,status_code,assignedTo,assignedAt,assignedBy
-3b23bb4b-4ac7-4a24-ac02-aa10cabd842c,1004155,Inverter not functional,H,C,bob.support@company.com
-3a4ede72-244a-4f5f-8efa-b17e032d01ee,1004161,No current on a sunny day,H,N,bob.support@company.com
-3ccf474c-3881-44b7-99fb-59a2a4668418,1004161,Strange noise when switching off Inverter,M,N,alice.support@company.com
-3583f982-d7df-4aad-ab26-301d4a157cd7,1004100,Solar panel broken,H,I,alice.support@company.com
+
 ```
 Copy the complete file from this link: [sap.capire.incidents-Incidents.csv](./sap.capire.incidents-Incidents.csv).
 

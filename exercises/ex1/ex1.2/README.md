@@ -1,4 +1,4 @@
-# Exercise 1.2 - Vertical Privilege Escalation
+.support@# Exercise 1.2 - Vertical Privilege Escalation
 
 ## 📖  1. Overview :
 

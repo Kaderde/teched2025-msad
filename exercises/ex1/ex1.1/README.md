@@ -353,7 +353,7 @@ Now, we will try to perform the original attack.
 2. Locate an incident that is explicitly assigned to Bob, for example, "No current on a sunny day".
 3. Click on this incident to view its details.
 4. Click the **Edit** button.
-6. ❌ Expected Result: The application should prevent Alice from editing this incident. clicking Edit mode will trigger an authorization error message (e.g., "Error - Forbidden"). This confirms that the **where: 'assignedTo is null or assignedTo = $user'** clause is correctly blocking Alice's unauthorized modification attempts on incidents assigned to Bob.
+6. ✅ **Expected Result:** The application should prevent Alice from editing this incident. clicking Edit mode will trigger an authorization error message (e.g., "Error - Forbidden"). This confirms that the **where: 'assignedTo is null or assignedTo = $user'** clause is correctly blocking Alice's unauthorized modification attempts on incidents assigned to Bob.
 
 > **Note:**  
 > If you run into a generic **"Forbidden"** error message, you can replace it with a more descriptive message by handling the error in your `services.js` file.  

@@ -49,7 +49,7 @@ service ProcessorService {
 }
 
 annotate ProcessorService.Incidents with @odata.draft.enabled; 
-annotate ProcessorService with @(requires: 'support');   // ❌   VULNERABILITY: Only basic role check - no granular access control
+annotate ProcessorService with @(requires: 'support');   // ❌   VULNERABILITY: Only basic role check - no granular access control at row level
 
 service AdminService {
     entity Customers as projection on my.Customers;      // ✅ Admin full access (correct)
@@ -58,7 +58,7 @@ service AdminService {
 annotate AdminService with @(requires: 'admin');        
 ```
 **Why this is vulnerable:**
-- The database schema lacks an assignedTo field to track incident ownership.
+- The database schema lacks an 'assignedTo' field to track incident ownership.
 - The @(requires: 'support') annotation only checks if the user has the support role.
 - Any support user can UPDATE/DELETE any incident, regardless of assignment.
 

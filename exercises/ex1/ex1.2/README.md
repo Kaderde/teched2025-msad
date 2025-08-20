@@ -15,7 +15,7 @@ Vertical Privilege Escalation occurs when a user gains access to higher-privileg
 * Compliance Risk: Violates the OWASP Top 10 A01 and the principle of least privilege, a fundamental security concept
 * Security Risk: Support users could close critical incidents, modify closed ones, or delete evidence without approval.
 
-* In this lab, we'll focus on instance-based authorization to enforce the above business rules.
+In this lab, we'll focus on instance-based authorization to enforce the above business rules.
 
 ## 🚨 2. Vulnerable Code :
 

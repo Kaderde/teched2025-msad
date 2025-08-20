@@ -86,7 +86,7 @@ At this stage, the database doesn't have an assignedTo field, so there's no conc
 ### Step 3: Exploit Modifying an Incident
 - Action:
   - View the incidents list - Alice can see all incidents.
-  - Click on any incident to open it (e.g., "No current on a sunny day").
+  - Click on any non-closed incident (e.g., "No current on a sunny day").
   - Click "Edit" button - **This works because there are no ownership restrictions**.
   - Modify the incident:
       - Change title to "URGENT - Modified by Alice".
@@ -94,10 +94,20 @@ At this stage, the database doesn't have an assignedTo field, so there's no conc
       - Add a conversation entry: "Alice was here".
   - Click "Save".
 - Result:
-  - ❌ The system allows Alice to modify and save ANY incident.
+  - ❌ The system allows Alice to modify and save ANY non-closed incident.
   - ❌ Root Cause: No 'assignedTo' field,  means no ownership tracking possible.
+ 
+### Step 4: Attempt Updating a Closed Incident
+- Action:
+  - Navigate to a closed incident (e.g., one with status "C").
+  - Click "Edit".
+  - Try to modify the incident details (e.g., change the title or add a conversation entry).
+  - Click "Save".
+- Result:
+❌ The system prevents the update and displays an error (e.g., "403 Forbidden - Cannot modify a closed incident").
+👉 This is due to the existing check in services.js, which blocks updates on closed incidents regardless of user role. However, this does not mitigate the core Horizontal Privilege Escalation issue, as Alice can still update non-closed incidents not assigned to her.
 
-### Step 4: Exploit Deleting an Incident
+### Step 5: Exploit Deleting an Incident
 - Action:
   - Navigate to any incident (e.g., "Printer issue in Office").
   - Click "Delete" (or select the incident and click the Delete button).
@@ -105,17 +115,17 @@ At this stage, the database doesn't have an assignedTo field, so there's no conc
 Result:
 ❌ The system allows Alice to delete the incident. This violates the business rule The system does not validate a user's role before processing a deletion request.
     
-### Step 5: Test with Another User
+### Step 6: Test with Another User
 - Action:
   - Log out as Alice and log in as bob.support@company.com (another support user).
   - Repeat the update and delete actions on any incidents.
-Result:
+- Result:
 ❌ The system allows Bob to perform the same unauthorized updates and deletions, confirming that all support users have unrestricted access to all incidents.
 
 ### 📌 Critical Vulnerability Summary
 
-* ❌ No ownership validation: Without the assignedTo field in the schema, there's no way to enforce restrictions, allowing any support user to update or delete any incident.
-* ❌ Business rule violations: The system fails to limit modifications or deletions based on user identity, breaching the principles of least privilege and data ownership.
+* ❌ No ownership validation: Without the 'assignedTo' field in the schema, there's no way to enforce restrictions, allowing any support user to update or delete any incident.
+* ❌ Partial safeguards: While updates to closed incidents are blocked, deletions remain unrestricted, amplifying risks.
 * ❌ Security risks: This enables widespread data tampering and deletion, directly aligning with OWASP Top 10 A01: Broken Access Control.
 
 ## 🛡️ 4. Remediation:

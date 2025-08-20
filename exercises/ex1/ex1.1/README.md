@@ -64,7 +64,6 @@ annotate AdminService with @(requires: 'admin');
 
 
 ## 💥 3. Exploitation: (TBD with screenshots)
-At this stage, the database doesn't have an assignedTo field, so there's no concept of incident ownership. This means ANY support user can modify ANY incident, which violates our business rules.
 
 ### Step 1: User and Role configuration Incident Management:
 

@@ -2,7 +2,17 @@
 
 ## 📖  1. Overview :
 
-Occurs when a user gains access to resources belonging to another user at the same privilege level. In our incident management system, this means a support user could potentially modify incidents assigned to other support users, violating the business rule that support users can only modify incidents explicitly assigned to them.
+Horizontal Privilege Escalation occurs when a user accesses resources belonging to another user at the same privilege level. In our Incident Management system, this means a support user could modify incidents assigned to other support users, violating critical business rules:
+
+- Support users should view all incidents for context.
+- Support users can only modify/delete incidents explicitly assigned to them.
+- No updates or deletions allowed on closed incidents.
+
+### Why This Matters
+
+* Business Impact: Unauthorized modifications could lead to incorrect incident handling, data tampering, and workflow disruption.
+* Compliance Risk: Violates OWASP Top 10 A01:Broken Access Control and the principle of least privilege.
+* Security Risk: Support users could alter other agents' work, close tickets improperly, or delete evidence
 
 ## 🚨 2. Vulnerable Code :
 
@@ -73,15 +83,19 @@ At this stage, the database doesn't have an assignedTo field, so there's no conc
 - Login with alice.support@company.com.
 - Navigate to Incident Management application.
 
-### Step 3: Exploit the Vulnerability
-- View the incidents list - Alice can see all incidents.
-- Click on any incident to open it (e.g., "No current on a sunny day").
-- Click "Edit" button - **This works because there are no ownership restrictions**.
-- Modify the incident:
-    - Change title to "URGENT - Modified by Alice".
-    - Change status to "In Process".
-    - Add a conversation entry: "Alice was here".
-- Click "Save".
+### Step 3: Exploit Modifying an Incident
+- Action:
+  - View the incidents list - Alice can see all incidents.
+  - Click on any incident to open it (e.g., "No current on a sunny day").
+  - Click "Edit" button - **This works because there are no ownership restrictions**.
+  - Modify the incident:
+      - Change title to "URGENT - Modified by Alice".
+      - Change status to "In Process".
+      - Add a conversation entry: "Alice was here".
+  - Click "Save".
+- Result:
+  - ❌ The system allows Alice to modify and Save ANY incident.
+  - ❌ Root Cause: No assignedTo field,  means no ownership tracking possible.
 
 ### Step 4: Verify Exploitation Success
 - ✅ The system allows Alice to modify ANY incident

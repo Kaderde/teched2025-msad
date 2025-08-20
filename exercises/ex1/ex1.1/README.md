@@ -102,16 +102,17 @@ annotate AdminService with @(requires: 'admin');
   - Try to modify the incident details (e.g., change the title or add a conversation entry).
   - Click "Save".
 - Result:
-❌ The system prevents the update and displays an error (e.g., "403 Forbidden - Cannot modify a closed incident").
-👉 This is due to the existing check in services.js, which blocks updates on closed incidents regardless of user role. However, this does not mitigate the core Horizontal Privilege Escalation issue, as Alice can still update non-closed incidents not assigned to her.
+  -❌ The system prevents the update and displays an error (e.g., "403 Forbidden - Cannot modify a closed incident").
+  -👉 This is due to the existing check in services.js, which blocks updates on closed incidents regardless of user role. However, this does not mitigate the core Horizontal Privilege Escalation issue, as Alice can still update non-closed incidents not assigned to her.
 
 ### Step 5: Exploit Deleting an Incident
 - Action:
   - Navigate to any incident (e.g., "Printer issue in Office").
   - Click "Delete" (or select the incident and click the Delete button).
   - Confirm deletion when prompted (e.g., "Are you sure you want to delete this incident?").
-Result:
-❌ The system allows Alice to delete the incident. This violates the business rule The system does not validate a user's role before processing a deletion request.
+- Result:
+  - ❌ The system allows Alice to delete ANY non-closed incident.
+  - ❌ Root Cause: No 'assignedTo' field, means no ownership tracking possible.
     
 ### Step 6: Test with Another User
 - Action:
@@ -122,9 +123,9 @@ Result:
 
 ### 📌 Critical Vulnerability Summary
 
-* ❌ No ownership validation: Without the 'assignedTo' field in the schema, there's no way to enforce restrictions, allowing any support user to update or delete any incident.
-* ❌ Partial safeguards: While updates to closed incidents are blocked, deletions remain unrestricted, amplifying risks.
-* ❌ Security risks: This enables widespread data tampering and deletion, directly aligning with OWASP Top 10 A01: Broken Access Control.
+* ❌ **No ownership validation:** Without the 'assignedTo' field in the schema, there's no way to enforce restrictions, allowing any support user to update or delete any incident.
+* ❌ **Partial safeguards:** While updates to closed incidents are blocked, deletions remain unrestricted, amplifying risks.
+* ❌ **Security risks:** This enables widespread data tampering and deletion, directly aligning with OWASP Top 10 A01: Broken Access Control.
 
 ## 🛡️ 4. Remediation:
 The fix requires both database schema changes and service-level security implementation.
@@ -215,6 +216,8 @@ using { sap.capire.incidents as my } from '../db/schema';
 
 ```
 Copy the complete code from this link: [services.cds](./services.cds).
+
+
 
 File: `srv/services.js`
 

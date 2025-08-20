@@ -4,7 +4,6 @@
 
 Horizontal Privilege Escalation occurs when a user accesses resources belonging to another user at the same privilege level. In our Incident Management system, this means a support user could modify incidents assigned to other support users, violating critical business rules:
 
-- Support users should view all incidents for context.
 - Support users can only modify/delete incidents explicitly assigned to them.
 - No updates or deletions allowed on closed incidents.
 

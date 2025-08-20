@@ -217,6 +217,15 @@ using { sap.capire.incidents as my } from '../db/schema';
 ```
 Copy the complete code from this link: [services.cds](./services.cds).
 
+>**Note:**  
+> In SAP CAP, the `@restrict` annotations in `services.cds` are processed **before** the `services.js` logic and generate system-level errors (e.g., `403 Forbidden`) directly at the database query layer.  
+> These errors are not directly customizable via `services.js` because the framework does not expose them to the JavaScript runtime.  
+>  
+> However, you can handle or override error behavior in `services.js` for **application-level validations** (e.g., dynamic business rules requiring runtime checks).  
+>  
+> 📌 **Rule of Thumb:**  
+> - `@restrict` in `services.cds` → **static authorization checks**. Enforced by CDS *before* any custom code runs.  
+> - `before`/`after` handlers in `services.js` → **dynamic business rules** that cannot be expressed using static `where` conditions.
 
 
 File: `srv/services.js`
@@ -227,29 +236,47 @@ const cds = require('@sap/cds')
 class ProcessorService extends cds.ApplicationService {
   /** Registering custom event handlers */
   init() {
-    this.before("UPDATE", "Incidents", (req) => this.onUpdate(req));
-    this.before("CREATE", "Incidents", (req) => this.changeUrgencyDueToSubject(req.data));
+    // ✅ NEW: Validate business rules
+    this.before(['UPDATE', 'DELETE'], 'Incidents', req => this.onModify(req));
 
-  // ✅ NEW:Handle the creation of new Incidents, triggering auto-assignment by the processor.
-    this.on("CREATE", "Incidents", (req) => this.handleIncidentCreation(req));
+    // ✅  NEW: Enrich before CREATE (auto‑assignment + urgency handling)
+    this.before("CREATE", "Incidents", req => this.onBeforeCreate(req))
 
     return super.init();
   }
 
 ...
 
-  // ✅ NEW: Handle incident creation with auto-assignment 
-  async handleIncidentCreation(req) {
-      const incident = req.data;      if (incident.status_code === 'A' && (req.user.is('support') || req.user.is('admin'))) {
-          incident.assignedTo = req.user.id;
-          console.log(`📝 Auto-assigned incident to ${req.user.id}`);
-      }
-      this.changeUrgencyDueToSubject(incident);
+//  ✅ NEW : No updates or deletes on closed incidents */
+  async onModify(req) {
+    const result = await SELECT.one.from(req.subject)
+      .columns('status_code')
+      .where({ ID: req.data.ID })
+
+    if (!result) return req.reject(404, `Incident ${req.data.ID} not found`)
+
+    if (result.status_code === 'C') {
+      const action = req.event === 'UPDATE' ? 'modify' : 'delete'
+      return req.reject(403, `Cannot ${action} a closed incident`)
+    }
+  }
+
+// ✅ NEW: Before CREATE: Auto‑assign + urgency keyword detection */
+  async onBeforeCreate(req) {
+    const incident = req.data
+
+    // Auto‑assign if status = 'A' Assigned incident
+    if (incident.status_code === 'A' && req.user) {
+      incident.assignedTo = req.user.id
+      console.log(`📝 Auto‑assigned incident to ${req.user.id}`)
+    }
+
+    // Adjust urgency based on title
+    this.changeUrgencyDueToSubject(incident)
   }
 }
 
 module.exports = { ProcessorService }
-
 ```
 Copy the complete code from this link: [services.js]([./services.js).
 

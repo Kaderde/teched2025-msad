@@ -357,7 +357,7 @@ AssignedTo=Assigned To
 Copy the complete code from this link: [i18n.properties](./i18n.properties).
 
 ## ✅ 5. Verification:
-This section outlines the steps to confirm that the remediation for the Horizontal Privilege Escalation vulnerability in the Incident Management application has been successfully implemented. The goal is to ensure that support users can only modify incidents assigned to them or unassigned incidents, and that admin users retain full access, as per the business rules.
+This section outlines the steps to confirm that the remediation for the Horizontal Privilege Escalation vulnerability in the Incident Management application has been successfully implemented. The goal is to ensure that support users can only modify/delete incidents assigned to them or unassigned incidents, and No updates or deletions are allowed on closed incidents, as per the business rules.
 
 #### Step 1: Deploy the Updated Application to Cloud Foundry
 

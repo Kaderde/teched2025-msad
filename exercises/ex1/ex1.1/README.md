@@ -239,7 +239,7 @@ class ProcessorService extends cds.ApplicationService {
     // ✅ NEW: Validate business rules
     this.before(['UPDATE', 'DELETE'], 'Incidents', req => this.onModify(req));
 
-    // ✅  NEW: Enrich before CREATE (auto‑assignment + urgency handling)
+    // ✅ NEW: Enrich before CREATE (auto‑assignment + urgency handling)
     this.before("CREATE", "Incidents", req => this.onBeforeCreate(req))
 
     return super.init();
@@ -285,8 +285,8 @@ To make the new assignedTo field visible and usable in your Fiori Elements appli
 add the foloowing parts in the code:
 
 **annotations.cds file:**
-  - General Information: Add assignedTo field to UI.FieldGroup #GeneratedGroup
-  - Selection Fields: Added assignedTo to UI.SelectionFields for filtering/sorting
+  - **General Information:** Add assignedTo field to UI.FieldGroup #GeneratedGroup
+  - **Selection Fields:** Added assignedTo to UI.SelectionFields for filtering/sorting
 
 **i18n.properties file:**
   - Added new property: AssignedTo=Assigned To
@@ -307,7 +307,7 @@ UI.FieldGroup #GeneratedGroup : {
             Label : '{i18n>Customer}',
             Value : customer_ID,
         },
-        // ✅ ADDED: assignedTo field to UI.FieldGroup #GeneratedGroup
+        // ✅ NEW: assignedTo field to UI.FieldGroup #GeneratedGroup
         {
             $Type : 'UI.DataField',
             Label : '{i18n>AssignedTo}', // Use consistent i18n label for assigned user in general info
@@ -323,36 +323,15 @@ UI.FieldGroup #GeneratedGroup : {
           Value : urgency.descr,
           Label : '{i18n>Urgency}',
       },
-      // ✅ ADDED: Show assigned user in the list view
+      // ✅ NEW: Show assigned user in the list view
       {
           $Type : 'UI.DataField',
           Value : assignedTo,
           Label : '{i18n>AssignedTo}',
+          @UI.Importance : #High   // ✅ NEW: ensures visible by default
       },
 
   ],
-
-// ✅ ADDED: PresentationVariant to explicitly control column order and visibility in the table
-    UI.PresentationVariant: {
-        $Type: 'UI.PresentationVariantType',
-        Visualizations: [
-            {
-                $Type: 'UI.Chart', // Or 'UI.Table' if your main visualization is a table
-                Qualifier: 'IncidentsList', // Use the correct qualifier if different (e.g., your list report's qualifier)
-                Visualization: {
-                    $Type: 'UI.Table',
-                    // ✅ NEW: Explicitly define the default visible columns and their order
-                    ColumnOrder: [
-                        { Value: title },
-                        { Value: customer.name },
-                        { Value: urgency.descr },
-                        { Value: status.descr },
-                        { Value: assignedTo } // Make sure 'assignedTo' is included here
-                    ]
-                }
-            }
-        ]
-    },
 
   // ✅ ADDED: Add 'assignedTo' field to selection fields for filtering/sorting
   UI.SelectionFields : [

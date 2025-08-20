@@ -94,24 +94,29 @@ At this stage, the database doesn't have an assignedTo field, so there's no conc
       - Add a conversation entry: "Alice was here".
   - Click "Save".
 - Result:
-  - ❌ The system allows Alice to modify and Save ANY incident.
-  - ❌ Root Cause: No assignedTo field,  means no ownership tracking possible.
+  - ❌ The system allows Alice to modify and save ANY incident.
+  - ❌ Root Cause: No 'assignedTo' field,  means no ownership tracking possible.
 
-### Step 4: Verify Exploitation Success
-- ✅ The system allows Alice to modify ANY incident
-- ✅ Changes are saved successfully to any incident Alice chooses
-- ✅ Root Cause: No assignedTo field means no ownership tracking possible
-
+### Step 4: Exploit Deleting an Incident
+- Action:
+  - Navigate to any incident (e.g., "Printer issue in Office").
+  - Click "Delete" (or select the incident and click the Delete button).
+  - Confirm deletion when prompted (e.g., "Are you sure you want to delete this incident?").
+Result:
+❌ The system allows Alice to delete the incident. This violates the business rule The system does not validate a user's role before processing a deletion request.
+    
 ### Step 5: Test with Another User
-- Login as Bob (bob.support@company.com).
-- Bob can also modify the same incident Alice just modified.
-- Bob can modify ANY incident in the system.
-- Conclusion: All support users have identical, unrestricted access.
+- Action:
+  - Log out as Alice and log in as bob.support@company.com (another support user).
+  - Repeat the update and delete actions on any incidents.
+Result:
+❌ The system allows Bob to perform the same unauthorized updates and deletions, confirming that all support users have unrestricted access to all incidents.
 
-### Current Vulnerability Summary:
-- Missing Data Model: No assignedTo field to track ownership.
-- No Access Control: Cannot implement "assigned to me" restrictions.
-- Business Rule Violation: Support users can modify incidents they shouldn't have access to.
+### 📌 Critical Vulnerability Summary
+
+* ❌ No ownership validation: Without the assignedTo field in the schema, there's no way to enforce restrictions, allowing any support user to update or delete any incident.
+* ❌ Business rule violations: The system fails to limit modifications or deletions based on user identity, breaching the principles of least privilege and data ownership.
+* ❌ Security risks: This enables widespread data tampering and deletion, directly aligning with OWASP Top 10 A01: Broken Access Control.
 
 ## 🛡️ 4. Remediation:
 The fix requires both database schema changes and service-level security implementation.

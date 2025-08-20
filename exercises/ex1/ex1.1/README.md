@@ -43,7 +43,7 @@ entity Incidents : cuid, managed {
 ```cds
 // VULNERABLE CODE - No access restrictions
 service ProcessorService { 
-    entity Incidents as projection on my.Incidents;      // ✅ Can view all (correct)
+    entity Incidents as projection on my.Incidents;      // ✅ Support user can view all incidents to assist effectively. (correct) 
     @readonly
     entity Customers as projection on my.Customers;      // ✅ Read-only customers (correct)
 }

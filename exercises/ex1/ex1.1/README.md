@@ -9,9 +9,9 @@ Horizontal Privilege Escalation occurs when a user accesses resources belonging 
 
 ### Why This Matters
 
-* Business Impact: Unauthorized modifications could lead to incorrect incident handling, data tampering, and workflow disruption.
-* Compliance Risk: Violates OWASP Top 10 A01:Broken Access Control and the principle of least privilege.
-* Security Risk: Support users could alter other agents' work, close tickets improperly, or delete evidence
+* **Business Impact:** Unauthorized modifications could lead to incorrect incident handling, data tampering, and workflow disruption.
+* **Compliance Risk:** Violates OWASP Top 10 A01:Broken Access Control and the principle of least privilege.
+* **Security Risk:** Support users could alter other agents' work, close tickets improperly, or delete evidence:
 
 ## 🚨 2. Vulnerable Code :
 

@@ -102,8 +102,9 @@ annotate AdminService with @(requires: 'admin');
   - Try to modify the incident details (e.g., change the title or add a conversation entry).
   - Click "Save".
 - Result:
-  -❌ The system prevents the update and displays an error (e.g., "403 Forbidden - Cannot modify a closed incident").
-  -👉 This is due to the existing check in services.js, which blocks updates on closed incidents regardless of user role. However, this does not mitigate the core Horizontal Privilege Escalation issue, as Alice can still update non-closed incidents not assigned to her.
+  -✅ The system prevents the update and displays an error (e.g., "403 Forbidden - Cannot modify a closed incident").
+  -👉 This is due to the existing check in services.js, which blocks updates on closed incidents regardless of user role.
+   ❌ However, this does not mitigate the core Horizontal Privilege Escalation issue, as Alice can still update non-closed incidents not assigned to her.
 
 ### Step 5: Exploit Deleting an Incident
 - Action:
@@ -111,7 +112,7 @@ annotate AdminService with @(requires: 'admin');
   - Click "Delete" (or select the incident and click the Delete button).
   - Confirm deletion when prompted (e.g., "Are you sure you want to delete this incident?").
 - Result:
-  - ❌ The system allows Alice to delete ANY non-closed incident.
+  - ❌ The system allows Alice to delete ANY incident.
   - ❌ Root Cause: No 'assignedTo' field, means no ownership tracking possible.
     
 ### Step 6: Test with Another User

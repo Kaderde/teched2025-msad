@@ -13,12 +13,12 @@ using { sap.capire.incidents as my } from '../db/schema';
         
         { grant: ['READ', 'CREATE'], to: 'support' },            // ✅ Support users Can view and create incidents
 
+
         // ✅THIS IS THE KEY CHANGE:
         // Support users can only UPDATE or DELETE incidents that are either
         // unassigned (assignedTo is null) or assigned to themselves.
         { 
-            grant: ['UPDATE', 'DELETE'], 
-            to: 'support', 
+            grant: ['UPDATE', 'DELETE'], to: 'support', 
             where: 'assignedTo is null or assignedTo = $user' 
         },
     ]

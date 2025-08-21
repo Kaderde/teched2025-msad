@@ -357,21 +357,35 @@ AssignedTo=Assigned To
 Copy the complete code from this link: [i18n.properties](./i18n.properties).
 
 ## ✅ 5. Verification:
-This section outlines the steps to confirm that the remediation for the Horizontal Privilege Escalation vulnerability in the Incident Management application has been successfully implemented. The goal is to ensure that support users can only modify/delete incidents assigned to them or unassigned incidents, and No updates or deletions are allowed on closed incidents, as per the business rules.
+This section outlines the steps to confirm that the remediation for the Horizontal Privilege Escalation vulnerability has been successfully implemented. The goal is to verify that support users can only modify or delete incidents assigned to them or unassigned incidents, and that updates or deletions on closed incidents are blocked.
 
-#### Step 1: Deploy the Updated Application to Cloud Foundry
-
-```
-mbt build
-cf deploy mta_archives/incident-management_1.0.0.mtar
-```
+### Step 1: Deploy the Updated Application to Cloud Foundry
+  ```
+  mbt build
+  cf deploy mta_archives/incident-management_1.0.0.mtar
+  ```
 
 ### Step 2: Login as Alice (Support User)
-- Access SAP Build Work Zone.
-- Login with alice.support@company.com.
-- Navigate to Incident Management application.
+- Action:
+  - Access SAP Build Work Zone and log in with alice.support@company.com.
+  - In the incident list, locate an incident assigned to Alice (e.g., "Strange noise when switching off Inverter").
+  - Confirm the 'Assigned To' column displays alice.support@company.com.
+  - Click on the incident to open its details.
+  - Click "Edit", modify the title (e.g., change to "UPDATED BY ALICE - Test"), add a conversation entry, and save.
+- Result:
+  - ✅ The system allows Alice to successfully edit and save her own incident.
+  - ✅ This confirms that the **@restrict: { grant: ['UPDATE', 'DELETE'], to: 'support', where: 'assignedTo is null or assignedTo = $user' }** rule correctly permits actions on incidents assigned to her.    
 
-### Step 3: Verify Alice Can Modify Her Own Incident
+### Step 3: Verify Alice Cannot Modify Another User's Incident
+- Action:
+  * In the incident list, locate an incident assigned to Bob (e.g., "No current on a sunny day").
+  * Click "Edit" on this incident.
+Result:
+❌ The system blocks the edit attempt.
+❌ The UI shows a 403 Forbidden error (or "Access denied" message).
+✅ This confirms that the where: 'assignedTo = $user' condition is effectively enforced — Alice cannot access Bob’s incident, even though both are support users.
+👉 This resolves the horizontal privilege escalation vulnerability.
+
 1. In the incident list, locate an incident assigned to **Alice**  *(e.g., "Strange noise when switching off Inverter")*
 2. Verify the UI shows the assignment: The **Assigned To** column should display `alice.support@company.com`.
 3. Click on the incident to open its details page.

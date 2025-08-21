@@ -399,8 +399,7 @@ This section outlines the steps to confirm that the remediation for the Horizont
 - Action:
   - Locate an unassigned incident (e.g., one where "Assigned To" is null).
   - Click "Edit", make changes (e.g., update the title), and save.
-- Result:
-  - ✅ The system allows the modification, as per the remediated rule (where: 'assignedTo is null or assignedTo = $user'), demonstrating that unassigned incidents are accessible to support users.
+- Result: ✅ The system allows the modification, as per the remediated rule (where: 'assignedTo is null or assignedTo = $user'), demonstrating that unassigned incidents are accessible to support users.
 
 ## Summary
 

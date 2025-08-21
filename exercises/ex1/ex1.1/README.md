@@ -307,7 +307,7 @@ UI.FieldGroup #GeneratedGroup : {
             Label : '{i18n>Customer}',
             Value : customer_ID,
         },
-        // ✅ NEW: assignedTo field to UI.FieldGroup #GeneratedGroup
+        // ✅ NEW: 'assignedTo' field to UI.FieldGroup #GeneratedGroup
         {
             $Type : 'UI.DataField',
             Label : '{i18n>AssignedTo}', // Use consistent i18n label for assigned user in general info
@@ -378,36 +378,29 @@ This section outlines the steps to confirm that the remediation for the Horizont
 
 ### Step 3: Verify Alice Cannot Modify Another User's Incident
 - Action:
-  * In the incident list, locate an incident assigned to Bob (e.g., "No current on a sunny day").
-  * Click "Edit" on this incident.
+  - In the incident list, locate an incident assigned to Bob (e.g., "No current on a sunny day").
+  - Click "Edit" on this incident.
+- Result:
+  - ❌ The system blocks the edit attempt.
+  - ❌ The UI shows a 403 Forbidden error (or "Access denied" message).
+  - ✅ This confirms that the where: 'assignedTo = $user' condition is effectively enforced — Alice cannot access Bob’s incident, even though both are support users.
+  - 👉 This resolves the horizontal privilege escalation vulnerability.
+ 
+### Step 5: Verify Alice Cannot Modify or Delete a Closed Incident
+- Action:
+  - Locate a closed incident (e.g., one with status "C").
+  - Click "Edit" and make changes.
+  - Click "Save". If editing is not possible, attempt to select the incident and click "Delete".
+- Result:
+- ❌ For updates: The system blocks the edit with an error (e.g., "Cannot modify a closed incident" from services.js).
+- ❌ For deletions: The system prevents deletion with a similar error. This confirms the combined effect of @restrict and the onModify handler in services.js.
+
+### Step 6: Verify Alice Can Modify an Unassigned Incident
+- Action:
+  - Locate an unassigned incident (e.g., one where "Assigned To" is null).
+  - Click "Edit", make changes (e.g., update the title), and save.
 Result:
-❌ The system blocks the edit attempt.
-❌ The UI shows a 403 Forbidden error (or "Access denied" message).
-✅ This confirms that the where: 'assignedTo = $user' condition is effectively enforced — Alice cannot access Bob’s incident, even though both are support users.
-👉 This resolves the horizontal privilege escalation vulnerability.
-
-1. In the incident list, locate an incident assigned to **Alice**  *(e.g., "Strange noise when switching off Inverter")*
-2. Verify the UI shows the assignment: The **Assigned To** column should display `alice.support@company.com`.
-3. Click on the incident to open its details page.
-4. Click the **Edit** button.
-5. Attempt to modify the incident:
-   1. Change the title to **"UPDATED BY ALICE - Test"**
-   2. Add a conversation entry: `"Alice updated this incident"`
-   3. Click **Save**
-
-6. ✅ **Expected Result:** The incident is now in edit mode. Alice can successfully change fields such as the title, status, or add a conversation message. This confirms that the **@restrict** rule **assignedTo = $user** evaluates to true for Alice's assigned incidents.
-
-### Step 4: Verify Alice Cannot Modify Another User's Incident
-Now, we will try to perform the original attack.
-1. Return to the incident list.
-2. Locate an incident that is explicitly assigned to Bob, for example, "No current on a sunny day".
-3. Click on this incident to view its details.
-4. Click the **Edit** button.
-6. ✅ **Expected Result:** The application should prevent Alice from editing this incident. clicking Edit mode will trigger an authorization error message (e.g., "Error - Forbidden"). This confirms that the **where: 'assignedTo is null or assignedTo = $user'** clause is correctly blocking Alice's unauthorized modification attempts on incidents assigned to Bob.
-
-> **Note:**  
-> If you run into a generic **"Forbidden"** error message, you can replace it with a more descriptive message by handling the error in your `services.js` file.  
-> Since the `@restrict` annotation does not support custom messages by default, you’ll need to implement your own logic to provide clearer, user-friendly feedback to the end user.
+- ✅ The system allows the modification, as per the remediated rule (where: 'assignedTo is null or assignedTo = $user'), demonstrating that unassigned incidents are accessible to support users.
 
 ## Summary
 

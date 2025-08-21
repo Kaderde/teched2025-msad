@@ -19,6 +19,9 @@ Business Rules:
 * **Compliance Risk:** Violates OWASP Top 10 A01:Broken Access Control and the principle of least privilege.
 * **Security Risk:** Support users could alter other agents' work, close tickets improperly, or delete evidence:
 
+### Objective:
+The objective of this exercise is to identify and remediate vulnerabilities that allow support users to perform actions reserved for other support users. By enforcing strict access controls, we will ensure that only authorized users can perform sensitive operations, thereby reinforcing business logic and mitigating security risks.
+
 ## 🚨 2. Vulnerable Code :
 
 **File**: `db/schema.cds`

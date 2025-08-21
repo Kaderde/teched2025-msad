@@ -1,43 +1,54 @@
 const cds = require('@sap/cds')
 
 class ProcessorService extends cds.ApplicationService {
-  /** Registering custom event handlers */
   init() {
-    this.before("UPDATE", "Incidents", (req) => this.onUpdate(req));
-    this.before("CREATE", "Incidents", (req) => this.changeUrgencyDueToSubject(req.data));
-    // NEW:Handle the creation of new Incidents, triggering auto-assignment by the processor.
-    this.on("CREATE", "Incidents", (req) => this.handleIncidentCreation(req));
+    // ✅ NEW: Validate business rules
+    this.before(['UPDATE', 'DELETE'], 'Incidents', req => this.onModify(req));
 
-    return super.init();
+    // ✅ NEW: Enrich before CREATE (auto‑assignment + urgency handling)
+    this.before("CREATE", "Incidents", req => this.onBeforeCreate(req))
+
+    return super.init()
   }
 
+  /** Helper: Adjust urgency based on incident title text */
   changeUrgencyDueToSubject(data) {
-    if (data) {
-      const incidents = Array.isArray(data) ? data : [data];
-      incidents.forEach((incident) => {
-        if (incident.title?.toLowerCase().includes("urgent")) {
-          incident.urgency = { code: "H", descr: "High" };
-        }
-      });
+    if (!data) return
+    const incidents = Array.isArray(data) ? data : [data]
+    incidents.forEach(incident => {
+      if (incident.title?.toLowerCase().includes("urgent")) {
+        incident.urgency = { code: "H", descr: "High" }
+      }
+    })
+  }
+
+// ✅ NEW: No updates or deletes on closed incidents */
+  async onModify(req) {
+    const result = await SELECT.one.from(req.subject)
+      .columns('status_code')
+      .where({ ID: req.data.ID })
+
+    if (!result) return req.reject(404, `Incident ${req.data.ID} not found`)
+
+    if (result.status_code === 'C') {
+      const action = req.event === 'UPDATE' ? 'modify' : 'delete'
+      return req.reject(403, `Cannot ${action} a closed incident`)
     }
   }
+  
+    // ✅ NEW: Before CREATE: Auto‑assign + urgency keyword detection */
+  async onBeforeCreate(req) {
+    const incident = req.data
 
-  /** Custom Validation */
-  async onUpdate (req) {
-    const { status_code } = await SELECT.one(req.subject, i => i.status_code).where({ID: req.data.ID})
-    if (status_code === 'C')
-      return req.reject(403, "Cannot modify a closed, incident");
-  }
+    // Auto‑assign if status = 'A' Assigned incident
+    if (incident.status_code === 'A' && req.user) {
+      incident.assignedTo = req.user.id
+      console.log(`📝 Auto‑assigned incident to ${req.user.id}`)
+    }
 
-  // ✅ NEW: Handle incident creation with auto-assignment 
-  async handleIncidentCreation(req) {
-      const incident = req.data;      if (incident.status_code === 'A' && (req.user.is('support') || req.user.is('admin'))) {
-          incident.assignedTo = req.user.id;
-          console.log(`📝 Auto-assigned incident to ${req.user.id}`);
-      }
-      this.changeUrgencyDueToSubject(incident);
+    // Adjust urgency based on title
+    this.changeUrgencyDueToSubject(incident)
   }
 }
 
 module.exports = { ProcessorService }
-

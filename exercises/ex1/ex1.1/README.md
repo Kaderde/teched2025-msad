@@ -108,7 +108,7 @@ annotate AdminService with @(requires: 'admin');
 
 ### Step 5: Exploit Deleting an Incident
 - Action:
-  - Navigate to any incident (e.g., "Printer issue in Office").
+  - Navigate to any incident.
   - Click "Delete" (or select the incident and click the Delete button).
   - Confirm deletion when prompted (e.g., "Are you sure you want to delete this incident?").
 - Result:

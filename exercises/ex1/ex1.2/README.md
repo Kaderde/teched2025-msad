@@ -29,7 +29,7 @@ This violates critical business rules and poses significant risks to the integri
 The objective of this exercise is to identify and remediate vulnerabilities that allow support users to perform actions reserved for administrators. By enforcing strict access controls, we will ensure that only authorized users can perform sensitive operations, thereby reinforcing business logic and mitigating security risks.
 
 ## 🚨 2. Vulnerable Code :
-This is exactly the remediated code from Exercise 1.1. It correctly prevents support users from touching other users’ incidents, but it does not yet enforce admin‑only rules (e.g. closing high‑urgency incidents, modifying closed incidents, deleting any incident).
+we will use exactly the [remediated code from Exercise 1.1.](./ex1.1#%EF%B8%8F-4-remediation), It correctly prevents support users from touching other users’ incidents, but it does not yet enforce admin‑only rules (e.g. closing high‑urgency incidents, modifying closed incidents, deleting any incident).
 
 **File**: `srv/services.cds`
 ```cds
@@ -37,8 +37,8 @@ using { sap.capire.incidents as my } from '../db/schema';
 
 service ProcessorService {
   @restrict: [
-    { grant: ['READ', 'CREATE'], to: 'support' },  // ✅ Support can view all incidents
-    { grant: ['UPDATE', 'DELETE'],                 // ❌ VULNERABILITY: DELETE granted to support users
+    { grant: ['READ', 'CREATE'], to: 'support' },        // ✅ Support can view all incidents
+    { grant: ['UPDATE', 'DELETE'],                       // ✅ UPDATE, DELETE granted to support users
       to: 'support',
       where: 'assignedTo is null or assignedTo = $user'  // ✅ Horizontal control (correct)
     }

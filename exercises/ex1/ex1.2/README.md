@@ -2,18 +2,31 @@
 
 ## 📖  1. Overview :
 
-Vertical Privilege Escalation occurs when a user gains access to higher-privileged functions they shouldn't have. In our Incident Management system, this means a support user could close high-urgency incidents, violating the business rule:
+After addressing [horizontal privilege escalation in Exercise 1.1](./ex1.1/README.md), the next step is to tackle vertical privilege escalation, which occurs when a user gains access to higher-privileged functions they shouldn't have. 
+In our Incident Management system, this means a support user could perform actions that are reserved for administrators, such as closing high-urgency incidents, modifying closed incidents, or deleting incidents. 
+This violates critical business rules and poses significant risks to the integrity and compliance of the system.
 
-- Only users with the admin role can close high-urgency incidents.
-- Closed incidents can only be modified by administrators.
-- Only administrators can delete incidents.
+**Business Rules:**
 
+* Support Users:
+  - Can view and create incidents.
+  - Can update or delete incidents assigned to them or unassigned incidents.
+  - Cannot close high-urgency incidents.
+  - Cannot modify or delete closed incidents.
+
+* Administrators:
+  - Can view, create, update, and delete all incidents.
+  - Can close all incidents, including high-urgency incidents.
+  - Can modify or delete closed incidents.
 
 ### Why This Matters
 
 * **Business Impact:** Unauthorized closures could lead to critical incidents being ignored or improperly resolved.
 * **Compliance Risk:** Violates the OWASP Top 10 A01 and the principle of least privilege, a fundamental security concept
 * **Security Risk:** Support users could close critical incidents, modify closed ones, or delete evidence without approval.
+
+### Objective:
+The objective of this exercise is to identify and remediate vulnerabilities that allow support users to perform actions reserved for administrators. By enforcing strict access controls, we will ensure that only authorized users can perform sensitive operations, thereby reinforcing business logic and mitigating security risks.
 
 ## 🚨 2. Vulnerable Code :
 

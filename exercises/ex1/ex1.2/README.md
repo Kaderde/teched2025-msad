@@ -55,47 +55,36 @@ const cds = require('@sap/cds')
 
 class ProcessorService extends cds.ApplicationService {
   init() {
-    this.before("UPDATE", "Incidents", (req) => this.onUpdate(req));
-    // ❌ VULNERABILITY: No DELETE handler at all
-    this.before("CREATE", "Incidents", (req) => this.changeUrgencyDueToSubject(req.data));
-    this.on("CREATE", "Incidents", (req) => this.handleIncidentCreation(req));
-    return super.init();
+
+... // Other methods...
+
+// ❌ VULNERABILITY:
+// No check for admin role and for high-urgency incidents when status is changed to 'closed'
+// No check that only admins can modify closed incidents.
+// ✅ NEW: No updates or deletes on closed incidents */
+  async onModify(req) {
+    const result = await SELECT.one.from(req.subject)
+      .columns('status_code')
+      .where({ ID: req.data.ID })
+
+    if (!result) return req.reject(404, `Incident ${req.data.ID} not found`)
+
+    if (result.status_code === 'C') {
+      const action = req.event === 'UPDATE' ? 'modify' : 'delete'
+      return req.reject(403, `Cannot ${action} a closed incident`)
+    }
   }
-
-  // ❌ VULNERABILITY:
-  // No check for admin role and for high-urgency incidents when status is changed to 'closed'
-  // No check that only admins can modify closed incidents.
-  // No DELETE validation
-
-async onUpdate(req) {
   
-    // Example validation that doesn't check urgency and admin role when closing
-    const { status_code } = await SELECT.one(req.subject, i => i.status_code).where({ID: req.data.ID})
-    if (status_code === 'C')
-      return req.reject(403, "Cannot modify a closed, incident");
-  }
-
-  // Other methods...
 }
 
-...
+... // Other methods
 
 ```
 
 **Why This is Vulnerable:**
-
-✅ What Works:
-  * @restrict prevents support users from modifying incidents not assigned to them (horizontal escalation privilege). it'spowerful for row-level filtering (which records you can access) but has limitations:
-    1. It filters based on existing data in the database
-    2. It cannot evaluate the changes being made in an update operation.
-    3. It cannot compare "old value vs. new value" to enforce transition rules.
-
-❌ What’s Missing:
-  * DELETE permission granted to support users in CDS.
-  * No DELETE validation in JavaScript to enforce admin-only deletion.
-  * No check for incident urgency when a support user tries to close an incident.
-  * Prevent support users from changing the status of high-urgency incidents to "Closed" and from modifying a closed incident.
-  * Admin privileges are not automatically enforced at both service (ProcessorService) and CRUD operation level.
+  - ❌ No DELETE validation in JavaScript to enforce admin-only deletion.
+  - ❌ No check for incident urgency when a support user tries to close an incident.
+  - ❌ Admin privileges are not automatically enforced at both service (ProcessorService) and CRUD operation level.
     
 ## 💥 3. Exploitation: (TBD with screenshots)
 

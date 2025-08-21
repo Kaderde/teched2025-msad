@@ -9,15 +9,15 @@ This violates critical business rules and poses significant risks to the integri
 **Business Rules:**
 
 * Support Users:
-  - Can view and create incidents.
-  - Can update or delete incidents assigned to them or unassigned incidents.
-  - Cannot close high-urgency incidents.
-  - Cannot modify or delete closed incidents.
+  - ✅ Can view and create incidents.
+  - ✅ Can update or delete incidents assigned to them or unassigned incidents.
+  - ❌ Cannot close high-urgency incidents.
+  - ❌ Cannot modify or delete closed incidents.
 
 * Administrators:
-  - Can view, create, update, and delete all incidents.
-  - Can close all incidents, including high-urgency incidents.
-  - Can modify or delete closed incidents.
+  - ✅ Can view, create, update, and delete all incidents.
+  - ✅ Can close all incidents, including high-urgency incidents.
+  - ✅ Can modify or delete closed incidents.
 
 ### Why This Matters
 
@@ -29,6 +29,7 @@ This violates critical business rules and poses significant risks to the integri
 The objective of this exercise is to identify and remediate vulnerabilities that allow support users to perform actions reserved for administrators. By enforcing strict access controls, we will ensure that only authorized users can perform sensitive operations, thereby reinforcing business logic and mitigating security risks.
 
 ## 🚨 2. Vulnerable Code :
+This is exactly the remediated code from Exercise 1.1. It correctly prevents support users from touching other users’ incidents, but it does not yet enforce admin‑only rules (e.g. closing high‑urgency incidents, modifying closed incidents, deleting any incident).
 
 **File**: `srv/services.cds`
 ```cds

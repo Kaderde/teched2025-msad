@@ -22,21 +22,21 @@ class ProcessorService extends cds.ApplicationService {
     })
   }
 
-// ✅ NEW: Display an error message on UPDATE or DELETE requests for closed incidents
+//  ✅ NEW : block updates or deletes for closed incidents */
   async onModify(req) {
     const result = await SELECT.one.from(req.subject)
       .columns('status_code')
       .where({ ID: req.data.ID })
 
     if (!result) return req.reject(404, `Incident ${req.data.ID} not found`)
-
-    if (result.status_code === 'C') {
+    // 'C' : Closed incident
+    if (result.status_code === 'C') { 
       const action = req.event === 'UPDATE' ? 'modify' : 'delete'
       return req.reject(403, `Cannot ${action} a closed incident`)
     }
   }
   
-    // ✅ NEW: Before CREATE: Auto‑assign + urgency keyword detection */
+// ✅ NEW: Before CREATE: Auto‑assign + urgency keyword detection */
   async onBeforeCreate(req) {
     const incident = req.data
 
@@ -52,4 +52,5 @@ class ProcessorService extends cds.ApplicationService {
 }
 
 module.exports = { ProcessorService }
+
 

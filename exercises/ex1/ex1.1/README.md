@@ -164,7 +164,7 @@ Copy the complete code from this link: [schema.cds](./schema.cds).
 ### Step 2: Update Test Data with Assignments
 
 File: `db/data/sap.capire.incidents-Incidents.csv`
- *   Add the `assignedTo` column and assign incidents to our test users.
+ *   Add the 'assignedTo' column and assign incidents to our test users.
  *   **Note:** Use the actual user IDs from your IdP. For this lab, we'll use their email addresses as a stand-in.
 
 ```
@@ -192,7 +192,7 @@ using { sap.capire.incidents as my } from '../db/schema';
     
   @restrict: [ // You can use the @restrict annotation to define authorizations on a fine-grained level.
         
-        { grant: ['READ', 'CREATE'], to: 'support' },          // ✅ Support users Can view and create incidents
+        { grant: ['READ', 'CREATE'], to: 'support' },          // ✅ Support users can view and create incidents
 
         // ✅ THIS IS THE KEY CHANGE:
         // Support users can only UPDATE or DELETE incidents that are either
@@ -247,15 +247,15 @@ class ProcessorService extends cds.ApplicationService {
 
 ...
 
-//  ✅ NEW : No updates or deletes on closed incidents */
+//  ✅ NEW : block updates or deletes for closed incidents */
   async onModify(req) {
     const result = await SELECT.one.from(req.subject)
       .columns('status_code')
       .where({ ID: req.data.ID })
 
     if (!result) return req.reject(404, `Incident ${req.data.ID} not found`)
-
-    if (result.status_code === 'C') {
+    // 'C' : Closed incident
+    if (result.status_code === 'C') { 
       const action = req.event === 'UPDATE' ? 'modify' : 'delete'
       return req.reject(403, `Cannot ${action} a closed incident`)
     }

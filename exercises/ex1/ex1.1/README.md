@@ -401,6 +401,12 @@ This section outlines the steps to confirm that the remediation for the Horizont
   - Click "Edit", make changes (e.g., update the title), and save.
 - Result: ✅ The system allows the modification, as per the remediated rule (where: 'assignedTo is null or assignedTo = $user'), demonstrating that unassigned incidents are accessible to support users.
 
+## 📌 Verification Summary :
+The remediation is successful in combination of :
+- Adding the 'assignedTo' field in schema.cds.
+- Implementing @restrict with where: 'assignedTo = $user'.
+- Enforcing business rules in services.js, eliminates horizontal privilege escalation and enforces the principle of least privilege.
+  
 ## Summary
 
 In these exercises, you have learned how:

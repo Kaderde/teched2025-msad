@@ -1,5 +1,3 @@
-.support@# Exercise 1.2 - Vertical Privilege Escalation
-
 ## 📖  1. Overview :
 
 Vertical Privilege Escalation occurs when a user gains access to higher-privileged functions they shouldn't have. In our Incident Management system, this means a support user could close high-urgency incidents, violating the business rule:

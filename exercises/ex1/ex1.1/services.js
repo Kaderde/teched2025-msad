@@ -22,7 +22,7 @@ class ProcessorService extends cds.ApplicationService {
     })
   }
 
-// ✅ NEW: No updates or deletes on closed incidents */
+// ✅ NEW: Display an error message on UPDATE or DELETE requests for closed incidents
   async onModify(req) {
     const result = await SELECT.one.from(req.subject)
       .columns('status_code')
@@ -52,3 +52,4 @@ class ProcessorService extends cds.ApplicationService {
 }
 
 module.exports = { ProcessorService }
+

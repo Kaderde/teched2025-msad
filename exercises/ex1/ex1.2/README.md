@@ -84,7 +84,7 @@ class ProcessorService extends cds.ApplicationService {
 **Why This is Vulnerable:**
   - ❌ No DELETE validation in JavaScript to enforce admin-only deletion.
   - ❌ No check for incident urgency when a support user tries to close an incident.
-  - ❌ Admin privileges are not automatically enforced at both service (ProcessorService) and CRUD operation level.
+  - ❌ Admin privileges are not enforced at both service (ProcessorService) and CRUD operation level.
     
 ## 💥 3. Exploitation: (TBD with screenshots)
 
@@ -101,18 +101,10 @@ class ProcessorService extends cds.ApplicationService {
   - Click "Save"
 - Result:
   - ❌ The system allows Alice to close the incident, violating the business rule.
-
-### Step 3: Exploit Modifying a Closed Incident
-- Action:
-  - Locate the closed incident Alice just closed.
-  - Click Edit → Change Description to "Resolved by support team."
-  - Click Save.
-- Result:
-  - The system accepts the modification, violating the "Closed incidents can only be modified by administrators" rule.
  
-### Step 4: Exploit Deleting an Incident
+### Step 3: Exploit Deleting an Incident
 - Action:
-  - Navigate to an incident assigned to Alice (e.g., "Printer issue in Office").
+  - Navigate to an incident assigned to Alice with Status different from "Closed".
   - Click Delete (or select incident and click Delete button).
   - Confirm deletion when prompted.
 - Result: ✅ System allows Alice to delete the incident, violating the "Only administrators can delete incidents" rule.

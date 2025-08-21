@@ -392,15 +392,15 @@ This section outlines the steps to confirm that the remediation for the Horizont
   - Click "Edit" and make changes.
   - Click "Save". If editing is not possible, attempt to select the incident and click "Delete".
 - Result:
-- ❌ For updates: The system blocks the edit with an error (e.g., "Cannot modify a closed incident" from services.js).
-- ❌ For deletions: The system prevents deletion with a similar error. This confirms the combined effect of @restrict and the onModify handler in services.js.
+  - ❌ For updates: The system blocks the edit with an error (e.g., "Cannot modify a closed incident" from services.js).
+  - ❌ For deletions: The system prevents deletion with a similar error. This confirms the combined effect of @restrict and the onModify handler in services.js.
 
 ### Step 6: Verify Alice Can Modify an Unassigned Incident
 - Action:
   - Locate an unassigned incident (e.g., one where "Assigned To" is null).
   - Click "Edit", make changes (e.g., update the title), and save.
-Result:
-- ✅ The system allows the modification, as per the remediated rule (where: 'assignedTo is null or assignedTo = $user'), demonstrating that unassigned incidents are accessible to support users.
+- Result:
+  - ✅ The system allows the modification, as per the remediated rule (where: 'assignedTo is null or assignedTo = $user'), demonstrating that unassigned incidents are accessible to support users.
 
 ## Summary
 

@@ -28,7 +28,7 @@ This violates critical business rules and poses significant risks to the integri
 The objective of this exercise is to identify and remediate vulnerabilities that allow support users to perform actions reserved for administrators. By enforcing strict access controls, we will ensure that only authorized users can perform sensitive operations, thereby reinforcing business logic and mitigating security risks.
 
 ## 🚨 2. Vulnerable Code :
-we will use exactly the [remediated code from Exercise 1.1.](./ex1.1#%EF%B8%8F-4-remediation), It correctly prevents support users from touching other users’ incidents, but it does not yet enforce admin‑only rules (e.g. closing high‑urgency incidents, modifying closed incidents, deleting any incident).
+we will use exactly the [remediated code from Exercise 1.1.](../ex1.1#%EF%B8%8F-4-remediation), It correctly prevents support users from touching other users’ incidents, but it does not yet enforce admin‑only rules (e.g. closing high‑urgency incidents, modifying closed incidents, deleting any incident).
 
 **File**: `srv/services.cds`
 ```cds
@@ -129,7 +129,7 @@ The fixes follow the principle of least privilege, ensuring support users are bl
 * **Improve UI Error Handling:** Modify the frontend to display meaningful error messages for forbidden actions.
 
 ### Step 1: Update Services.cds
-The updated version for this exercise introduces vertical privilege escalation protections, explicitly defining admin privileges for Processorservice while maintaining the horizontal controls from [Exercise 1.1]((./ex1.1/README.md))
+The updated version for this exercise introduces vertical privilege escalation protections, explicitly defining admin privileges for Processorservice while maintaining the horizontal controls from [Exercise 1.1]((../ex1.1/README.md))
 
 
 ```
@@ -163,7 +163,7 @@ Key Changes:
 * ✅ Service-Level Role Requirements: @requires: ['support', 'admin'] allows both roles to access the service.
 
 ### Step 2: Update Services.js
-The initial remediation code from [Exercise 1.1]((./ex1.1/README.md)) secured against horizontal privilege escalation (support users interfering with others' incidents). 
+The initial remediation code from [Exercise 1.1]((../ex1.1/README.md)) secured against horizontal privilege escalation (support users interfering with others' incidents). 
 However, it still allowed support users to perform actions reserved for administrators, such as closing high-urgency incidents. We enhance the existing services.js to fix vertical privilege escalation.
 
 Here is the updated services.js with added checks to enforce the admin-only rules:

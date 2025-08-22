@@ -107,7 +107,7 @@ class ProcessorService extends cds.ApplicationService {
   - Navigate to an incident assigned to Alice with Status different from "Closed".
   - Click Delete (or select incident and click Delete button).
   - Confirm deletion when prompted.
-- Result: ✅ System allows Alice to delete the incident, violating the "Only administrators can delete incidents" rule.
+- Result: ✅ System allows Alice to delete incident with Status different from "Closed" , violating the "Only administrators can delete incidents" rule.
     
 ### Step 4: Verify Exploitation Success
   * Observation:

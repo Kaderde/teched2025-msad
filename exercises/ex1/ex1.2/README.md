@@ -241,18 +241,17 @@ cf deploy mta_archives/incident-management_1.0.0.mtar
   - ❌ The UI displays an error: "Only administrators can close high-urgency incidents."
   - ✅ This confirms that vertical privilege escalation is prevented for high-urgency incidents.
 
-* Click "Edit" and try to set the status to "Closed" (status_code = 'C').
-* Save the changes.
-### Step 3: Verify Alice Can Modify Her Own Incident
-1. In the incident list, locate an incident assigned to **Alice**  *(e.g., "Strange noise when switching off Inverter")*
-2. Verify the UI shows the assignment: The **Assigned To** column should display `alice.support@company.com`.
-3. Click on the incident to open its details page.
-4. Click the **Edit** button.
-5. Attempt to modify the incident:
-   1. Change the title to **"UPDATED BY ALICE - Test"**
-   2. Add a conversation entry: `"Alice updated this incident"`
-   3. Click **Save**
-
+### Step 3: Verify Alice Can Close a Medium-Urgency Incident
+- Action:
+  - Locate a medium-urgency (code: 'M') incident assigned to Alice or unassigned.
+  - Click "Edit", change status to "Closed", and save.
+- Result:
+  - ✅ The system allows the update and closes the incident.
+  - ✅ This confirms that normal workflow operations are preserved for non-critical incidents. Support users can close regular tickets — only high-urgency closures are restricted.
+ 
+### Step 4: Verify Alice Can Close a Medium-Urgency Incident
+  
+    
 6. ✅ **Expected Result:** The incident is now in edit mode. Alice can successfully change fields such as the title, status, or add a conversation message. This confirms that the **@restrict** rule **assignedTo = $user** evaluates to true for Alice's assigned incidents.
 
 ### Step 4: Verify Alice Cannot Modify Another User's Incident

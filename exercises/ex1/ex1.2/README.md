@@ -241,7 +241,7 @@ cf deploy mta_archives/incident-management_1.0.0.mtar
   - ❌ The UI displays an error: "Only administrators can close high-urgency incidents."
   - ✅ This confirms that vertical privilege escalation is prevented for high-urgency incidents.
 
-### Step 3: Verify Alice Can Close a Medium-Urgency Incident
+### Step 3: Verify Alice Can Modify Non-High-Urgency Incidents
 - Action:
   - Locate a medium-urgency (code: 'M') incident assigned to Alice or unassigned.
   - Click "Edit", change status to "Closed", and save.
@@ -249,29 +249,50 @@ cf deploy mta_archives/incident-management_1.0.0.mtar
   - ✅ The system allows the update and closes the incident.
   - ✅ This confirms that normal workflow operations are preserved for non-critical incidents. Support users can close regular tickets — only high-urgency closures are restricted.
  
-### Step 4: Verify Alice Can Close a Medium-Urgency Incident
-  
-    
-6. ✅ **Expected Result:** The incident is now in edit mode. Alice can successfully change fields such as the title, status, or add a conversation message. This confirms that the **@restrict** rule **assignedTo = $user** evaluates to true for Alice's assigned incidents.
+### Step 4: Login as David (Admin User)
+  - Action:
+    - Log in with david.admin@company.com
+    - Locate a high-urgency open incident (assigned to anyone or unassigned).
+    - Click "Edit", change status to "Closed", and save.
+- Result:
+    - ✅ The system successfully closes the high-urgency incident.
+    - ✅ This confirms that only administrators can perform sensitive actions like closing high-risk incidents, as enforced by { grant: '*', to: 'admin' } and correct role-based access control.
+ 
+### Step 5: Verify David can Modify/Delete a Closed Incident
+- Action:
+  - Locate the closed incident from Step 4.
+  - Edit the title or delete the incident.
+- Result:
+- ✅ The system allows both operations.
+- ✅ This confirms admins bypass restrictions applied to support users.
 
-### Step 4: Verify Alice Cannot Modify Another User's Incident
-Now, we will try to perform the original attack.
-1. Return to the incident list.
-2. Locate an incident that is explicitly assigned to Bob, for example, "No current on a sunny day".
-3. Click on this incident to view its details.
-4. Click the **Edit** button.
-6. ❌ Expected Result: The application should prevent Alice from editing this incident. clicking Edit mode will trigger an authorization error message (e.g., "Error - Forbidden"). This confirms that the **where: 'assignedTo is null or assignedTo = $user'** clause is correctly blocking Alice's unauthorized modification attempts on incidents assigned to Bob.
+### 📌 Verification Summary:
 
-> **Note:**  
-> If you run into a generic **"Forbidden"** error message, you can replace it with a more descriptive message by handling the error in your `services.js` file.  
-> Since the `@restrict` annotation does not support custom messages by default, you’ll need to implement your own logic to provide clearer, user-friendly feedback to the end user.
+The remediation successfully addresses Vertical Privilege Escalation by:
+
+**1. Restricting Support Users:**
+
+  - Cannot close high-urgency incidents.
+  - Cannot modify/delete closed incidents.
+  - Retain modify only to their own non-high-urgency incidents.
+
+**2. Empowering Admin Users:**
+  - Full access to all incidents and operations.
+  - Can close high-urgency incidents and modify closed incidents.
+
+**3. Security Mechanisms:**
+  - Declarative Security: @restrict rules in services.cds enforce role-based access.
+  - Imperative Security: services.js handlers (e.g., onModify) validate business rules.
+  - Defense in Depth: Combined CDS annotations and JavaScript logic prevent bypasses.
 
 ## Summary
 
-In these exercises, you have learned how:
-
-* To address Horizontal Privilege Escalation by implementing **crucial data ownership field (assignedTo)** and enforcing granular authorization rules.
-* To leverage CAP's native **@restrict annotation and the $user context** to declaratively define and enforce security policies directly within the service definition.
-* To secure the application by ensuring support users can **only modify incidents assigned to them**, thereby reinforcing business logic and mitigating a critical OWASP Top 10 vulnerability.
-
+In these exercises, you have learned how to:
+  - Mitigate Vertical Privilege Escalation by explicitly defining admin-only operations in @restrict rules.
+  - Leverage CAP’s Role-Based Access Control (RBAC) to separate support and admin capabilities.
+  - Combine Declarative and Imperative Security for comprehensive protection:
+    * CDS Annotations (@restrict) for coarse-grained access control.
+    * JavaScript Handlers (e.g., onModify) for fine-grained business logic enforcement.
+  - Test Security Rules by validating both allowed and denied operations for each role.
+    
 Continue to - [Exercise 1.2 - Vertical Privilege Escalation](./ex1.2/README.md)

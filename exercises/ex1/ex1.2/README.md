@@ -130,7 +130,7 @@ The fixes follow the principle of least privilege, ensuring support users are bl
 
 ### Step 1: Updated Code: services.cds
 
-Update the ProcessorService definition to explicitly grant admins full access (including closing incidents) while keeping support restrictions. This ensures admins can override rules, but we'll enforce the urgency check in the JS handler.
+Update the ProcessorService definition to explicitly grant admins full access (including closing incidents) while keeping support restrictions. This ensures admins can override rules, and  we'll enforce the urgency check in the JS handler.
 
 ```
 // Updated srv/services.cds
@@ -186,10 +186,9 @@ using { sap.capire.incidents as my } from '../db/schema';
     
   @restrict: [ // You can use the @restrict annotation to define authorizations on a fine-grained level.
         
-        { grant: ['READ', 'CREATE'], to: 'support' },          // ✅ Support users Can view and create incidents
+        { grant: ['READ', 'CREATE'], to: 'support' },         // ✅ Support users Can view and create incidents
 
-        // ✅ THIS IS THE KEY CHANGE:
-        // Support users can only UPDATE or DELETE incidents that are either
+        // ✅ Support users can only UPDATE or DELETE incidents that are either
         // unassigned (assignedTo is null) or assigned to themselves.
         { 
             grant: ['UPDATE', 'DELETE'], 
@@ -197,7 +196,7 @@ using { sap.capire.incidents as my } from '../db/schema';
             where: 'assignedTo is null or assignedTo = $user' 
         },
 
-        { grant: '*', to: 'admin' }                          // ✅ Admin users has full access
+        { grant: '*', to: 'admin' }                           // ✅ Admin users has full access
     ]
     entity Incidents as projection on my.Incidents;    
 
@@ -224,23 +223,13 @@ class ProcessorService extends cds.ApplicationService {
     this.before("UPDATE", "Incidents", (req) => this.onUpdate(req));
     this.before("CREATE", "Incidents", (req) => this.changeUrgencyDueToSubject(req.data));
 
-  // ✅ NEW:Handle the creation of new Incidents, triggering auto-assignment by the processor.
+  // ✅ NEW: Handle the creation of new Incidents, triggering auto-assignment by the processor.
     this.on("CREATE", "Incidents", (req) => this.handleIncidentCreation(req));
 
     return super.init();
   }
 
-...
-
-  // ✅ NEW: Handle incident creation with auto-assignment 
-  async handleIncidentCreation(req) {
-      const incident = req.data;      if (incident.status_code === 'A' && (req.user.is('support') || req.user.is('admin'))) {
-          incident.assignedTo = req.user.id;
-          console.log(`📝 Auto-assigned incident to ${req.user.id}`);
-      }
-      this.changeUrgencyDueToSubject(incident);
-  }
-}
+... // Other methods
 
 module.exports = { ProcessorService }
 

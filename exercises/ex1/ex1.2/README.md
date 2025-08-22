@@ -60,7 +60,7 @@ class ProcessorService extends cds.ApplicationService {
 // ❌ VULNERABILITY:
 // No check for admin role and for high-urgency incidents when status is changed to 'closed'
 // No check that only admins can modify closed incidents.
-// ✅ NEW: No updates or deletes on closed incidents */
+// No updates or deletes on closed incidents.
   async onModify(req) {
     const result = await SELECT.one.from(req.subject)
       .columns('status_code')

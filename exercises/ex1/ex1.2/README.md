@@ -285,7 +285,7 @@ The remediation successfully addresses Vertical Privilege Escalation by:
   - Imperative Security: services.js handlers (e.g., onModify) validate business rules.
   - Defense in Depth: Combined CDS annotations and JavaScript logic prevent bypasses.
 
-## Summary
+## 📌 Summary:
 
 In these exercises, you have learned how to:
   - Mitigate Vertical Privilege Escalation by explicitly defining admin-only operations in @restrict rules.

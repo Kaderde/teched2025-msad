@@ -12,7 +12,6 @@ This violates critical business rules and poses significant risks to the integri
   - ✅ Can view and create incidents.
   - ✅ Can update or delete incidents assigned to them or unassigned incidents.
   - ❌ Cannot close high-urgency incidents.
-  - ❌ Cannot modify or delete closed incidents.
 
 * Administrators:
   - ✅ Can view, create, update, and delete all incidents.
@@ -100,14 +99,14 @@ class ProcessorService extends cds.ApplicationService {
   - Add a conversation message: "Closing this high-urgency incident as support user"
   - Click "Save"
 - Result:
-  - ❌ The system allows Alice to close the incident, violating the business rule.
+  - ❌ The system allows Alice to close High-Urgency incident, violating the business rule.
  
 ### Step 3: Exploit Deleting an Incident
 - Action:
   - Navigate to an incident assigned to Alice with Status different from "Closed".
   - Click Delete (or select incident and click Delete button).
   - Confirm deletion when prompted.
-- Result: ✅ System allows Alice to delete incident with Status different from "Closed" , violating the "Only administrators can delete incidents" rule.
+- Result: ✅ System allows Alice to delete incident with Status different from "Closed" , violating the "Only administrators can delete closed incidents" rule.
     
 ### Step 4: Verify Exploitation Success
   * Observation:

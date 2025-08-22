@@ -205,7 +205,7 @@ Here is the updated services.js with added checks to enforce the admin-only rule
 module.exports = { ProcessorService }
 
 ```
-Copy the complete code from this link: [services.js]([./services.js).
+Copy the complete code from this link: [services.js](./services.js).
 
 Key Changes:
 

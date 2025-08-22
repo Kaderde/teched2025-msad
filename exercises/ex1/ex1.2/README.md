@@ -128,7 +128,7 @@ The fixes follow the principle of least privilege, ensuring support users are bl
 * **Implement Custom Validation Logic:** Add checks in services.js to validate urgency and user roles during UPDATE operations, rejecting invalid closures.
 * **Improve UI Error Handling:** Modify the frontend to display meaningful error messages for forbidden actions.
 
-### Step 1: services.cds
+### Step 1: Update Services.cds
 
 
 ```
@@ -161,7 +161,7 @@ Key Changes:
 * ✅ Admin Full Access: { grant: '*', to: 'admin' } grants admins complete CRUD permissions.
 * ✅ Service-Level Role Requirements: @requires: ['support', 'admin'] allows both roles to access the service.
 
-### Step 2: services.js
+### Step 2: Update Services.js
 The initial remediation code from [Exercise 1.1]((./ex1.1/README.md)) secured against horizontal privilege escalation (support users interfering with others' incidents). 
 However, it still allowed support users to perform actions reserved for administrators, such as closing high-urgency incidents. We enhance the existing services.js to fix vertical privilege escalation.
 

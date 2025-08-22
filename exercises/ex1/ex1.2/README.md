@@ -129,6 +129,7 @@ The fixes follow the principle of least privilege, ensuring support users are bl
 * **Improve UI Error Handling:** Modify the frontend to display meaningful error messages for forbidden actions.
 
 ### Step 1: Update Services.cds
+The updated version for this exercise introduces vertical privilege escalation protections, explicitly defining admin privileges for Processorservice while maintaining the horizontal controls from [Exercise 1.1]((./ex1.1/README.md))
 
 
 ```

@@ -128,7 +128,7 @@ The fixes follow the principle of least privilege, ensuring support users are bl
 * **Implement Custom Validation Logic:** Add checks in services.js to validate urgency and user roles during UPDATE operations, rejecting invalid closures.
 * **Improve UI Error Handling:** Modify the frontend to display meaningful error messages for forbidden actions.
 
-### Step 1: Updated Code: services.cds
+### Step 1: services.cds
 
 Update the ProcessorService definition to explicitly grant admins full access (including closing incidents) while keeping support restrictions. This ensures admins can override rules, and  we'll enforce the urgency check in the JS handler.
 
@@ -162,53 +162,13 @@ Key Changes:
 * ✅ Admin Full Access: { grant: '*', to: 'admin' } grants admins complete CRUD permissions.
 * ✅ Service-Level Role Requirements: @requires: ['support', 'admin'] allows both roles to access the service.
 
-### Step 2: Updated Code: services.js
+### Step 2: services.js
 
 Implement custom validation logic to enforce both business rules using role-based and state-based checks.
 
-File: `srv/services.cds`
-
 ```
-using { sap.capire.incidents as my } from '../db/schema';
+// Updated srv/services.cds
 
-/**
- * Service used by support personel, i.e. the incidents' 'processors'.
- */
-// ✅ SECURED: ProcessorService with proper access controls
-
-  service ProcessorService {
-    
-  @restrict: [ // You can use the @restrict annotation to define authorizations on a fine-grained level.
-        
-        { grant: ['READ', 'CREATE'], to: 'support' },         // ✅ Support users Can view and create incidents
-
-        // ✅ Support users can only UPDATE or DELETE incidents that are either
-        // unassigned (assignedTo is null) or assigned to themselves.
-        { 
-            grant: ['UPDATE', 'DELETE'], 
-            to: 'support', 
-            where: 'assignedTo is null or assignedTo = $user' 
-        },
-
-        { grant: '*', to: 'admin' }                           // ✅ Admin users has full access
-    ]
-    entity Incidents as projection on my.Incidents;    
-
-    @readonly
-    entity Customers as projection on my.Customers;        
-}
-
-    annotate ProcessorService.Incidents with @odata.draft.enabled; 
-    annotate ProcessorService with @(requires: ['support']);
-
-...
-
-```
-Copy the complete code from this link: [services.cds](./services.cds).
-
-File: `srv/services.js`
-
-```
 const cds = require('@sap/cds')
 
 class ProcessorService extends cds.ApplicationService {
@@ -229,80 +189,6 @@ module.exports = { ProcessorService }
 
 ```
 Copy the complete code from this link: [services.js]([./services.js).
-
-### Step 4: Update UI to Show Assignment
-To make the new assignedTo field visible and usable in your Fiori Elements application, you need to
-add the foloowing parts in the code:
-
-**annotations.cds file:**
-  - General Information: Add assignedTo field to UI.FieldGroup #GeneratedGroup
-  - Selection Fields: Added assignedTo to UI.SelectionFields for filtering/sorting
-
-**i18n.properties file:**
-  - Added new property: AssignedTo=Assigned To
-
-**File**: app/incidents/annotations.cds changes:
-
-```
-UI.FieldGroup #GeneratedGroup : {
-
-    $Type : 'UI.FieldGroupType',
-    Data : [
-        {
-            $Type : 'UI.DataField',
-            Value : title,
-        },
-        {
-            $Type : 'UI.DataField',
-            Label : '{i18n>Customer}',
-            Value : customer_ID,
-        },
-        // ✅ ADDED: assignedTo field to UI.FieldGroup #GeneratedGroup
-        {
-            $Type : 'UI.DataField',
-            Label : '{i18n>AssignedTo}', // Use consistent i18n label for assigned user in general info
-            Value : assignedTo,
-        },
-    ],
-},
-...
-  UI.LineItem : [
-      ...
-      {
-          $Type : 'UI.DataField',
-          Value : urgency.descr,
-          Label : '{i18n>Urgency}',
-      },
-      // ✅ ADDED: Show assigned user in the list view
-      {
-          $Type : 'UI.DataField',
-          Value : assignedTo,
-          Label : '{i18n>AssignedTo}',
-      },
-
-  ],
-  // ✅ ADDED: Add 'assignedTo' field to selection fields for filtering/sorting
-  UI.SelectionFields : [
-      status_code,
-      urgency_code,
-      assignedTo, 
-  ],
-
-...
-
-```
-Copy the complete code from this link: [annotations.cds](./annotations.cds).
-
-**File**: app/incidents/webapp/i18n.properties
-
-```
-...
-
-// ✅ ADDED: #XFLD: Label for assigned user field
-AssignedTo=Assigned To
-
-```
-Copy the complete code from this link: [i18n.properties](./i18n.properties).
 
 ### ✅ 5. Verification:
 This section outlines the steps to confirm that the remediation for the Horizontal Privilege Escalation vulnerability in the Incident Management application has been successfully implemented. The goal is to ensure that support users can only modify incidents assigned to them or unassigned incidents, and that admin users retain full access, as per the business rules.

@@ -216,20 +216,33 @@ Key Changes:
 * ✅ Allows administrators to close any incident, including high-urgency ones.
 
 ### ✅ 5. Verification:
-This section outlines the steps to confirm that the remediation for the Horizontal Privilege Escalation vulnerability in the Incident Management application has been successfully implemented. The goal is to ensure that support users can only modify incidents assigned to them or unassigned incidents, and that admin users retain full access, as per the business rules.
+This section outlines the steps to confirm that the remediation for the Vertical Privilege Escalation vulnerability has been successfully implemented. The goal is to verify that:
 
-### Step 1: Deploy the Updated Application to Cloud Foundry
+* Support users cannot perform admin-only operations (e.g., closing high-urgency incidents, modifying/deleting closed incidents).
+* Admin users can perform all operations, including those restricted for support users.
+
+### Step 1: Deploy the Updated Application
 
 ```
 mbt build
 cf deploy mta_archives/incident-management_1.0.0.mtar
 ```
+💡 Ensure the deployment includes both updated srv/services.cds and services.js logic.
 
 ### Step 2: Login as Alice (Support User)
-- Access SAP Build Work Zone.
-- Login with alice.support@company.com.
-- Navigate to Incident Management application.
+- Action:
+  - Access SAP Build Work Zone and log in with alice.support@company.com.
+  - Locate a high-urgency incident (e.g., "URGENT: Inverter overheating" with urgency_code = 'H' and status_code = 'N').
+  - Confirm the urgency is set to "High" and the status is "New" (not closed).
+  - Click "Edit" and try to set the status to "Closed" (status_code = 'C').
+  - Save the changes.
+- Result:
+❌ The system blocks the action.
+❌ The UI displays an error: "Only administrators can close high-urgency incidents."
+✅ This confirms that vertical privilege escalation is prevented for high-urgency incidents.
 
+* Click "Edit" and try to set the status to "Closed" (status_code = 'C').
+* Save the changes.
 ### Step 3: Verify Alice Can Modify Her Own Incident
 1. In the incident list, locate an incident assigned to **Alice**  *(e.g., "Strange noise when switching off Inverter")*
 2. Verify the UI shows the assignment: The **Assigned To** column should display `alice.support@company.com`.

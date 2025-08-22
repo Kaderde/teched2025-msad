@@ -414,7 +414,7 @@ The remediation is successful in combination of :
 - Implementing @restrict with where: 'assignedTo = $user'.
 - Enforcing business rules in services.js, eliminates horizontal privilege escalation and enforces the principle of least privilege.
   
-## Summary
+## 📌 Summary
 
 In these exercises, you have learned how:
 

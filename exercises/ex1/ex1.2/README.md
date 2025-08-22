@@ -232,14 +232,14 @@ cf deploy mta_archives/incident-management_1.0.0.mtar
 ### Step 2: Login as Alice (Support User)
 - Action:
   - Access SAP Build Work Zone and log in with alice.support@company.com.
-  - Locate a high-urgency incident (e.g., "URGENT: Inverter overheating" with urgency_code = 'H' and status_code = 'N').
+  - Locate a high-urgency incident assigned to Alice or unassigned.
   - Confirm the urgency is set to "High" and the status is "New" (not closed).
   - Click "Edit" and try to set the status to "Closed" (status_code = 'C').
   - Save the changes.
 - Result:
-❌ The system blocks the action.
-❌ The UI displays an error: "Only administrators can close high-urgency incidents."
-✅ This confirms that vertical privilege escalation is prevented for high-urgency incidents.
+  - ❌ The system blocks the action.
+  - ❌ The UI displays an error: "Only administrators can close high-urgency incidents."
+  - ✅ This confirms that vertical privilege escalation is prevented for high-urgency incidents.
 
 * Click "Edit" and try to set the status to "Closed" (status_code = 'C').
 * Save the changes.

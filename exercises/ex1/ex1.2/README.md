@@ -130,7 +130,6 @@ The fixes follow the principle of least privilege, ensuring support users are bl
 
 ### Step 1: services.cds
 
-Update the ProcessorService definition to explicitly grant admins full access (including closing incidents) while keeping support restrictions. This ensures admins can override rules, and  we'll enforce the urgency check in the JS handler.
 
 ```
 // Updated srv/services.cds
@@ -163,8 +162,10 @@ Key Changes:
 * ✅ Service-Level Role Requirements: @requires: ['support', 'admin'] allows both roles to access the service.
 
 ### Step 2: services.js
+The initial remediation code from [Exercise 1.1]((./ex1.1/README.md)) secured against horizontal privilege escalation (support users interfering with others' incidents). 
+However, it still allowed support users to perform actions reserved for administrators, such as closing high-urgency incidents. We enhance the existing services.js to fix vertical privilege escalation.
 
-Implement custom validation logic to enforce both business rules using role-based and state-based checks.
+Here is the updated services.js with added checks to enforce the admin-only rules:
 
 ```
 // Updated srv/services.cds

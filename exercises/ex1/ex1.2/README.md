@@ -207,6 +207,14 @@ module.exports = { ProcessorService }
 ```
 Copy the complete code from this link: [services.js]([./services.js).
 
+Key Changes:
+
+* ✅ Implements role-based access control using req.user.isAdmin().
+* ✅ Allows administrators to modify/delete closed incidents.
+* ✅ Returns 403 Forbidden with descriptive error message
+* ✅ Prevents support users from closing high-urgency incidents (urgency_code === 'H').
+* ✅ Allows administrators to close any incident, including high-urgency ones.
+
 ### ✅ 5. Verification:
 This section outlines the steps to confirm that the remediation for the Horizontal Privilege Escalation vulnerability in the Incident Management application has been successfully implemented. The goal is to ensure that support users can only modify incidents assigned to them or unassigned incidents, and that admin users retain full access, as per the business rules.
 

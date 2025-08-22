@@ -169,21 +169,36 @@ However, it still allowed support users to perform actions reserved for administ
 Here is the updated services.js with added checks to enforce the admin-only rules:
 
 ```
-// Updated srv/services.cds
+// Updated srv/services.js
 
-const cds = require('@sap/cds')
+... // Other methods
 
-class ProcessorService extends cds.ApplicationService {
-  /** Registering custom event handlers */
-  init() {
-    this.before("UPDATE", "Incidents", (req) => this.onUpdate(req));
-    this.before("CREATE", "Incidents", (req) => this.changeUrgencyDueToSubject(req.data));
+ // ✅ NEW : Enforce admin-only operations (vertical ESC)
+  async onModify(req) {
+    // Fetch current incident state (status + urgency)
+    const result = await SELECT.one.from(req.subject)
+      .columns('status_code', 'urgency_code')
+      .where({ ID: req.data.ID });
 
-  // ✅ NEW: Handle the creation of new Incidents, triggering auto-assignment by the processor.
-    this.on("CREATE", "Incidents", (req) => this.handleIncidentCreation(req));
+    if (!result) return req.reject(404, `Incident ${req.data.ID} not found`);
 
-    return super.init();
-  }
+    // Check if incident is already closed
+    if (result.status_code === 'C') {
+    // ✅ NEW : Allow only admins to modify/delete closed incidents
+      if (!req.user.isAdmin()) {
+        const action = req.event === 'UPDATE' ? 'modify' : 'delete';
+        return req.reject(403, `Cannot ${action} a closed incident`);
+      }
+      // Admins can proceed
+      return;
+    }
+    // ✅ UPDATE : Check if user is attempting to close the incident (status_code set to 'C')
+    if (req.data.status_code === 'C') {
+    // ✅ NEW : Block support users from closing high-urgency incidents
+      if (result.urgency_code === 'H' && !req.user.isAdmin()) {
+        return req.reject(403, 'Only administrators can close high-urgency incidents');
+      }
+    }
 
 ... // Other methods
 

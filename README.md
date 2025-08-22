@@ -49,6 +49,7 @@ Every exercise module is a self-contained lab focused on a specific vulnerabilit
 - 💥 **Exploitation:** A step-by-step guide on how to exploit the vulnerability, demonstrating its real-world impact.
 - 🛡️ **Remediation:** The corrected version of the code that patches the vulnerability, along with an explanation of the fix.
 - ✅ **Verification:** A simple procedure to confirm that the patch has successfully mitigated the vulnerability and the exploit no longer works.
+- 📌 **Summary:** A practical recap that consolidates the exercise outcomes with actionable takeaways.
 
 This structure is designed to help you understand a vulnerability from an attacker's perspective and a defender's, see how it can impact a CAP application, and learn actionable steps to mitigate it with BTP best practices. 
 

@@ -163,14 +163,8 @@ Key Changes:
 * ✅ Service-Level Role Requirements: @requires: ['support', 'admin'] allows both roles to access the service.
 
 ### Step 2: Updated Code: services.js
+
 Implement custom validation logic to enforce both business rules using role-based and state-based checks.
-
-```
-
-```
-Copy the complete file from this link: [sap.capire.incidents-Incidents.csv](./sap.capire.incidents-Incidents.csv).
-
-### Step 3: Implement Service-Level Security
 
 File: `srv/services.cds`
 

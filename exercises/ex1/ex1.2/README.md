@@ -10,7 +10,7 @@ This violates critical business rules and poses significant risks to the integri
 
 * Support Users:
   - ✅ Can view and create incidents.
-  - ✅ Can update or delete incidents assigned to them or unassigned incidents.
+  - ✅ Can update or delete non-closed incidents assigned to them or unassigned.
   - ❌ Cannot close high-urgency incidents.
 
 * Administrators:
@@ -100,19 +100,8 @@ class ProcessorService extends cds.ApplicationService {
   - Click "Save"
 - Result:
   - ❌ The system allows Alice to close High-Urgency incident, violating the business rule.
- 
-### Step 3: Exploit Deleting an Incident
-- Action:
-  - Navigate to an incident assigned to Alice with Status different from "Closed".
-  - Click Delete (or select incident and click Delete button).
-  - Confirm deletion when prompted.
-- Result: ✅ System allows Alice to delete incident with Status different from "Closed" , violating the "Only administrators can delete closed incidents" rule.
-    
-### Step 4: Verify Exploitation Success
-  * Observation:
-    - ✅ Alice closed a high-urgency incident and modified a closed incident despite lacking admin privileges.
 
-### Step 5: Login as Admin User
+### Step 3: Login as Admin User
 
 - Action:
   - Log out and log in as david.admin@company.com (admin role).
@@ -123,7 +112,7 @@ class ProcessorService extends cds.ApplicationService {
   - ❌ Root Cause: @requires: 'support' in services.cds blocks admin access to the service.
 
 ### 📌Critical Vulnerability Summary
-- ❌ Support users can close high-urgency incidents and modify closed incidents.
+- ❌ Support users can close high-urgency incidents.
 - ❌ Admins are excluded entirely from modifying closed incidents due to misconfigured @requires.
 - ❌ No validation in services.js for:
   - Admin role when closing high-urgency incidents.

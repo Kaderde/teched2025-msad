@@ -9,16 +9,16 @@ This violates critical business rules and poses significant risks to the integri
 **Business Rules:**
 
 * Support Users:
-  - Can view and create incidents.
-  - Can update or delete non-closed incidents assigned to them or unassigned.
-  - Cannot modify or delete incidents assigned to other support users.
-  -  Cannot modify or delete closed incidents.
-  - Cannot close high-urgency incidents.
+  - ✅ Can view and create incidents.
+  - ✅ Can update or delete non-closed incidents assigned to them or unassigned.
+  - ❌ Cannot modify or delete incidents assigned to other support users.
+  - ❌ Cannot modify or delete closed incidents.
+  - ❌ Cannot close high-urgency incidents.
 
 * Administrators:
-  - Can view, create, update, and delete all incidents.
-  - Can close all incidents, including high-urgency incidents.
-  - Can modify or delete closed incidents.
+  - ✅ Can view, create, update, and delete all incidents.
+  - ✅ Can close all incidents, including high-urgency incidents.
+  - ✅ Can modify or delete closed incidents.
 
 ### Why This Matters
 

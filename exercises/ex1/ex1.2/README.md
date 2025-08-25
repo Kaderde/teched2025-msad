@@ -11,6 +11,8 @@ This violates critical business rules and poses significant risks to the integri
 * Support Users:
   - ✅ Can view and create incidents.
   - ✅ Can update or delete non-closed incidents assigned to them or unassigned.
+  - ❌ Cannot modify or delete incidents assigned to other support users.
+  - ❌ Cannot modify or delete closed incidents.
   - ❌ Cannot close high-urgency incidents.
 
 * Administrators:

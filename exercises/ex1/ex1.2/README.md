@@ -297,4 +297,4 @@ In these exercises, you have learned how to:
     * JavaScript Handlers (e.g., onModify) for fine-grained business logic enforcement.
   - Test Security Rules by validating both allowed and denied operations for each role.
     
-Continue to - [Exercise 1.2 - Vertical Privilege Escalation](./ex1.2/README.md)
+Continue to - [Exercise 1.3 - Insecure Direct Object References (IDOR)](./ex1.3/README.md)

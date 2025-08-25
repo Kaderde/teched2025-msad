@@ -22,7 +22,7 @@ The business rules for the "Incident Management" application are as follows:
 
 ## [Exercise 1.1 - Horizontal Privilege Escalation](./ex1.1/README.md)
 ## [Exercise 1.2 - Vertical Privilege Escalation](./ex1.2/README.md)
-## [Exercise 1.3 - - Insecure Direct Object References (IDOR)]()
+## [Exercise 1.3 - Insecure Direct Object References (IDOR)]()
 
 
 

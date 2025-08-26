@@ -27,24 +27,6 @@ The objective of this exercise is to implement object-level authorization, data 
 ## 🚨 2. Vulnerable Code :
 we will use exactly the [remediated code from Exercise 1.1.](../ex1.1#%EF%B8%8F-4-remediation), It correctly prevents support users from touching other users’ incidents, but it does not yet enforce admin‑only rules (e.g. closing high‑urgency incidents, modifying closed incidents, deleting any incident).
 
-**File**: `srv/services.cds`
-```cds
-using { sap.capire.incidents as my } from '../db/schema';
-
-service ProcessorService {
-  @restrict: [
-    { grant: ['READ', 'CREATE'], to: 'support' },        // ✅ Support can view all incidents
-    { grant: ['UPDATE', 'DELETE'],                       // ✅ UPDATE, DELETE granted to support users
-      to: 'support',
-      where: 'assignedTo is null or assignedTo = $user'  // ✅ Horizontal control (correct)
-    }
-  ]
-  entity Incidents as projection on my.Incidents;
-}
-
-annotate ProcessorService with @(requires: 'support');  // ❌ Only support role required, Admins excluded
-
-```
 **File**: `db/schema.cds`
 ```
 entity Customers : managed { 
@@ -60,7 +42,7 @@ entity Customers : managed {
 }
 
 ```
-```
+
 **File**: `srv/services.cds`
 ```
 using { sap.capire.incidents as my } from '../db/schema';
@@ -89,14 +71,14 @@ service AdminService {
 annotate AdminService with @(requires: 'admin');
 
 ```
+
 **Why This is Vulnerable:**
 
-❌ No audit logging: No tracking of access to sensitive data or unauthorized access attempts.
-❌ No object-level validation: A support user can manipulate customers IDs in the API to access other customer's data, including credit card numbers.
-❌ No data classification: Credit card numbers are not annotated as sensitive, so audit logging isn't triggered.
-❌ No data masking: Credit card numbers are displayed in full to all users.
-❌ No error messages that prevent information disclosure (e.g., "Incident 12345 not found" reveals incident existence).
-
+- ❌ **No audit logging:** No tracking of access to sensitive data or unauthorized access attempts.
+- ❌ **No object-level validation:** A support user can manipulate customers IDs in the API to access other customer's data, including credit card numbers.- 
+- ❌ **No data classification:** Credit card numbers are not annotated as sensitive, so audit logging isn't triggered.
+- ❌ **No data masking:** Credit card numbers are displayed in full to all users.
+- ❌ **No error messages that prevent information disclosure :**  (e.g., "Incident 12345 not found" reveals incident existence).
      
 ## 💥 3. Exploitation: (TBD with screenshots)
 

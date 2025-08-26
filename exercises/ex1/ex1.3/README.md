@@ -142,6 +142,32 @@ module.exports = { ProcessorService }
 
 ```
 
+**File**: `package.json`
+
+```
+{
+  "dependencies": {
+    "@sap/cds": "^7",
+    "@sap/cds-hana": "^2"
+    // ❌ MISSING: "@cap-js/audit-logging"- Required for IDOR detection
+  }
+}
+
+```
+**File**: `mta.yaml`
+
+```
+modules:
+  - name: incident-management-srv
+    requires:
+   //   ❌ MISSING: audit-log
+
+resources:
+  // ❌ MISSING: audit-log
+  # Add this resource
+  
+```
+
 **Why This is Vulnerable:**
 
 - ❌ **No object-level validation:** A support user can manipulate customers IDs in the API to access other customer's data, including credit card numbers.- 

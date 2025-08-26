@@ -45,43 +45,61 @@ service ProcessorService {
 annotate ProcessorService with @(requires: 'support');  // ❌ Only support role required, Admins excluded
 
 ```
-**File**: `srv/services.js`
+**File**: `db/schema.cds`
 ```
-const cds = require('@sap/cds')
-
-class ProcessorService extends cds.ApplicationService {
-  init() {
-
-... // Other methods...
-
-// ❌ VULNERABILITY:
-// No check for admin role and for high-urgency incidents when status is changed to 'closed'
-// No check that only admins can modify closed incidents.
-// No updates or deletes on closed incidents.
-  async onModify(req) {
-    const result = await SELECT.one.from(req.subject)
-      .columns('status_code')
-      .where({ ID: req.data.ID })
-
-    if (!result) return req.reject(404, `Incident ${req.data.ID} not found`)
-
-    if (result.status_code === 'C') {
-      const action = req.event === 'UPDATE' ? 'modify' : 'delete'
-      return req.reject(403, `Cannot ${action} a closed incident`)
-    }
-  }
-  
+entity Customers : managed { 
+  key ID        : String;
+  firstName     : String;
+  lastName      : String;
+  name          : String = firstName ||' '|| lastName;
+  email         : EMailAddress;
+  phone         : PhoneNumber;
+  incidents     : Association to many Incidents on incidents.customer = $self;
+  creditCardNo  : String(16) @assert.format: '^[1-9]\d{15}$';  // ❌ No access control or masking
+  addresses     : Composition of many Addresses on addresses.customer = $self;
 }
 
-... // Other methods
+```
+
+```
+**File**: `srv/services.cds`
+```
+using { sap.capire.incidents as my } from '../db/schema';
+
+service ProcessorService {
+  @restrict: [
+    { grant: ['READ', 'CREATE'], to: 'support' },  // Support can view and create
+    { grant: ['UPDATE', 'DELETE'], 
+      to: 'support',
+      where: 'assignedTo is null or assignedTo = $user'  // Horizontal control for support
+    },
+    { grant: '*', to: 'admin' }  // Admin full access
+  ]
+  entity Incidents as projection on my.Incidents;
+  
+  @readonly
+  entity Customers as projection on my.Customers;  // ❌ Exposes all customers data to support users.
+}
+
+annotate ProcessorService with @(requires: ['support', 'admin']); 
+
+service AdminService {
+  entity Customers as projection on my.Customers;
+  entity Incidents as projection on my.Incidents;
+}
+annotate AdminService with @(requires: 'admin');
 
 ```
 
+
 **Why This is Vulnerable:**
-  - ❌ No DELETE validation in JavaScript to enforce admin-only deletion.
-  - ❌ No check for incident urgency when a support user tries to close an incident.
-  - ❌ Admin privileges are not enforced at both service (ProcessorService) and CRUD operation level.
-    
+
+❌ No audit logging: No tracking of access to sensitive data or unauthorized access attempts.
+❌ No object-level validation: A support user can manipulate customers IDs in the API to access other customer's data, including credit card numbers.
+❌ No data classification: Credit card numbers are not annotated as sensitive, so audit logging isn't triggered.
+❌ No data masking: Credit card numbers are displayed in full to all users.
+❌ No error messages that prevent information disclosure (e.g., "Incident 12345 not found" reveals incident existence).
+     
 ## 💥 3. Exploitation: (TBD with screenshots)
 
 ### Step 1: Login as Alice (Support User) :

@@ -60,7 +60,6 @@ entity Customers : managed {
 }
 
 ```
-
 ```
 **File**: `srv/services.cds`
 ```
@@ -90,8 +89,6 @@ service AdminService {
 annotate AdminService with @(requires: 'admin');
 
 ```
-
-
 **Why This is Vulnerable:**
 
 ❌ No audit logging: No tracking of access to sensitive data or unauthorized access attempts.
@@ -99,6 +96,7 @@ annotate AdminService with @(requires: 'admin');
 ❌ No data classification: Credit card numbers are not annotated as sensitive, so audit logging isn't triggered.
 ❌ No data masking: Credit card numbers are displayed in full to all users.
 ❌ No error messages that prevent information disclosure (e.g., "Incident 12345 not found" reveals incident existence).
+
      
 ## 💥 3. Exploitation: (TBD with screenshots)
 

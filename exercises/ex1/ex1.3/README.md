@@ -21,7 +21,8 @@ Insecure Direct Object References (IDOR) occur when an application exposes inter
 * **Security Risk:** Support users can manipulate customer IDs in the UI/API to access restricted data.
 
 ### Objective:
-The objective of this exercise is to identify and remediate vulnerabilities that allow support users to perform actions reserved for administrators. By enforcing strict access controls, we will ensure that only authorized users can perform sensitive operations, thereby reinforcing business logic and mitigating security risks.
+
+The objective of this exercise is to implement object-level authorization, data masking, and audit logging to ensure users only access customer data they are authorized to view. By enforcing these security controls, we will restrict data visibility appropriately and maintain comprehensive records of access, thereby protecting sensitive information and mitigating unauthorized data exposure risks.
 
 ## 🚨 2. Vulnerable Code :
 we will use exactly the [remediated code from Exercise 1.1.](../ex1.1#%EF%B8%8F-4-remediation), It correctly prevents support users from touching other users’ incidents, but it does not yet enforce admin‑only rules (e.g. closing high‑urgency incidents, modifying closed incidents, deleting any incident).

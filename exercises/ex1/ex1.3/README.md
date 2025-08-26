@@ -72,13 +72,85 @@ annotate AdminService with @(requires: 'admin');
 
 ```
 
+**File**: `srv/services.js`
+
+```
+const cds = require('@sap/cds')
+
+class ProcessorService extends cds.ApplicationService {
+  init() {
+
+    // ✅ Vertical privilege escalation fixed from Exercise 1.2
+    this.before(['UPDATE', 'DELETE'], 'Incidents', this.onModify)
+    
+    return super.init()
+  }
+
+  // ❌ VULNERABILITY: Limited validation and no comprehensive IDOR protection
+  async onModify(req) {
+    // Fetch current incident state (status + urgency)
+    const result = await SELECT.one.from(req.subject)
+      .columns('status_code', 'urgency_code')
+      .where({ ID: req.data.ID });
+
+    if (!result) return req.reject(404, `Incident ${req.data.ID} not found`);
+
+    // Check if incident is already closed
+    if (result.status_code === 'C') {
+      if (!req.user.isAdmin()) {
+        const action = req.event === 'UPDATE' ? 'modify' : 'delete';
+        return req.reject(403, `Cannot ${action} a closed incident`);
+      }
+      return;
+    }
+    
+    // Check if user is attempting to close the incident
+    if (req.data.status_code === 'C') {
+      if (result.urgency_code === 'H' && !req.user.isAdmin()) {
+        return req.reject(403, 'Only administrators can close high-urgency incidents');
+      }
+    }
+
+    // ❌ VULNERABILITY 1: Information Disclosure in Error Messages
+    // Error messages reveal incident existence and properties to unauthorized users.
+    
+    // ❌ VULNERABILITY 2: No Audit Trail
+    // No logging of access attempts, making security monitoring impossible
+    
+    // ❌ VULNERABILITY 1: No Audit Logging
+    // No record of who accessed which incidents, when, or what they did.
+    
+    // ❌ VULNERABILITY 2: No SAP Audit Log Service Integration
+    // Missing integration with enterprise audit logging for compliance
+
+    // ❌ VULNERABILITY 1: No API-Level READ Validation
+    // Users can directly access API endpoints to read any incident data
+    
+    // ❌ VULNERABILITY 2: No Comprehensive Audit Logging
+    // No audit trail for API access, making IDOR attacks invisible
+    
+    // ❌ VULNERABILITY 3: Missing Personal Data Protection
+    // No @PersonalData annotations for audit logging compliance
+    
+    // ❌ VULNERABILITY 4: No Direct API Access Controls
+    // API endpoints accessible outside of UI context without additional validation
+    
+  }
+}
+
+module.exports = { ProcessorService }
+
+```
+
 **Why This is Vulnerable:**
 
-- ❌ **No audit logging:** No tracking of access to sensitive data or unauthorized access attempts.
 - ❌ **No object-level validation:** A support user can manipulate customers IDs in the API to access other customer's data, including credit card numbers.- 
 - ❌ **No data classification:** Credit card numbers are not annotated as sensitive, so audit logging isn't triggered.
 - ❌ **No data masking:** Credit card numbers are displayed in full to all users.
 - ❌ **No error messages that prevent information disclosure :**  (e.g., "Incident 12345 not found" reveals incident existence).
+- ❌ **No audit logging:** No tracking of access to sensitive data or unauthorized access attempts, making it difficult to detect IDOR attacks.
+- ❌ **Missing SAP Audit Log Service:** No integration with enterprise audit logging infrastructure required for compliance and security monitoring.
+- ❌ **Compliance Gap:** Lacks detailed audit records required by regulations like GDPR, SOX, and industry standards.
      
 ## 💥 3. Exploitation: (TBD with screenshots)
 

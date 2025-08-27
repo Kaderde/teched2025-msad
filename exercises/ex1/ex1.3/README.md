@@ -175,9 +175,9 @@ resources:
 - ❌ **No audit logging:** No tracking of access to sensitive data or unauthorized access attempts, making it difficult to detect IDOR attacks.
 - ❌ **Missing SAP Audit Log Service:** No integration with enterprise audit logging infrastructure required for compliance and security monitoring.
 - ❌ **Compliance Gap:** Lacks detailed audit records required by regulations like GDPR, SOX, and industry standards.
-     
+
 ## 💥 3. Exploitation: (TBD with screenshots)
-In this lab, an IDOR vulnerability is exploited via API calls in a local development environment (SAP Business Application Studio with cds watch). Unlike production, key security measures such as real authentication flows, OAuth2 tokens, and data isolation are inactive, allowing ethical hackers to safely simulate attacks, validate vulnerabilities without risking live systems, and rapidly iterate fixes before deploying to production..
+In this lab, an IDOR vulnerability is exploited via API calls in a local development environment (SAP Business Application Studio with cds watch). Unlike production, key security measures such as real authentication flows, OAuth2 tokens, and data isolation are inactive, allowing ethical hackers to safely simulate attacks, validate vulnerabilities without risking live systems, and rapidly iterate fixes before deploying to production.
 
 ### Step 1: Start Local Development Server
 
@@ -212,53 +212,84 @@ Results :
 [cds] - server listening on { url: 'http://localhost:4004' }
 [cds] - server launched in: 673.811ms
 ```
+
 ### Step 2: List All Customers
 - Action: 
   - Click on 'http://localhost:4004' to connect to your locally running CAP server.
   - Click on Customers under the Service Endpoints: /odata/v4/processor/$metadata section.
-  - Add a conversation message: "Closing this high-urgency incident as support user"
-  - Click "Save"
 - Result:
-  - ❌ The system allows Alice to close High-Urgency incident, violating the business rule.
-
-
-- Access SAP Build Work Zone.
-- Login with alice.support@company.com. This user is set up from the from the previous exercise.
-- Navigate to Incident Management application.
-
-
-### Step 3: Login as Admin User
-
-- Action:
-  - Log out and log in as david.admin@company.com (admin role).
-  - Navigate to the closed incident modified by Alice.
-  - Attempt to edit the closed incident (e.g., add a comment).
-- Result:
-  - ❌ UI displays a blank loading screen (no error message).
-  - ❌ Root Cause: @requires: 'support' in services.cds blocks admin access to the service.
-
-### 📌Critical Vulnerability Summary
-- ❌ Support users can close high-urgency incidents.
-- ❌ Admins are excluded entirely from modifying closed incidents due to misconfigured @requires.
-- ❌ No validation in services.js for:
-  - Admin role when closing high-urgency incidents.
-  - Admin role when modifying closed incidents.
-- ❌ Silent errors for admins reduce transparency and hinder operations.
-
-## 🛡️ 4. Remediation:
-The fixes follow the principle of least privilege, ensuring support users are blocked from unauthorized actions while admins retain elevated permissions.
-
-### Key Remediation Steps
-
-* **Enhance Service-Level and Entity-Level Authorization:** Update services.cds to include explicit grants for admins and ensure proper role requirements.
-* **Implement Custom Validation Logic:** Add checks in services.js to validate urgency and user roles during UPDATE operations, rejecting invalid closures.
-* **Improve UI Error Handling:** Modify the frontend to display meaningful error messages for forbidden actions.
-
-### Step 1: Update Services.cds
-The updated version for this exercise introduces vertical privilege escalation protections, explicitly defining admin privileges for Processorservice while maintaining the horizontal controls from [Exercise 1.1]((../ex1.1/README.md))
-
 
 ```
+{
+  "@odata.context": "$metadata#Customers",
+  "value": [
+    {
+      "createdAt": "2025-08-27T09:06:00.013Z",
+      "createdBy": "anonymous",
+      "modifiedAt": "2025-08-27T09:06:00.013Z",
+      "modifiedBy": "anonymous",
+      "ID": "1004100",
+      "firstName": "Sunny",
+      "lastName": "Sunshine",
+      "name": "Sunny Sunshine",
+      "email": "sunny.sunshine@demo.com",
+      "phone": "+49-555-789",
+      "creditCardNo": "3400000000000094"
+    },
+... Other customers' records.
+  ]
+}
+```
+- ❌ No audit record is produced in local log files or the console output of the CAP runtime for any audit entries.
+- ❌ Sensitive data (e.g., credit card numbers) is not masked or protected in output.
+
+## 🛡️ 4. Remediation:
+To address the identified IDOR vulnerabilities and data privacy risks, this section implements SAP CAP's built-in security controls through:
+  1. **Personal Data Annotation** - Explicitly tags sensitive fields for GDPR compliance
+  2. **Automated Audit Logging** - Tracks all access to protected data with @cap-js/audit-logging
+  3. **Fine-Grained Access Control** - Restricts customer data visibility by user role.
+
+### Step 1: Add Audit Logging Dependency
+'''
+npm add @cap-js/audit-logging
+'''
+✅ Adds automatic:
+  - Sensitive data tracking.
+  - CRUD operation logging.
+  - GDPR-compliant audit trails.
+
+### Step 2: Annotate Personal Data
+Create srv/data-privacy.cds:
+'''
+using {sap.capire.incidents as my} from './services';
+using {
+  cuid,
+  managed
+} from '@sap/cds/common';
+
+
+annotate my.Customers with @PersonalData: {
+  EntitySemantics: 'DataSubject',
+  DataSubjectRole: 'Customer',
+} {
+  ID         @PersonalData.FieldSemantics : 'DataSubjectID';
+  firstName     @PersonalData.IsPotentiallyPersonal;
+  lastName      @PersonalData.IsPotentiallyPersonal;
+  email         @PersonalData.IsPotentiallyPersonal;
+  phone         @PersonalData.IsPotentiallyPersonal;
+  creditCardNo @PersonalData.IsPotentiallySensitive;
+}
+
+annotate my.Addresses with @PersonalData: {
+  EntitySemantics: 'DataSubjectDetails'
+} {
+  customer      @PersonalData.FieldSemantics: 'DataSubjectID';
+  city          @PersonalData.IsPotentiallyPersonal;
+  postCode      @PersonalData.IsPotentiallyPersonal;
+  streetAddress @PersonalData.IsPotentiallyPersonal;
+}
+'''
+
 // Updated srv/services.cds
 
 using { sap.capire.incidents as my } from '../db/schema';

@@ -3,7 +3,7 @@ Vulnerability: Unauthorized Access to Credit Card Data via IDOR
 
 ## 📖  1. Overview :
 
-Insecure Direct Object References (IDOR) occur when an application exposes internal object references (e.g., customer IDs) without proper access controls, allowing attackers to manipulate these references to access unauthorized data. In our Incident Management system, we demonstrate how a support user can exploit IDOR to access credit card numbers stored in the Customers entity.
+Insecure Direct Object References (IDOR) occur when an application exposes internal object references(e.g., database keys, filenames, or user IDs) without proper access controls, allowing attackers to manipulate these references to access unauthorized data. In our Incident Management system, we will demonstrate how a support user can exploit IDOR to access credit card numbers stored in the Customers entity.
 
 **Business Rules:**
 
@@ -73,7 +73,6 @@ annotate AdminService with @(requires: 'admin');
 ```
 
 **File**: `srv/services.js`
-
 ```
 const cds = require('@sap/cds')
 
@@ -143,7 +142,6 @@ module.exports = { ProcessorService }
 ```
 
 **File**: `package.json`
-
 ```
 {
   "dependencies": {
@@ -154,8 +152,8 @@ module.exports = { ProcessorService }
 }
 
 ```
-**File**: `mta.yaml`
 
+**File**: `mta.yaml`
 ```
 modules:
   - name: incident-management-srv
@@ -179,20 +177,55 @@ resources:
 - ❌ **Compliance Gap:** Lacks detailed audit records required by regulations like GDPR, SOX, and industry standards.
      
 ## 💥 3. Exploitation: (TBD with screenshots)
+In this lab, an IDOR vulnerability is exploited via API calls in a local development environment (SAP Business Application Studio with cds watch). Unlike production, key security measures such as real authentication flows, OAuth2 tokens, and data isolation are inactive, allowing ethical hackers to safely simulate attacks, validate vulnerabilities without risking live systems, and rapidly iterate fixes before deploying to production..
 
-### Step 1: Login as Alice (Support User) :
-- Access SAP Build Work Zone.
-- Login with alice.support@company.com. This user is set up from the from the previous exercise.
-- Navigate to Incident Management application.
+### Step 1: Start Local Development Server
 
-### Step 2: Exploit Closing High-Urgency Incident
+Action :
+```
+user: incident-management $ cds watch 
+
+```
+Results :
+
+```
+[cds] - connect using bindings from: { registry: '~/.cds-services.json' }
+[cds] - connect to db > sqlite { url: ':memory:' }
+  > init from db/data/sap.capire.incidents-Urgency.texts.csv 
+  > init from db/data/sap.capire.incidents-Urgency.csv 
+  > init from db/data/sap.capire.incidents-Status.texts.csv 
+  > init from db/data/sap.capire.incidents-Status.csv 
+  > init from db/data/sap.capire.incidents-Incidents.csv 
+  > init from db/data/sap.capire.incidents-Incidents.conversation.csv 
+  > init from db/data/sap.capire.incidents-Customers.csv 
+  > init from db/data/sap.capire.incidents-Addresses.csv 
+/> successfully deployed to in-memory database. 
+
+[cds] - using auth strategy {
+  kind: 'mocked',
+  impl: 'node_modules/@sap/cds/lib/srv/middlewares/auth/basic-auth'
+} 
+
+[cds] - serving ProcessorService { impl: 'srv/services.js', path: '/odata/v4/processor' }
+[cds] - serving AdminService { impl: 'srv/services.js', path: '/odata/v4/admin' }
+
+[cds] - server listening on { url: 'http://localhost:4004' }
+[cds] - server launched in: 673.811ms
+```
+### Step 2: List All Customers
 - Action: 
-  - Find a high-urgency incident assigned to Alice (e.g., "Strange noise when switching off Inverter").
-  - Click "Edit" → Change Status to "Closed".
+  - Click on 'http://localhost:4004' to connect to your locally running CAP server.
+  - Click on Customers under the Service Endpoints: /odata/v4/processor/$metadata section.
   - Add a conversation message: "Closing this high-urgency incident as support user"
   - Click "Save"
 - Result:
   - ❌ The system allows Alice to close High-Urgency incident, violating the business rule.
+
+
+- Access SAP Build Work Zone.
+- Login with alice.support@company.com. This user is set up from the from the previous exercise.
+- Navigate to Incident Management application.
+
 
 ### Step 3: Login as Admin User
 

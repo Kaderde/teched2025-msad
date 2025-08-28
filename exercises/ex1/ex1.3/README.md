@@ -250,9 +250,11 @@ To address the identified IDOR vulnerabilities and data privacy risks, this sect
   3. **Fine-Grained Access Control** - Restricts customer data visibility by user role.
 
 ### Step 1: Add Audit Logging Dependency
+
 '''
 npm add @cap-js/audit-logging
 '''
+
 ✅ Adds automatic:
   - Sensitive data tracking.
   - CRUD operation logging.

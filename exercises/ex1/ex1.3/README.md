@@ -321,10 +321,6 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
     ```
     cds watch
     ```
-  - Execute the following command to add .http files with sample read and write requests.
-    ```
-    cds add http --filter ProcessorService  
-    ```
 - Results:
   - Server starts on default port (4004).
   - Test files created in /test/http/ folder at the root directory.
@@ -332,7 +328,10 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 
 #### Step 2: Test Read Access to Customers
 - Action:
-  - Open test/http/ProcessorService.http and run the GET /odata/v4/admin/Customers request.
+  - Test files was created in /test/http/ folder at the root directory with the command : cds add http --filter ProcessorService.
+  - The test user is set to 'alice', ensuring audit logs are tied to this user.
+  - Open test/http/ProcessorService.http Line 119 and run the GET /odata/v4/admin/Customers request (Click on Send Request).
+  
 
 Results:
 

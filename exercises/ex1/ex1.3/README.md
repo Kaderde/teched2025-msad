@@ -24,7 +24,7 @@ Insecure Direct Object References (IDOR) occur when an application exposes inter
 
 ### Objective:
 
-The objective of this exercise is to implement object-level authorization, data masking, and audit logging to ensure users only access customer data they are authorized to view. By enforcing these security controls, we will restrict data visibility appropriately and maintain comprehensive records of access, thereby protecting sensitive information and mitigating unauthorized data exposure risks.
+The objective of this exercise is to implement **object-level authorization**, **data masking**, and **audit logging** to ensure users only access customer data they are authorized to view. By enforcing these security controls, we will restrict data visibility appropriately and maintain comprehensive records of access, thereby protecting sensitive information and mitigating unauthorized data exposure risks.
 
 ## 🚨 2. Vulnerable Code :
 we will use exactly the [remediated code from Exercise 1.1.](../ex1.1#%EF%B8%8F-4-remediation), It correctly prevents support users from touching other users’ incidents, but it does not yet enforce admin‑only rules (e.g. closing high‑urgency incidents, modifying closed incidents, deleting any incident).
@@ -87,15 +87,13 @@ class ProcessorService extends cds.ApplicationService {
     return super.init()
   }
 
-  // ❌ VULNERABILITY: Limited validation and no comprehensive IDOR protection
   async onModify(req) {
     // Fetch current incident state (status + urgency)
     const result = await SELECT.one.from(req.subject)
       .columns('status_code', 'urgency_code')
       .where({ ID: req.data.ID });
 
-    if (!result) return req.reject(404, `Incident ${req.data.ID} not found`);
-
+    if (!result) return req.reject(404, `Incident ${req.data.ID} not found`); 
     // Check if incident is already closed
     if (result.status_code === 'C') {
       if (!req.user.isAdmin()) {
@@ -108,22 +106,17 @@ class ProcessorService extends cds.ApplicationService {
     // Check if user is attempting to close the incident
     if (req.data.status_code === 'C') {
       if (result.urgency_code === 'H' && !req.user.isAdmin()) {
-        return req.reject(403, 'Only administrators can close high-urgency incidents');
+        return req.reject(403, 'Only administrators can close high-urgency incidents'); 
       }
     }
-
-    // ❌ VULNERABILITY 1: Information Disclosure in Error Messages
-    // Error messages reveal incident existence and properties to unauthorized users.
-    
-    // ❌ VULNERABILITY 2: No Audit Trail
-    // No logging of access attempts, making security monitoring impossible
+   
+    // ❌ VULNERABILITY
+      No Audit Trail
+    // No logging of access attempts to customers & incidents data, making security monitoring impossible
     
     // ❌ VULNERABILITY 1: No Audit Logging
     // No record of who accessed which incidents, when, or what they did.
     
-    // ❌ VULNERABILITY 2: No SAP Audit Log Service Integration
-    // Missing integration with enterprise audit logging for compliance
-
     // ❌ VULNERABILITY 1: No API-Level READ Validation
     // Users can directly access API endpoints to read any incident data
     
@@ -173,9 +166,8 @@ resources:
 - ❌ **No object-level validation:** A support user can manipulate customers IDs in the API to access other customer's data, including credit card numbers.- 
 - ❌ **No data classification:** Credit card numbers are not annotated as sensitive, so audit logging isn't triggered.
 - ❌ **No data masking:** Credit card numbers are displayed in full to all users.
-- ❌ **No error messages that prevent information disclosure :**  (e.g., "Incident 12345 not found" reveals incident existence).
-- ❌ **No audit logging:** No tracking of access to sensitive data or unauthorized access attempts, making it difficult to detect IDOR attacks.
-- ❌ **Missing SAP Audit Log Service:** No integration with enterprise audit logging infrastructure required for compliance and security monitoring.
+- ❌ **No Audit Trail:**  No logging of access attempts to customers & incidents data, making security monitoring impossible.
+- ❌ **No audit logging:** No record of who accessed which customers, when, or what they did.
 - ❌ **Compliance Gap:** Lacks detailed audit records required by regulations like GDPR, SOX, and industry standards.
 
 ## 💥 3. Exploitation: (TBD with screenshots)
@@ -251,7 +243,56 @@ To address the identified IDOR vulnerabilities and data privacy risks, this sect
   2. **Automated Audit Logging** - Tracks all access to protected data with @cap-js/audit-logging
   3. **Fine-Grained Access Control** - Restricts customer data visibility by user role.
 
-### Step 1: Add Audit Logging Dependency
+
+### Step 1: Annotate Personal Data
+Annotate the domain model in a separate file srv/data-privacy.cds with the following content:
+
+'''
+using { sap.capire.incidents as my } from './services';
+using { cuid, managed } from '@sap/cds/common';
+
+// Annotating the my.Customers entity with @PersonalData to enable data privacy
+
+annotate my.Customers with @PersonalData: {
+  // Setting the EntitySemantics to 'DataSubject', which means it represents an individual or a group subject to data privacy regulations.
+  // The DataSubjectRole is set to 'Customer'  for this specific entity.
+
+  EntitySemantics: 'DataSubject',
+  DataSubjectRole: 'Customer'
+
+  // Annotating the fields with PersonalData attributes to differentiate between different types of data:
+
+  ID          @PersonalData.FieldSemantics: 'DataSubjectID';  // Identifier for the data subject, can also be used to generate audit logs
+  firstName   @PersonalData.IsPotentiallyPersonal;            // Personal data that can potentially identify a person (firstName,lastname,email,phone)
+  lastName    @PersonalData.IsPotentiallyPersonal;            
+  email       @PersonalData.IsPotentiallyPersonal;            
+  phone       @PersonalData.IsPotentiallyPersonal;            
+  creditCardNo @PersonalData.IsPotentiallySensitive           // Sensitive personal data requiring special treatment and access restrictions
+}
+
+// Annotating the my.Addresses entity with @PersonalData to enable data privacy
+
+annotate my.Addresses with @PersonalData: {
+  
+  // Setting the EntitySemantics to 'DataSubjectDetails', which means this entity holds details related to the data subject
+  
+  EntitySemantics: 'DataSubjectDetails'
+
+  // Annotating the fields with PersonalData attributes to differentiate between different types of data:
+
+  customer    @PersonalData.FieldSemantics: 'DataSubjectID';  // Identifier for the data subject, can also be used to generate audit logs
+  city        @PersonalData.IsPotentiallyPersonal;            // Personal data that can potentially identify a person : customer, city,postcode,streetAdress
+  postCode    @PersonalData.IsPotentiallyPersonal;            
+  streetAddress @PersonalData.IsPotentiallyPersonal;          
+}
+'''
+
+Key Changes:
+- Setting EntitySemantics to 'DataSubject', meaning Custome entity represents individuals or groups subject to data privacy regulations.
+- Annotating fields firstName, lastName, email, phone as IsPotentiallyPersonal to indicate they are personal data that can potentially identify a person.
+- Annotating field creditCardNo as IsPotentiallySensitive, requiring special treatment and access restrictions.
+
+### Step 2: Add Audit Logging Dependency
 
 '''
 npm add @cap-js/audit-logging
@@ -262,37 +303,6 @@ npm add @cap-js/audit-logging
   - CRUD operation logging.
   - GDPR-compliant audit trails.
 
-### Step 2: Annotate Personal Data
-Create srv/data-privacy.cds:
-'''
-using {sap.capire.incidents as my} from './services';
-using {
-  cuid,
-  managed
-} from '@sap/cds/common';
-
-
-annotate my.Customers with @PersonalData: {
-  EntitySemantics: 'DataSubject',
-  DataSubjectRole: 'Customer',
-} {
-  ID         @PersonalData.FieldSemantics : 'DataSubjectID';
-  firstName     @PersonalData.IsPotentiallyPersonal;
-  lastName      @PersonalData.IsPotentiallyPersonal;
-  email         @PersonalData.IsPotentiallyPersonal;
-  phone         @PersonalData.IsPotentiallyPersonal;
-  creditCardNo @PersonalData.IsPotentiallySensitive;
-}
-
-annotate my.Addresses with @PersonalData: {
-  EntitySemantics: 'DataSubjectDetails'
-} {
-  customer      @PersonalData.FieldSemantics: 'DataSubjectID';
-  city          @PersonalData.IsPotentiallyPersonal;
-  postCode      @PersonalData.IsPotentiallyPersonal;
-  streetAddress @PersonalData.IsPotentiallyPersonal;
-}
-'''
 
 // Updated srv/services.cds
 

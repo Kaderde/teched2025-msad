@@ -307,26 +307,31 @@ annotate my.Addresses with @PersonalData: {
 This section evaluates the implementation of audit logging and data protection in the CAP application.
 Key aspects include:
 
-* Ensuring sensitive fields (e.g., creditCardNo) are properly annotated for logging
-* Confirming role-based access controls are enforced
-* Verifying that audit logs record all API interactions, such as SensitiveDataRead, PersonalDataModified, and SecurityEvent
+* Ensuring sensitive fields (e.g., creditCardNo) are properly annotated for logging.
+* Confirming role-based access controls are enforced.
+* Verifying that audit logs record all API interactions, such as SensitiveDataRead, PersonalDataModified, and SecurityEvent.
 
 Testing is performed both locally in SAP Business Application Studio and in SAP BTP environments to validate that logs are correctly generated, masked, and compliant with enterprise security standards.
 
-### Step 1: Local Environment Setup
-Action:
-- Start the CDS server in watch mode from SAP Business Application Studio command line:
-  ```
-  cds watch
-  ```
-- Execute the following command to add .http files with sample read and write requests.
-  ```
-  cds add http --filter AdminService  
-  ```
-  
+### Local Environment Setup
 
-  
-
+#### Step 1: Set Up Local Server
+- Action:
+  - Start the CDS server in watch mode from SAP Business Application Studio command line:
+    ```
+    cds watch
+    ```
+  - Execute the following command to add .http files with sample read and write requests.
+    ```
+    cds add http --filter AdminService  
+    ```
+  - Change the username in tests/AdminService.http to 'alice'.
+- Results:
+  - Server starts on default port (4004).
+  - Test files created in /test/http/.
+  - User context set for subsequent tests.
+ 
+ 
   
 💡 Ensure the deployment includes both updated srv/services.cds and services.js logic.
 

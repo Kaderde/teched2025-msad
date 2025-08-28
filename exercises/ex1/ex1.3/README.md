@@ -328,15 +328,13 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 
 #### Step 2: Test Read Access to Customers
 - Action:
+  - Open test/http/ProcessorService.http file in Line 119 and run the GET /odata/v4/admin/Customers request (Click on Send Request).
   - Test files was created in /test/http/ folder at the root directory with the command : cds add http --filter ProcessorService.
   - The test user is set to 'alice', ensuring audit logs are tied to this user.
-  - Open test/http/ProcessorService.http Line 119 and run the GET /odata/v4/admin/Customers request (Click on Send Request).
   
-
 Results:
-
-* Audit logs show SensitiveDataRead entries for creditCardNo with timestamps matching the current time.
-* Each customer entity generates a separate audit log entry. 
+- Audit logs show SensitiveDataRead entries for creditCardNo with timestamps matching the current time.
+- Each customer record generates a separate audit log entry. 
  
   
 💡 Ensure the deployment includes both updated srv/services.cds and services.js logic.

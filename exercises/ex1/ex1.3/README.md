@@ -243,13 +243,24 @@ To address the identified IDOR vulnerabilities and data privacy risks, this sect
   2. **Automated Audit Logging** - Tracks all access to protected data with @cap-js/audit-logging
   3. **Fine-Grained Access Control** - Restricts customer data visibility by user role.
 
+### Step 1: Add Audit Logging Dependency
 
-### Step 1: Annotate Personal Data
-Annotate the domain model in a separate file srv/data-privacy.cds with the following content:
+- Action :
+  - Add the @cap-js/audit-logging plugin to your project
+  '''
+  npm add @cap-js/audit-logging
+  '''
+Result:
+  - get automatic audit logging, for personal data.
+  - CRUD operation logging.
+  - GDPR-compliant audit trails.
 
+### Step 2: Annotate Personal Data
+
+- Action : Annotate the domain model in a separate file srv/data-privacy.cds with the following content:
+  
 '''
 using { sap.capire.incidents as my } from './services';
-using { cuid, managed } from '@sap/cds/common';
 
 // Annotating the my.Customers entity with @PersonalData to enable data privacy
 
@@ -287,117 +298,36 @@ annotate my.Addresses with @PersonalData: {
 }
 '''
 
-Key Changes:
-- Setting EntitySemantics to 'DataSubject', meaning Custome entity represents individuals or groups subject to data privacy regulations.
-- Annotating fields firstName, lastName, email, phone as IsPotentiallyPersonal to indicate they are personal data that can potentially identify a person.
-- Annotating field creditCardNo as IsPotentiallySensitive, requiring special treatment and access restrictions.
+- Result:
+  - Sensitive fields like creditCardNo are marked as @PersonalData: #Sensitive for compliance.
+  - Audit logs automatically include these fields in tracking, ensuring data privacy and regulatory adherence.
 
-### Step 2: Add Audit Logging Dependency
+## ✅ 5. Verification:
 
-'''
-npm add @cap-js/audit-logging
-'''
+This section evaluates the implementation of audit logging and data protection in the CAP application.
+Key aspects include:
 
-✅ Adds automatic:
-  - Sensitive data tracking.
-  - CRUD operation logging.
-  - GDPR-compliant audit trails.
+* Ensuring sensitive fields (e.g., creditCardNo) are properly annotated for logging
+* Confirming role-based access controls are enforced
+* Verifying that audit logs record all API interactions, such as SensitiveDataRead, PersonalDataModified, and SecurityEvent
 
+Testing is performed both locally in SAP Business Application Studio and in SAP BTP environments to validate that logs are correctly generated, masked, and compliant with enterprise security standards.
 
-// Updated srv/services.cds
+### Step 1: Local Environment Setup
+Action:
+- Start the CDS server in watch mode from SAP Business Application Studio command line:
+  ```
+  cds watch
+  ```
+- Execute the following command to add .http files with sample read and write requests.
+  ```
+  cds add http --filter AdminService  
+  ```
+  
 
-using { sap.capire.incidents as my } from '../db/schema';
+  
 
-service ProcessorService {
-  @restrict: [
-    { grant: ['READ', 'CREATE'], to: 'support' },  // Support can view and create
-    { grant: ['UPDATE', 'DELETE'], 
-      to: 'support',
-      where: 'assignedTo is null or assignedTo = $user'  // Horizontal control for support
-    },
-    { grant: '*', to: 'admin' }  // ✅ NEW: Explicit full access for admins (CREATE, READ, UPDATE, DELETE)
-  ]
-  entity Incidents as projection on my.Incidents;
-
-}
-
-annotate ProcessorService with @(requires: ['support', 'admin']);  // ✅ NEW: Allow both roles support and admin at service level.
-
-...
-
-```
-Copy the complete code from this link: [services.cds](./services.cds).
-
-Key Changes:
-
-* ✅ Admin Full Access: { grant: '*', to: 'admin' } grants admins complete CRUD permissions.
-* ✅ Service-Level Role Requirements: @requires: ['support', 'admin'] allows both roles to access the service.
-
-### Step 2: Update Services.js
-The initial remediation code from [Exercise 1.1]((../ex1.1/README.md)) secured against horizontal privilege escalation (support users interfering with others' incidents). 
-However, it still allowed support users to perform actions reserved for administrators, such as closing high-urgency incidents. We enhance the existing services.js to fix vertical privilege escalation.
-
-Here is the updated services.js with added checks to enforce the admin-only rules:
-
-```
-// Updated srv/services.js
-
-... // Other methods
-
- // ✅ NEW : Enforce admin-only operations (vertical ESC)
-  async onModify(req) {
-    // Fetch current incident state (status + urgency)
-    const result = await SELECT.one.from(req.subject)
-      .columns('status_code', 'urgency_code')
-      .where({ ID: req.data.ID });
-
-    if (!result) return req.reject(404, `Incident ${req.data.ID} not found`);
-
-    // Check if incident is already closed
-    if (result.status_code === 'C') {
-    // ✅ NEW : Allow only admins to modify/delete closed incidents
-      if (!req.user.isAdmin()) {
-        const action = req.event === 'UPDATE' ? 'modify' : 'delete';
-        return req.reject(403, `Cannot ${action} a closed incident`);
-      }
-      // Admins can proceed
-      return;
-    }
-    // ✅ UPDATE : Check if user is attempting to close the incident (status_code set to 'C')
-    if (req.data.status_code === 'C') {
-    // ✅ NEW : Block support users from closing high-urgency incidents
-      if (result.urgency_code === 'H' && !req.user.isAdmin()) {
-        return req.reject(403, 'Only administrators can close high-urgency incidents');
-      }
-    }
-
-... // Other methods
-
-module.exports = { ProcessorService }
-
-```
-Copy the complete code from this link: [services.js](./services.js).
-
-Key Changes:
-
-* ✅ Implements role-based access control using req.user.isAdmin().
-* ✅ Allows administrators to modify/delete closed incidents.
-* ✅ Returns 403 Forbidden with descriptive error message
-* ✅ Prevents support users from closing high-urgency incidents (urgency_code === 'H').
-* ✅ Allows administrators to close any incident, including high-urgency ones.
-
-### ✅ 5. Verification:
-This section outlines the steps to confirm that the remediation for the Vertical Privilege Escalation vulnerability has been successfully implemented. The goal is to verify that:
-
-* Support users cannot perform admin-only operations (e.g., closing high-urgency incidents, modifying/deleting closed incidents).
-* Admin users can perform all operations, including those restricted for support users.
-
-### Step 1: Deploy the Updated Application
-
-```
-mbt build
-cf deploy mta_archives/incident-management_1.0.0.mtar
-```
+  
 💡 Ensure the deployment includes both updated srv/services.cds and services.js logic.
 
 ### Step 2: Login as Alice (Support User)

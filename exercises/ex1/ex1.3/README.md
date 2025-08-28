@@ -247,9 +247,9 @@ To address the identified IDOR vulnerabilities and data privacy risks, this sect
 
 - Action :
   - Add the @cap-js/audit-logging plugin to your project
-  '''
+  ```
   npm add @cap-js/audit-logging
-  '''
+  ```
 Result:
   - get automatic audit logging, for personal data.
   - CRUD operation logging.
@@ -259,7 +259,7 @@ Result:
 
 - Action : Annotate the domain model in a separate file srv/data-privacy.cds with the following content:
   
-'''
+```
 using { sap.capire.incidents as my } from './services';
 
 // Annotating the my.Customers entity with @PersonalData to enable data privacy
@@ -296,7 +296,7 @@ annotate my.Addresses with @PersonalData: {
   postCode    @PersonalData.IsPotentiallyPersonal;            
   streetAddress @PersonalData.IsPotentiallyPersonal;          
 }
-'''
+```
 
 - Result:
   - Sensitive fields like creditCardNo are marked as @PersonalData: #Sensitive for compliance.
@@ -323,14 +323,21 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
     ```
   - Execute the following command to add .http files with sample read and write requests.
     ```
-    cds add http --filter AdminService  
+    cds add http --filter ProcessorService  
     ```
-  - Change the username in tests/AdminService.http to 'alice'.
 - Results:
   - Server starts on default port (4004).
-  - Test files created in /test/http/.
-  - User context set for subsequent tests.
- 
+  - Test files created in /test/http/ folder at the root directory.
+  - The test user is set to 'alice', ensuring audit logs are tied to this user.
+
+#### Step 2: Test Read Access to Customers
+- Action:
+  - Open test/http/ProcessorService.http and run the GET /odata/v4/admin/Customers request.
+
+Results:
+
+* Audit logs show SensitiveDataRead entries for creditCardNo with timestamps matching the current time.
+* Each customer entity generates a separate audit log entry. 
  
   
 💡 Ensure the deployment includes both updated srv/services.cds and services.js logic.

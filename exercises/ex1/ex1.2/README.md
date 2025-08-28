@@ -219,7 +219,7 @@ Key Changes:
 * ✅ Prevents support users from closing high-urgency incidents (urgency_code === 'H').
 * ✅ Allows administrators to close any incident, including high-urgency ones.
 
-### ✅ 5. Verification:
+## ✅ 5. Verification:
 This section outlines the steps to confirm that the remediation for the Vertical Privilege Escalation vulnerability has been successfully implemented. The goal is to verify that:
 
 * Support users cannot perform admin-only operations (e.g., closing high-urgency incidents, modifying/deleting closed incidents).

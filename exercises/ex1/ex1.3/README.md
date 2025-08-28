@@ -10,9 +10,11 @@ Insecure Direct Object References (IDOR) occur when an application exposes inter
 * Support Users:
   - ✅ Can view customer data.
   - ❌ Cannot access customers sensitive data (e.g., credit card numbers).
+  - ⚠️ All access attempts logged to SAP Audit Log Service
 
 * Administrators:
   - ✅ Can view all customer data.
+  - ⚠️ All operations, including access to sensitive fields, are logged for audit compliance.
 
 ### Why This Matters
 

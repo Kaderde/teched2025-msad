@@ -45,6 +45,8 @@ service ProcessorService {
     }
   ]
   entity Incidents as projection on my.Incidents;
+  @readonly
+    entity Customers as projection on my.Customers;     
 }
 
 annotate ProcessorService with @(requires: 'support');  // ❌ Only support role required, Admins excluded

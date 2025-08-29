@@ -6,7 +6,7 @@ Vulnerability: Unauthorized Access to Credit Card Data via IDOR
 Insecure Direct Object References (IDOR) occur when an application exposes internal object references(e.g., database keys, filenames, or user IDs) without proper access controls, allowing attackers to manipulate these references to access unauthorized data. In our Incident Management system, we will demonstrate how a support user can exploit IDOR to access credit card numbers stored in the Customers entity.
 
 **Business Rules:**
-
++
 * Support Users:
   - ✅ Can view customer data.
   - ❌ Cannot access customers sensitive data (e.g., credit card numbers).
@@ -115,20 +115,9 @@ class ProcessorService extends cds.ApplicationService {
     // No logging of access attempts to customers & incidents data, making security monitoring impossible
     
     // ❌ VULNERABILITY 1: No Audit Logging
-    // No record of who accessed which incidents, when, or what they did.
-    
-    // ❌ VULNERABILITY 1: No API-Level READ Validation
-    // Users can directly access API endpoints to read any incident data
-    
-    // ❌ VULNERABILITY 2: No Comprehensive Audit Logging
-    // No audit trail for API access, making IDOR attacks invisible
-    
-    // ❌ VULNERABILITY 3: Missing Personal Data Protection
-    // No @PersonalData annotations for audit logging compliance
-    
-    // ❌ VULNERABILITY 4: No Direct API Access Controls
-    // API endpoints accessible outside of UI context without additional validation
-    
+    // No record of who accessed which customerss, when, or what they did.
+   
+
   }
 }
 
@@ -321,12 +310,56 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
     ```
     cds watch
     ```
+ 
 - Results:
-  - Server starts on default port (4004).
-  - Test files created in /test/http/ folder at the root directory.
-  - The test user is set to 'alice', ensuring audit logs are tied to this user.
+  - The server is running, and the Rest Extension is ready for testing.
+  - Audit logs are enabled and accessible via the terminal.   
 
-#### Step 2: Test Read Access to Customers
+####  Step 2: Generate HTTP Test Files
+- Action:
+  - Run : **cds add http --filter ProcessorService** to create Processor.http in the test/http directory.
+
+- Results:
+  - The test user is set to alice, ensuring audit logs are tied to this user.
+
+#### Step 3: Test Read Access to Customers
+- Action:
+  - Open test/http/ProcessorService.http file, go to  Line 119 and run the GET /odata/v4/admin/Customers request (Click on Send Request).
+
+- Results:
+  - Audit logs show SensitiveDataRead entries for creditCardNo with timestamps matching the current time.
+  - Each customer entity generates a separate audit log entry.
+  - Here is a sample audit log SensitiveDataRead for 1 customer entity. In your log, the timestamp matches the current timestamp.
+
+    ```
+    [odata] - GET /odata/v4/processor/Customers 
+    [cds] - connect to audit-log > audit-log-to-console 
+    [audit-log] - SensitiveDataRead: {
+      data_subject: {
+        id: { ID: '1004155' },
+        role: 'Customer',
+        type: 'ProcessorService.Customers'
+      },
+      object: { type: 'ProcessorService.Customers', id: { ID: '1004155' } },
+      attributes: [ { name: 'creditCardNo' } ],
+      uuid: '0bf74230-e246-445c-915b-3220d0643302',
+      tenant: undefined,
+      user: 'alice',
+      time: 2025-08-29T08:17:51.865Z
+    }
+    ... other customer's entities
+    ```
+- When creditCardNo is accessed, a **SensitiveDataRead** event is automatically generated.
+- These events are richer than standard audit logs and include:
+  - Who accessed the data
+  - When it was accessed
+  - Context of the access
+
+
+      
+      
+
+
 - Action:
   - Open test/http/ProcessorService.http file in Line 119 and run the GET /odata/v4/admin/Customers request (Click on Send Request).
   - Test files was created in /test/http/ folder at the root directory with the command : cds add http --filter ProcessorService.

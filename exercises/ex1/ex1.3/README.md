@@ -240,9 +240,9 @@ To address the identified IDOR vulnerabilities and data privacy risks, this sect
   npm add @cap-js/audit-logging
   ```
 Result:
-  - get automatic audit logging, for personal data.
-  - CRUD operation logging.
-  - GDPR-compliant audit trails.
+  - ✅ Get automatic audit logging, for personal data.
+  - ✅ CRUD operation logging.
+  - ✅ GDPR-compliant audit trails.
 
 ### Step 2: Annotate Personal Data
 
@@ -312,8 +312,8 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
     ```
  
 - Results:
-  - The server is running, and the Rest Extension is ready for testing.
-  - Audit logs are enabled and accessible via the terminal.   
+  - ✅ The server is running, and the Rest Extension is ready for testing.
+  - ✅ Audit logs are enabled and accessible via the terminal.   
 
 ####  Step 2: Generate HTTP Test Files
 - Action:
@@ -321,7 +321,7 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
   - Run : **cds add http --filter ProcessorService** to create Processor.http in the test/http directory.
 
 - Results:
-  - The AdminService.http and Processor.http  files are generated with sample GET, POST, and PATCH requests for testing.
+  - ✅ The AdminService.http and Processor.http  files are generated with sample GET, POST, and PATCH requests for testing.
   
 #### Step 3: Test Read Access to Customers with Support User
 - Action:
@@ -330,7 +330,7 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
   - Go to  Line 119 and run the GET /odata/v4/admin/Customers request (Click on Send Request).
 
 - Results:
-  - Here is a sample audit log SensitiveDataRead for 1 customer entity. In your log, the timestamp matches the current timestamp.
+  - ✅ Here is a sample audit log SensitiveDataRead for 1 customer entity. In your log, the timestamp matches the current timestamp.
     ```
     [odata] - GET /odata/v4/processor/Customers 
     [cds] - connect to audit-log > audit-log-to-console 
@@ -349,10 +349,9 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
     }
     ... other customer's entities
     ```
-  - Audit logs show **SensitiveDataRead** entries for creditCardNo with timestamps matching the current time.
-  - Each customer entity generates a separate audit log entry.
-  - When creditCardNo is accessed, a **SensitiveDataRead** event is automatically generated.
-  - These events are richer than standard audit logs and include:
+  - ✅ Each customer entity generates a separate audit log entry.
+  - ✅ When creditCardNo is accessed, a **SensitiveDataRead** event is automatically generated.
+  - ✅ These events are richer than standard audit logs and include:
     - Who accessed the data
     - When it was accessed
     - Context of the access
@@ -388,9 +387,9 @@ Results:
       time: 2025-08-29T10:37:21.191Z
 }
 ```
-- Audit logs generate **PersonalDataModified** entries for changes to annotated fields with @PersonalData.
-- Audit logs masks only fields explicitly annotated #Sensitive.
-- This behavior is regulated by the @cap-js/audit-logging plugin and the audit-log.json configuration.
+- ✅ Audit logs generate **PersonalDataModified** entries for changes to annotated fields with @PersonalData.
+- ✅ Audit logs masks only fields explicitly annotated #Sensitive.
+- ✅ This behavior is regulated by the @cap-js/audit-logging plugin and the audit-log.json configuration.
    
   
 💡 Ensure the deployment includes both updated srv/services.cds and services.js logic.

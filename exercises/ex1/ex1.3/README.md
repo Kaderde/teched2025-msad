@@ -294,11 +294,11 @@ annotate my.Addresses with @PersonalData: {
 ## ✅ 5. Verification:
 
 This section evaluates the implementation of audit logging and data protection in the CAP application.
-Key aspects include:
 
-* Ensuring sensitive fields (e.g., creditCardNo) are properly annotated for logging.
-* Confirming role-based access controls are enforced.
-* Verifying that audit logs record all API interactions, such as SensitiveDataRead, PersonalDataModified, and SecurityEvent.
+- Key aspects include:
+  - Ensuring sensitive fields (e.g., creditCardNo) are properly annotated for logging.
+  - Confirming role-based access controls are enforced.
+  - Verifying that audit logs record all API interactions, such as SensitiveDataRead, PersonalDataModified, and SecurityEvent.
 
 Testing is performed both locally in SAP Business Application Studio and in SAP BTP environments to validate that logs are correctly generated, masked, and compliant with enterprise security standards.
 
@@ -330,10 +330,7 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
   - Go to  Line 119 and run the GET /odata/v4/admin/Customers request (Click on Send Request).
 
 - Results:
-  - Audit logs show SensitiveDataRead entries for creditCardNo with timestamps matching the current time.
-  - Each customer entity generates a separate audit log entry.
   - Here is a sample audit log SensitiveDataRead for 1 customer entity. In your log, the timestamp matches the current timestamp.
-
     ```
     [odata] - GET /odata/v4/processor/Customers 
     [cds] - connect to audit-log > audit-log-to-console 
@@ -352,6 +349,8 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
     }
     ... other customer's entities
     ```
+  - Audit logs show **SensitiveDataRead** entries for creditCardNo with timestamps matching the current time.
+  - Each customer entity generates a separate audit log entry.
   - When creditCardNo is accessed, a **SensitiveDataRead** event is automatically generated.
   - These events are richer than standard audit logs and include:
     - Who accessed the data
@@ -366,7 +365,7 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
   - Run the POST /odata/v4/admin/Customers request with new customer details (e.g., firstName: "Bob", email: "bob.builder@example.com").
 
 Results:
-    ```
+```
     [odata] - POST /odata/v4/admin/Customers 
     [cds] - connect to audit-log > audit-log-to-console 
     [audit-log] - PersonalDataModified: {
@@ -388,19 +387,11 @@ Results:
       user: 'carol',
       time: 2025-08-29T10:37:21.191Z
 }
-- The audit log logs all personal data fields (as per entity-level @PersonalData) but only masks fields explicitly annotated #Sensitive.
+```
+- Audit logs generate **PersonalDataModified** entries for changes to annotated fields with @PersonalData.
+- Audit logs masks only fields explicitly annotated #Sensitive.
 - This behavior is regulated by the @cap-js/audit-logging plugin and the audit-log.json configuration.
-
-  
-
-    
-    ```
-
-
-* Audit logs generate PersonalDataModified entries for fields like firstName, lastName, and email.
-* Logs include uuid, tenant, and time fields with correct values.
-
-
+   
   
 💡 Ensure the deployment includes both updated srv/services.cds and services.js logic.
 

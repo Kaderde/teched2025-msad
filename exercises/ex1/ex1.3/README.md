@@ -360,10 +360,10 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 - Action:
   - Open test/http/AdminService.http file.
   - Change the username to incident.support@tester.sap.com.
-  - Go to  Line 12 and run the GET /odata/v4/admin/Customers request (Click on Send Request).
-  - Run the POST /odata/v4/admin/Customers request with new customer details (e.g., firstName: "Bob", email: "bob.builder@example.com").
-
-Results:
+  - Go to  Line 12 and run the the POST /odata/v4/admin/Customers request (Click on Send Request).
+ 
+  Results:
+  - ✅ Here is a sample audit log **PersonalDataModified** for one customer entity. In your log, the timestamp matches the current timestamp.
 ```
     [odata] - POST /odata/v4/admin/Customers 
     [cds] - connect to audit-log > audit-log-to-console 
@@ -390,8 +390,32 @@ Results:
 - ✅ Audit logs generate **PersonalDataModified** entries for changes to annotated fields with @PersonalData.
 - ✅ Audit logs masks only fields explicitly annotated #Sensitive.
 - ✅ This behavior is regulated by the @cap-js/audit-logging plugin and the audit-log.json configuration.
-   
-  
+
+#### Step 5: Test Write Access to Customer Data with with Support User
+- Action:
+  - Open test/http/AdminService.http file.
+  - Change the username to alice.
+  - Go to  Line 12 and run the the POST /odata/v4/admin/Customers request (Click on Send Request).
+
+- Result:
+  - ✅ Here is a sample audit log **PersonalDataModified** for one customer entity. In your log, the timestamp matches the current timestamp.
+  ```
+  [odata] - POST /odata/v4/admin/Customers 
+  [error] - 403 - Error: Forbidden
+      at requires_check (/home/user/projects/incident-management/node_modules/@sap/cds/lib/srv/protocols/http.js:54:32)
+      at http_log (/home/user/projects/incident-management/node_modules/@sap/cds/lib/srv/protocols/http.js:42:59) {
+    code: '403',
+    reason: "User 'alice' is lacking required roles: [admin]",
+    user: User { id: 'alice', roles: { support: 1 } },
+    required: [ 'admin' ],
+    '@Common.numericSeverity': 4
+}
+
+```
+
+- ✅ Audit logs generate a **SecurityEvent** entry for the unauthorized write attempt.
+No PersonalDataModified entry is created.
+Enforcement is handled by the custom audit_log_403 handler in server.js.
 💡 Ensure the deployment includes both updated srv/services.cds and services.js logic.
 
 ### Step 2: Login as Alice (Support User)

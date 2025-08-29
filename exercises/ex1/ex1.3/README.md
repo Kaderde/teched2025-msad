@@ -345,7 +345,7 @@ As part of audit logs, there can be cases where you want to genereate custom aud
   module.exports = cds.server
   ```
 - Result:
-  - The audit_log_403 function is configured to capture SecurityEvent logs for all 403 Forbidden responses
+  - The audit_log_403 function is configured to capture **SecurityEvent** logs for all 403 Forbidden responses
   - Two event handlers are implemented:
     - Non-batch requests: Monitors HTTP response status codes and triggers audit logging when res.statusCode == 403
     - Batch subrequests: Captures 403 errors within OData batch operations and logs them appropriately.    
@@ -389,7 +389,7 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
   - Go to  Line 119 and run the GET /odata/v4/admin/Customers request (Click on Send Request).
 
 - Results:
-  - ✅ Here is a sample audit log SensitiveDataRead for 1 customer entity. In your log, the timestamp matches the current timestamp.
+  - ✅ Here is a sample audit log **SensitiveDataRead** for 1 customer entity. In your log, the timestamp matches the current timestamp.
     ```
     [odata] - GET /odata/v4/processor/Customers 
     [cds] - connect to audit-log > audit-log-to-console 

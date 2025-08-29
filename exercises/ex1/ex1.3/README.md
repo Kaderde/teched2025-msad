@@ -317,14 +317,17 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 
 ####  Step 2: Generate HTTP Test Files
 - Action:
+  - Run : **cds add http --filter AdminService** to create Admin.http in the test/http directory.
   - Run : **cds add http --filter ProcessorService** to create Processor.http in the test/http directory.
 
 - Results:
-  - The test user is set to alice, ensuring audit logs are tied to this user.
-
+  - The AdminService.http and Processor.http  files are generated with sample GET, POST, and PATCH requests for testing.
+  
 #### Step 3: Test Read Access to Customers
 - Action:
-  - Open test/http/ProcessorService.http file, go to  Line 119 and run the GET /odata/v4/admin/Customers request (Click on Send Request).
+  - Open test/http/ProcessorService.http file.
+  - Change the username in AdminService.http to alice.
+  - Go to  Line 119 and run the GET /odata/v4/admin/Customers request (Click on Send Request).
 
 - Results:
   - Audit logs show SensitiveDataRead entries for creditCardNo with timestamps matching the current time.
@@ -349,25 +352,11 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
     }
     ... other customer's entities
     ```
-- When creditCardNo is accessed, a **SensitiveDataRead** event is automatically generated.
-- These events are richer than standard audit logs and include:
-  - Who accessed the data
-  - When it was accessed
-  - Context of the access
-
-
-      
-      
-
-
-- Action:
-  - Open test/http/ProcessorService.http file in Line 119 and run the GET /odata/v4/admin/Customers request (Click on Send Request).
-  - Test files was created in /test/http/ folder at the root directory with the command : cds add http --filter ProcessorService.
-  - The test user is set to 'alice', ensuring audit logs are tied to this user.
-  
-Results:
-- Audit logs show SensitiveDataRead entries for creditCardNo with timestamps matching the current time.
-- Each customer record generates a separate audit log entry. 
+  - When creditCardNo is accessed, a **SensitiveDataRead** event is automatically generated.
+  - These events are richer than standard audit logs and include:
+    - Who accessed the data
+    - When it was accessed
+    - Context of the access
  
   
 💡 Ensure the deployment includes both updated srv/services.cds and services.js logic.

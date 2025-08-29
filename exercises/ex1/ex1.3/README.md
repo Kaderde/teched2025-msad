@@ -323,10 +323,10 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 - Results:
   - The AdminService.http and Processor.http  files are generated with sample GET, POST, and PATCH requests for testing.
   
-#### Step 3: Test Read Access to Customers
+#### Step 3: Test Read Access to Customers with Support User
 - Action:
   - Open test/http/ProcessorService.http file.
-  - Change the username in AdminService.http to alice.
+  - Change the username to alice.
   - Go to  Line 119 and run the GET /odata/v4/admin/Customers request (Click on Send Request).
 
 - Results:
@@ -357,7 +357,50 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
     - Who accessed the data
     - When it was accessed
     - Context of the access
- 
+
+#### Step 4: Test Write Access to Customer Data with Admin User
+- Action:
+  - Open test/http/AdminService.http file.
+  - Change the username to incident.support@tester.sap.com.
+  - Go to  Line 12 and run the GET /odata/v4/admin/Customers request (Click on Send Request).
+  - Run the POST /odata/v4/admin/Customers request with new customer details (e.g., firstName: "Bob", email: "bob.builder@example.com").
+
+Results:
+    ```
+    [odata] - POST /odata/v4/admin/Customers 
+    [cds] - connect to audit-log > audit-log-to-console 
+    [audit-log] - PersonalDataModified: {
+      data_subject: {
+        id: { ID: 'Customers-2582449' },
+        role: 'Customer',
+        type: 'AdminService.Customers'
+      },
+      object: { type: 'AdminService.Customers', id: { ID: 'Customers-2582449' } },
+      attributes: (
+        { name: 'firstName', new: 'Bob' },
+        { name: 'lastName', new: 'lastName-2582449' },
+        { name: 'email', new: 'bob.builder@example.com' },
+        { name: 'phone', new: 'phone-2582449' },
+        { name: 'creditCardNo', new: '***' }
+      ),
+      uuid: 'eac3b4ca-4b7d-4123-a1d5-6f788a1ac617',
+      tenant: undefined,
+      user: 'carol',
+      time: 2025-08-29T10:37:21.191Z
+}
+- The audit log logs all personal data fields (as per entity-level @PersonalData) but only masks fields explicitly annotated #Sensitive.
+- This behavior is regulated by the @cap-js/audit-logging plugin and the audit-log.json configuration.
+
+  
+
+    
+    ```
+
+
+* Audit logs generate PersonalDataModified entries for fields like firstName, lastName, and email.
+* Logs include uuid, tenant, and time fields with correct values.
+
+
   
 💡 Ensure the deployment includes both updated srv/services.cds and services.js logic.
 

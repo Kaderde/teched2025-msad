@@ -288,8 +288,67 @@ annotate my.Addresses with @PersonalData: {
 ```
 
 - Result:
-  - Sensitive fields like creditCardNo are marked as @PersonalData: #Sensitive for compliance.
-  - Audit logs automatically include these fields in tracking, ensuring data privacy and regulatory adherence.
+  - ✅ Sensitive fields like creditCardNo are marked as @PersonalData: #Sensitive for compliance.
+  - ✅ Audit logs automatically include these fields in tracking, ensuring data privacy and regulatory adherence.
+ 
+### Step 3: Create server.js with Custom 403 Handler
+As part of audit logs, there can be cases where you want to genereate custom audit logs. For example if you want to log 403 - Forbidden events when an user is not having roles but is still trying to access certain data. This can be achieved by adding custom handlers in a CAP application.
+- Action :
+  - Create a server.js file at the root of your CAP application with the following content:
+  ```
+  const cds = require('@sap/cds')
+
+  let audit
+  
+  cds.on('served', async () => {
+    audit = await cds.connect.to('audit-log')
+  })
+  
+  const audit_log_403 = (resource, ip) => {
+    // we need to start our own tx because the default tx may be burnt
+    audit.tx(async () => {
+      await audit.log('SecurityEvent', {
+        data: {
+          user: cds.context.user?.id || 'unknown',
+          action: `Attempt to access restricted resource "${resource}" with insufficient authority`
+        },
+        ip
+      })
+    })
+  }
+  
+  // log for non-batch requests
+  cds.on('bootstrap', app => {
+    app.use((req, res, next) => {
+      req.on('close', () => {
+        if (res.statusCode == 403) {
+          const { originalUrl, ip } = req
+          audit_log_403(originalUrl, ip)
+        }
+      })
+      next()
+    })
+  })
+  
+  // log for batch subrequests
+  cds.on('serving', srv => {
+    if (srv instanceof cds.ApplicationService) {
+      srv.on('error', (err, req) => {
+        if (err.code == 403) {
+          const { originalUrl, ip } = req.http.req
+          if (originalUrl.endsWith('/$batch')) audit_log_403(originalUrl.replace('/$batch', req.req.url), ip)
+        }
+      })
+    }
+  })
+  
+  module.exports = cds.server
+  ```
+- Result:
+  - The audit_log_403 function is configured to capture SecurityEvent logs for all 403 Forbidden responses
+  - Two event handlers are implemented:
+    - Non-batch requests: Monitors HTTP response status codes and triggers audit logging when res.statusCode == 403
+    - Batch subrequests: Captures 403 errors within OData batch operations and logs them appropriately.    
 
 ## ✅ 5. Verification:
 
@@ -400,20 +459,29 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 - Result:
   - ✅ Here is a sample audit log **SecurityEvent** for one customer entity. In your log, the timestamp matches the current timestamp.
 ```
-  [odata] - POST /odata/v4/admin/Customers 
-  [error] - 403 - Error: Forbidden
-      at requires_check (/home/user/projects/incident-management/node_modules/@sap/cds/lib/srv/protocols/http.js:54:32)
-      at http_log (/home/user/projects/incident-management/node_modules/@sap/cds/lib/srv/protocols/http.js:42:59) {
-    code: '403',
-    reason: "User 'alice' is lacking required roles: [admin]",
-    user: User { id: 'alice', roles: { support: 1 } },
-    required: [ 'admin' ],
-    '@Common.numericSeverity': 4
+[odata] - POST /odata/v4/admin/Customers 
+[error] - 403 - Error: Forbidden
+    at requires_check (/home/user/projects/incident-management/node_modules/@sap/cds/lib/srv/protocols/http.js:54:32)
+    at http_log (/home/user/projects/incident-management/node_modules/@sap/cds/lib/srv/protocols/http.js:42:59) {
+  code: '403',
+  reason: "User 'alice' is lacking required roles: [admin]",
+  user: User { id: 'alice', roles: { support: 1 } },
+  required: [ 'admin' ],
+  '@Common.numericSeverity': 4
 }
+[audit-log] - SecurityEvent: {
+  data: {
+    user: 'alice',
+    action: 'Attempt to access restricted resource "/odata/v4/admin/Customers" with insufficient authority'
+  },
+  ip: '::ffff:127.0.0.1',
+  uuid: 'f76c4ab8-edcd-4334-a7ee-6e971c4cb415',
+  tenant: undefined,
+  user: 'alice',
+  time: 2025-08-29T22:54:27.493Z
 ```
 - ✅ Audit logs generate a **SecurityEvent** entry for the unauthorized write attempt.
-No PersonalDataModified entry is created.
-💡 Ensure the deployment includes both updated srv/services.cds and services.js logic.
+- ✅ No PersonalDataModified entry is created.
 
 ### 📌 Verification Summary:
 

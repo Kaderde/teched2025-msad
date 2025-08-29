@@ -28,6 +28,7 @@ modules:
       - name: incident-management-destination
       - name: incident-management-db
       - name: incident-management-auth
+      - name: incident-management-auditlog
 
   - name: incident-management-db-deployer
     type: hdb
@@ -37,7 +38,7 @@ modules:
     requires:
       - name: incident-management-db
 
-  - name: incident-management-app-deployer
+  - name: incident-management-ui-deployer
     type: com.sap.application.content
     path: .
     requires:
@@ -95,7 +96,6 @@ modules:
               ServiceInstanceName: incident-management-auth
               ServiceKeyName: incident-management-auth-key
               sap.cloud.service: incidentmanagement.service
-
 resources:
   - name: incident-management-destination
     type: org.cloudfoundry.managed-service
@@ -152,3 +152,17 @@ resources:
       config:
         xsappname: incident-management-${org}-${space}
         tenant-mode: dedicated
+        role-collections:
+          - name: 'support (incident-management ${org}-${space})'
+            description: 'generated'
+            role-template-references:
+              - '$XSAPPNAME.support'
+          - name: 'admin (incident-management ${org}-${space})'
+            description: 'generated'
+            role-template-references:
+              - '$XSAPPNAME.admin'
+  - name: incident-management-auditlog
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: auditlog
+      service-plan: premium

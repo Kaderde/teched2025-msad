@@ -398,8 +398,8 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
   - Go to  Line 12 and run the the POST /odata/v4/admin/Customers request (Click on Send Request).
 
 - Result:
-  - ✅ Here is a sample audit log **PersonalDataModified** for one customer entity. In your log, the timestamp matches the current timestamp.
-  ```
+  - ✅ Here is a sample audit log **SecurityEvent** for one customer entity. In your log, the timestamp matches the current timestamp.
+```
   [odata] - POST /odata/v4/admin/Customers 
   [error] - 403 - Error: Forbidden
       at requires_check (/home/user/projects/incident-management/node_modules/@sap/cds/lib/srv/protocols/http.js:54:32)
@@ -410,50 +410,10 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
     required: [ 'admin' ],
     '@Common.numericSeverity': 4
 }
-
 ```
-
 - ✅ Audit logs generate a **SecurityEvent** entry for the unauthorized write attempt.
 No PersonalDataModified entry is created.
-Enforcement is handled by the custom audit_log_403 handler in server.js.
 💡 Ensure the deployment includes both updated srv/services.cds and services.js logic.
-
-### Step 2: Login as Alice (Support User)
-- Action:
-  - Access SAP Build Work Zone and log in with alice.support@company.com.
-  - Locate a high-urgency incident assigned to Alice or unassigned.
-  - Confirm the urgency is set to "High" and the status is "New" (not closed).
-  - Click "Edit" and try to set the status to "Closed" (status_code = 'C').
-  - Save the changes.
-- Result:
-  - ❌ The system blocks the action.
-  - ❌ The UI displays an error: "Only administrators can close high-urgency incidents."
-  - ✅ This confirms that vertical privilege escalation is prevented for high-urgency incidents.
-
-### Step 3: Verify Alice Can Modify Non-High-Urgency Incidents
-- Action:
-  - Locate a medium-urgency (code: 'M') incident assigned to Alice or unassigned.
-  - Click "Edit", change status to "Closed", and save.
-- Result:
-  - ✅ The system allows the update and closes the incident.
-  - ✅ This confirms that normal workflow operations are preserved for non-critical incidents. Support users can close regular tickets — only high-urgency closures are restricted.
- 
-### Step 4: Login as David (Admin User)
-  - Action:
-    - Log in with david.admin@company.com
-    - Locate a high-urgency open incident (assigned to anyone or unassigned).
-    - Click "Edit", change status to "Closed", and save.
-- Result:
-    - ✅ The system successfully closes the high-urgency incident.
-    - ✅ This confirms that only administrators can perform sensitive actions like closing high-risk incidents, as enforced by { grant: '*', to: 'admin' } and correct role-based access control.
- 
-### Step 5: Verify David can Modify/Delete a Closed Incident
-- Action:
-  - Locate the closed incident from Step 4.
-  - Edit the title or delete the incident.
-- Result:
-- ✅ The system allows both operations.
-- ✅ This confirms admins bypass restrictions applied to support users.
 
 ### 📌 Verification Summary:
 

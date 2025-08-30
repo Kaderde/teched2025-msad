@@ -484,33 +484,13 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 - ✅ Audit logs generate a **SecurityEvent** entry for the unauthorized write attempt.
 - ✅ No PersonalDataModified entry is created.
 
-### 📌 Verification Summary:
 
-The remediation successfully addresses Vertical Privilege Escalation by:
+  ### Cloud FoundrY  environment setup (TBD)
+  
 
-**1. Restricting Support Users:**
+### 📌 Verification Summary: (TBD)
 
-  - Cannot close high-urgency incidents.
-  - Cannot modify/delete closed incidents.
-  - Retain modify only to their own non-high-urgency incidents.
 
-**2. Empowering Admin Users:**
-  - Full access to all incidents and operations.
-  - Can close high-urgency incidents and modify closed incidents.
-
-**3. Security Mechanisms:**
-  - Declarative Security: @restrict rules in services.cds enforce role-based access.
-  - Imperative Security: services.js handlers (e.g., onModify) validate business rules.
-  - Defense in Depth: Combined CDS annotations and JavaScript logic prevent bypasses.
-
-## 📌 Summary:
-
-In these exercises, you have learned how to:
-  - Mitigate Vertical Privilege Escalation by explicitly defining admin-only operations in @restrict rules.
-  - Leverage CAP’s Role-Based Access Control (RBAC) to separate support and admin capabilities.
-  - Combine Declarative and Imperative Security for comprehensive protection:
-    * CDS Annotations (@restrict) for coarse-grained access control.
-    * JavaScript Handlers (e.g., onModify) for fine-grained business logic enforcement.
-  - Test Security Rules by validating both allowed and denied operations for each role.
+## 📌 Summary: (TBD)
     
-Continue to - [Exercise 1.3 - Insecure Direct Object References (IDOR)](./ex1.3/README.md)
+Continue to - [Exercise 1.4 - SQl Injection](./ex2/README.md)

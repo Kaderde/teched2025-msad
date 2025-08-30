@@ -246,7 +246,7 @@ Result:
 
 ### Step 2: Annotate Personal Data
 
-- Action : Annotate the domain model in a separate file srv/data-privacy.cds with the following content:
+- Action : Annotate the domain model in a separate new file srv/data-privacy.cds with the following content:
   
 ```
 using { sap.capire.incidents as my } from './services';
@@ -345,10 +345,11 @@ As part of audit logs, there can be cases where you want to genereate custom aud
   module.exports = cds.server
   ```
 - Result:
-  - The audit_log_403 function is configured to capture **SecurityEvent** logs for all 403 Forbidden responses
-  - Two event handlers are implemented:
-    - Non-batch requests: Monitors HTTP response status codes and triggers audit logging when res.statusCode == 403
-    - Batch subrequests: Captures 403 errors within OData batch operations and logs them appropriately.    
+  - The audit_log_403 function is configured to capture **SecurityEvent** logs for all 403 Forbidden responses.
+  - Three event handlers are implemented to enable comprehensive audit logging for security incidents like 403 Forbidden responses:
+    - cds.on('served'): Establishes connections to services like 'audit-log' after initialization, preparing resources for global event processing.
+    - cds.on('bootstrap'): Monitors HTTP response status codes for non-batch requests and triggers audit logging when a 403 error occurs.
+    - cds.on('serving'): Captures 403 errors within OData batch operations and logs them appropriately for service-specific events.
 
 ## ✅ 5. Verification:
 

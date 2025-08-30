@@ -56,7 +56,7 @@ This structure is designed to help you understand a vulnerability from an attack
 - [Getting Started](exercises/ex0/)
 - [Exercise 1 - Broken Access Control](exercises/ex1/)
     - [Exercise 1.1 - Enter the application with your trial identity provider user](exercises/ex1#exercise-11---Setup-SAP-Build-Apps-and-enter-the-application-with-your-trial-identity-provider-user)
-    - [Exercise 1.2 - Horizontal Privilege Escalation](exercises/ex1/ex1.2/README.md)
+    - [Exercise 1.2 - Horizontal Privilege Escalation](exercises/ex1/ex1.1/README.md)
     - [Exercise 1.3 - Vertical Privilege Escalation](exercises/ex1/ex1.2/README.md)
     - [Exercise 1.4 - Insecure Direct Object References (IDOR)](exercises/ex1/ex1.3/README.md)
     

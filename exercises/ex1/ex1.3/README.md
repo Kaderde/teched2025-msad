@@ -394,14 +394,14 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 - Action:
   - Open test/http/ProcessorService.http file.
   - Change the username to alice.
-  - Go to  Line 119 and run the GET /odata/v4/admin/Customers request (Click on Send Request).
+  - Go to  Line 119 and Click on 'Send Request' to run the 'GET {{server}}/odata/v4/processor/Customers' request.
 
 - Results:
-  - ✅ Here is a sample audit log **SensitiveDataRead** for 1 customer entity. In your log, the timestamp matches the current timestamp.
+  - ✅ Here is a sample audit log event **SensitiveDataRead** for 1 customer entity. In your log, the timestamp matches the current timestamp.
     ```
     [odata] - GET /odata/v4/processor/Customers 
     [cds] - connect to audit-log > audit-log-to-console 
-    [audit-log] - SensitiveDataRead: {
+    [audit-log] - SensitiveDataRead: {  // SensitiveDataRead event generated
       data_subject: {
         id: { ID: '1004155' },
         role: 'Customer',
@@ -426,7 +426,7 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 #### Step 4: Test Write Access to Customer Data with Admin User
 - Action:
   - Open test/http/AdminService.http file.
-  - Change the username to incident.support@tester.sap.com.
+  - Change the username to incident.support@tester.sap.com (admin role).
   - Go to  Line 12 and run the the POST /odata/v4/admin/Customers request (Click on Send Request).
  
   Results:

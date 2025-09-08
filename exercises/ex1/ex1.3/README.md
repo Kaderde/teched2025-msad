@@ -288,7 +288,7 @@ annotate my.Addresses with @PersonalData: {
   - ✅ Sensitive fields like creditCardNo are marked as @PersonalData: #Sensitive for compliance.
   - ✅ Audit logs automatically include these fields in tracking, ensuring data privacy and regulatory adherence.
 
-- Copy the complete code from this link: [data-privacy.cds](./srv/data-privacy.cds).
+- Copy the complete code from this link: [data-privacy.cds](./srv/data-privacy.cds) in /srv directory.
 
 ### Step 3: Create server.js with Custom 403 Handler
 As part of audit logs, there can be cases where you want to genereate custom audit logs. For example if you want to log 403 - Forbidden events when an user is not having roles but is still trying to access certain data. This can be achieved by adding custom handlers in a CAP application.
@@ -351,7 +351,7 @@ As part of audit logs, there can be cases where you want to genereate custom aud
     - cds.on('bootstrap'): Monitors HTTP response status codes for non-batch requests and triggers audit logging when a 403 error occurs.
     - cds.on('serving'): Captures 403 errors within OData batch operations and logs them appropriately for service-specific events.
    
-- Copy the complete code from this link: [server.js](./server.js).
+- Copy the complete code from this link: [server.js](./server.js) in root directory.
 
 
 ## ✅ 5. Verification:

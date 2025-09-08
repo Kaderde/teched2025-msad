@@ -110,14 +110,10 @@ class ProcessorService extends cds.ApplicationService {
       }
     }
    
-    // ❌ VULNERABILITY
-      No Audit Trail
-    // No logging of access attempts to customers & incidents data, making security monitoring impossible
-    
-    // ❌ VULNERABILITY 1: No Audit Logging
-    // No record of who accessed which customerss, when, or what they did.
+// ❌ VULNERABILITY: Missing Audit Logging for sensitive data.
+// ❌ CRITICAL: No tracking of user access to customer records (who, what, when)
+// → Prevents security monitoring, incident investigation, and forensic analysis
    
-
   }
 }
 
@@ -152,7 +148,7 @@ resources:
 
 **Why This is Vulnerable:**
 
-- ❌ **No object-level validation:** A support user can manipulate customers IDs in the API to access other customer's data, including credit card numbers.- 
+- ❌ **No object-level validation:** A support user can manipulate customers IDs in the API to access other customer's data, including credit card numbers.
 - ❌ **No data classification:** Credit card numbers are not annotated as sensitive, so audit logging isn't triggered.
 - ❌ **No data masking:** Credit card numbers are displayed in full to all users.
 - ❌ **No Audit Trail:**  No logging of access attempts to customers & incidents data, making security monitoring impossible.

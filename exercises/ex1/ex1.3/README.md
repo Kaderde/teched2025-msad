@@ -485,7 +485,7 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 - ✅ No PersonalDataModified entry is created.
 
 
-  ### Cloud FoundrY  environment setup (TBD)
+  ### Cloud Foundry Environment Setup (TBD)
   
 
 ### 📌 Verification Summary: (TBD)

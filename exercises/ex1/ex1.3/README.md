@@ -196,6 +196,7 @@ Results :
 - Action: 
   - Click on 'http://localhost:4004' to connect to your locally running CAP server.
   - Click on Customers under the Service Endpoints: /odata/v4/processor/$metadata section.
+  - Use the following credentials if required : Username = 'alice',  Password: [leave empty — no password required]
 - Result:
 
 ```
@@ -224,8 +225,8 @@ Results :
 
 ## 🛡️ 4. Remediation:
 To address the identified IDOR vulnerabilities and data privacy risks, this section implements SAP CAP's built-in security controls through:
-  1. **Personal Data Annotation** - Explicitly tags sensitive fields for GDPR compliance
-  2. **Automated Audit Logging** - Tracks all access to protected data with @cap-js/audit-logging
+  1. **Personal Data Annotation** - Explicitly tags sensitive fields for GDPR compliance.
+  2. **Automated Audit Logging** - Tracks all access to protected data with @cap-js/audit-logging.
   3. **Fine-Grained Access Control** - Restricts customer data visibility by user role.
 
 ### Step 1: Add Audit Logging Dependency
@@ -286,7 +287,9 @@ annotate my.Addresses with @PersonalData: {
 - Result:
   - ✅ Sensitive fields like creditCardNo are marked as @PersonalData: #Sensitive for compliance.
   - ✅ Audit logs automatically include these fields in tracking, ensuring data privacy and regulatory adherence.
- 
+
+- Copy the complete code from this link: [data-privacy.js](./data-privacy.js).
+
 ### Step 3: Create server.js with Custom 403 Handler
 As part of audit logs, there can be cases where you want to genereate custom audit logs. For example if you want to log 403 - Forbidden events when an user is not having roles but is still trying to access certain data. This can be achieved by adding custom handlers in a CAP application.
 - Action :

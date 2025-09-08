@@ -393,8 +393,8 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 #### Step 3: Test Read Access to Customers with Support User
 - Action:
   - Open test/http/ProcessorService.http file.
-  - Change the username to alice.
-  - Go to  Line 119 and Click on 'Send Request' to run the 'GET {{server}}/odata/v4/processor/Customers' request.
+  - Change the @username to 'alice`',@password: [leave empty — no password required]
+  - Go to  Line 119 and click on 'Send Request' to run the 'GET {{server}}/odata/v4/processor/Customers' request.
 
 - Results:
   - ✅ Here is a sample audit log event **SensitiveDataRead** for 1 customer entity. In your log, the timestamp matches the current timestamp.
@@ -417,7 +417,7 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
     ... other customer's entities
     ```
   - ✅ Each customer entity generates a separate audit log entry.
-  - ✅ When creditCardNo is accessed, a **SensitiveDataRead** event is automatically generated.
+  - ✅ When creditCardNo is accessed, a **SensitiveDataRead** log is automatically generated.
   - ✅ These events are richer than standard audit logs and include:
     - Who accessed the data
     - When it was accessed
@@ -426,8 +426,8 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 #### Step 4: Test Write Access to Customer Data with Admin User
 - Action:
   - Open test/http/AdminService.http file.
-  - Change the username to incident.support@tester.sap.com (admin role).
-  - Go to  Line 12 and run the the POST /odata/v4/admin/Customers request (Click on Send Request).
+  - Change the username to 'incident.support@tester.sap.com' (admin role), password : 'initial'.
+  - Go to Line 12 and and click on 'Send Request' to run 'POST {{server}}/odata/v4/admin/Customers' request.
  
   Results:
   - ✅ Here is a sample audit log **PersonalDataModified** for one customer entity. In your log, the timestamp matches the current timestamp.
@@ -461,11 +461,11 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 #### Step 5: Test Write Access to Customer Data with with Support User
 - Action:
   - Open test/http/AdminService.http file.
-  - Change the username to alice.
-  - Go to  Line 12 and run the the POST /odata/v4/admin/Customers request (Click on Send Request).
+  - Change the @username to 'alice', @password: [leave empty — no password required]
+  - Go to Line 12 and and click on 'Send Request' to run 'POST {{server}}/odata/v4/admin/Customers' request.
 
 - Result:
-  - ✅ Here is a sample audit log **SecurityEvent** for one customer entity. In your log, the timestamp matches the current timestamp.
+  - ✅ Audit logs generate **SecurityEvent** for one customer entity. In your log, the timestamp matches the current timestamp.
 ```
 [odata] - POST /odata/v4/admin/Customers 
 [error] - 403 - Error: Forbidden
@@ -490,6 +490,7 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 ```
 - ✅ Audit logs generate a **SecurityEvent** entry for the unauthorized write attempt.
 - ✅ No PersonalDataModified entry is created.
+
 
 
   ### Cloud Foundry Environment Setup (TBD)

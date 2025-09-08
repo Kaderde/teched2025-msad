@@ -369,7 +369,7 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 
 ####  Step 1: Generate HTTP Test Files
 - Action:
-  - Run the commands to create Admin.http and Processor.http in the test/http directory :
+  - To create HTTP request templates for testing your services, run the following commands in your terminal from the project root:
   ```
     cds add http --filter ProcessorService
     cds add http --filter ProcessorService

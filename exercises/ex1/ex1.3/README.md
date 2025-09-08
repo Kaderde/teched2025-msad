@@ -27,7 +27,7 @@ Insecure Direct Object References (IDOR) occur when an application exposes inter
 The objective of this exercise is to implement **object-level authorization**, **data masking**, and **audit logging** to ensure users only access customer data they are authorized to view. By enforcing these security controls, we will restrict data visibility appropriately and maintain comprehensive records of access, thereby protecting sensitive information and mitigating unauthorized data exposure risks.
 
 ## 🚨 2. Vulnerable Code :
-we will use the code from previous [remediated code from Exercise 1.2](../ex1.2#%EF%B8%8F-4-remediation), It handles basic data operations but does not yet address the critical vulnerability related to IDOR.
+We'll build upon the code from previous [Exercise 1.2](../ex1.2#%EF%B8%8F-4-remediation), which handles core data operations but still contains an Insecure Direct Object Reference (IDOR) vulnerability. 
 
 **File**: `db/schema.cds`
 ```

@@ -6,7 +6,7 @@ Vulnerability: Unauthorized Access to Credit Card Data via IDOR
 Insecure Direct Object References (IDOR) occur when an application exposes internal object references(e.g., database keys, filenames, or user IDs) without proper access controls, allowing attackers to manipulate these references to access unauthorized data. In our Incident Management system, we will demonstrate how a support user can exploit IDOR to access credit card numbers stored in the Customers entity.
 
 **Business Rules:**
-+
+
 * Support Users:
   - ✅ Can view customer data.
   - ❌ Cannot access customers sensitive data (e.g., credit card numbers).

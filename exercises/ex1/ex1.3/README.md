@@ -367,7 +367,18 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 
 ### Local Environment Setup
 
-#### Step 1: Set Up Local Server
+####  Step 1: Generate HTTP Test Files
+- Action:
+  - Run the commands to create Admin.http and Processor.http in the test/http directory :
+  ```
+    cds add http --filter ProcessorService
+    cds add http --filter ProcessorService
+  ```
+
+- Results:
+  - ✅ The AdminService.http and Processor.http  files are generated with sample GET, POST, and PATCH requests for testing.
+
+#### Step 2: Set Up Local Server
 - Action:
   - Start the CDS server in watch mode from SAP Business Application Studio command line:
     ```
@@ -378,14 +389,7 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
   - ✅ The server is running, and the Rest Extension is ready for testing.
   - ✅ Audit logs are enabled and accessible via the terminal.   
 
-####  Step 2: Generate HTTP Test Files
-- Action:
-  - Run : **cds add http --filter AdminService** to create Admin.http in the test/http directory.
-  - Run : **cds add http --filter ProcessorService** to create Processor.http in the test/http directory.
-
-- Results:
-  - ✅ The AdminService.http and Processor.http  files are generated with sample GET, POST, and PATCH requests for testing.
-  
+ 
 #### Step 3: Test Read Access to Customers with Support User
 - Action:
   - Open test/http/ProcessorService.http file.

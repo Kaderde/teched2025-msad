@@ -372,7 +372,7 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
   - To create HTTP request templates for testing your services, run the following commands in your terminal from the project root:
   ```
     cds add http --filter ProcessorService
-    cds add http --filter ProcessorService
+    cds add http --filter AdminService
   ```
 
 - Results:

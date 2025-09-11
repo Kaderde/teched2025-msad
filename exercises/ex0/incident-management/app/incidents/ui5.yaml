@@ -2,12 +2,13 @@ specVersion: "3.1"
 metadata:
   name: ns.incidents
 type: application
+
 server:
   customMiddleware:
     - name: fiori-tools-proxy
       afterMiddleware: compression
       configuration:
-        ignoreCertError: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
+        ignoreCertError: false
         ui5:
           path:
             - /resources
@@ -19,3 +20,17 @@ server:
         port: 35729
         path: webapp
         delay: 300
+
+builder:
+  resources:
+    excludes:
+      - "/test/**"
+      - "/localService/**"
+  customTasks:
+    - name: ui5-task-zipper
+      afterTask: generateVersionInfo
+      configuration:
+        archiveName: nsincidents
+        additionalFiles:
+          - xs-app.json
+          - manifest.json

@@ -22,6 +22,9 @@ By completing the exercises, you will gain the practical skills to identify and 
 -	**Validate** the effectiveness of security fixes through practical testing.
 
 
+![Top 10 OWASP Security Risks](img/top10-owasp-with-title.png)
+
+
 ## Requirements (TBD)
 
 The requirements to follow the exercises in this repository are active trial accounts for SAP BTP and for the SAP Cloud Identity Services. 

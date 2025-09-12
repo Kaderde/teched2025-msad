@@ -24,7 +24,7 @@ By completing the exercises, you will gain the practical skills to identify and 
 <p align="center">
   <img src="img/top10-owasp.png" alt="Top 10 OWASP Vulnerabilities" width="900"/>
   <br>
-  <em>Top 10 OWASP Vulnerabilities</em>
+  <b>Top 10 OWASP Vulnerabilities</b>
 </p>
 
 ## Requirements (TBD)

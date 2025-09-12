@@ -22,7 +22,7 @@ By completing the exercises, you will gain the practical skills to identify and 
 -	**Validate** the effectiveness of security fixes through practical testing.
 
 
-    ![Top 10 OWASP Security Risks](img/top10-owasp-with-title.png)
+    ![Top 10 OWASP Vulnerabilities](img/top10-owasp.png)
 
 
 ## Requirements (TBD)

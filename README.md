@@ -21,9 +21,11 @@ By completing the exercises, you will gain the practical skills to identify and 
 -	**Implement** BTP's comprehensive, built-in security services to protect your data and business logic.
 -	**Validate** the effectiveness of security fixes through practical testing.
 
-
-    ![Top 10 OWASP Vulnerabilities](img/top10-owasp.png)
-
+<p align="center">
+  <img src="img/top10-owasp.png" alt="Top 10 OWASP Vulnerabilities" width="900"/>
+  <br>
+  <em>Top 10 OWASP Vulnerabilities</em>
+</p>
 
 ## Requirements (TBD)
 

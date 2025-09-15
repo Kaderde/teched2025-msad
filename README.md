@@ -59,29 +59,17 @@ Every exercise module is a self-contained lab focused on a specific vulnerabilit
 This structure is designed to help you understand a vulnerability from an attacker's perspective and a defender's, see how it can impact a CAP application, and learn actionable steps to mitigate it with BTP best practices. 
 
 - [Getting Started](exercises/ex0/)
+
 - [Exercise 1 - Broken Access Control](exercises/ex1/)
-    - [Exercise 1.1 - Enter the application with your trial identity provider user](exercises/ex1#exercise-11---Setup-SAP-Build-Apps-and-enter-the-application-with-your-trial-identity-provider-user)
-    - [Exercise 1.2 - Horizontal Privilege Escalation](exercises/ex1/ex1.1/README.md)
-    - [Exercise 1.3 - Vertical Privilege Escalation](exercises/ex1/ex1.2/README.md)
-    - [Exercise 1.4 - Insecure Direct Object References (IDOR)](exercises/ex1/ex1.3/README.md)
+    - [Exercise 1.1 - Horizontal Privilege Escalation](exercises/ex1/ex1.1/README.md)
+    - [Exercise 1.2 - Vertical Privilege Escalation](exercises/ex1/ex1.2/README.md)
+  
+- [Exercise 2 - SQL injection](exercises/ex2/)
+
+- [Exercise 3 - SQL injection](exercises/ex2/)
+
+- [Exercise 1.4 - Insecure Direct Object References (IDOR)](exercises/ex1/ex1.3/README.md)
     
-- [Exercise 2 - Security Recommendations regarding user access and authentication](exercises/ex2/)
-    - [Exercise 2.1 - Manage obsolete administrators](exercises/ex2#exercise-21-identify-obsolete-users)
-    - [Exercise 2.2 - Defining a custom password policy](exercises/ex2#exercise-22-defining-a-custom-password-policy)
-    - [Exercise 2.3 - Keep public access to applications by self-registration disabled](exercises/ex2#exercise-23-keep-public-access-to-applications-by-self-registration-disabled)
-    - [Exercise 2.4 - Keep Social Sign-On disabled](exercises/ex2#exercise-24-keep-social-sign-on-disabled)
-- [Exercise 3 - Security Recommendations regarding the Audit Log](exercises/ex3/)
-    - [Exercise 3.1 - Subscribe to the SAP Audit Log Viewer service](exercises/ex3#exercise-31-subscribe-to-the-sap-audit-log-viewer-service)
-    - [Exercise 3.2 - Configure the SAP Audit Log Viewer service](exercises/ex3#exercise-32-configure-the-sap-audit-log-viewer-service)
-    - [Exercise 3.3 - Check the audit logs and download audit log entries via the SAP Audit Log Viewer service](exercises/ex3#exercise-33-check-the-audit-logs-and-download-audit-log-entries-via-the-sap-audit-log-viewer-service)
-- [Exercise 4 - Managing administrative authorizations in SAP Cloud Identity Services (optional)](exercises/ex4/)
-    - [Exercise 4.1 - Enable policy-based authorizations in SAP Cloud Identity Services](exercises/ex4/README.md#exercise-41-enable-policy-based-authorizations-in-sap-cloud-identity-services)
-    - [Exercise 4.2 - Create an authorization policy for reading users](exercises/ex4/README.md#exercise-42-create-an-authorization-policy-for-reading-users)
-    - [Exercise 4.3 - Create another user account to be used for testing](exercises/ex4/README.md#exercise-43-create-another-user-account-to-be-used-for-testing)
-    - [Exercise 4.4 - Remove classic authorization for reading users](exercises/ex4/README.md#exercise-44-remove-classic-authorization-for-reading-users)
-    - [Exercise 4.5 - Validate that you can still see all user records](exercises/ex4/README.md#exercise-45-validate-that-you-can-still-see-all-user-records)
-    - [Exercise 4.6 - Restrict the authorization policy](exercises/ex4/README.md#exercise-46-restrict-the-authorization-policy)
-    - [Exercise 4.7 - Validate that you can only see the allowed user accounts](exercises/ex4/README.md#exercise-47-validate-that-you-can-only-see-the-allowed-user-accounts)
 
 
 **IMPORTANT**

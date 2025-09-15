@@ -67,10 +67,10 @@ This structure is designed to help you understand a vulnerability from an attack
 - [Exercise 2 - SQL injection](exercises/ex2/)
 
 - [Exercise 3 - Security Logging and Monitoring Failures](exercises/ex3/)
-    - [Exercise 3.1 - Audit Logging in CAP](exercises/ex3/README.md)
-    - [Exercise 3.2 - Setting up SAP Audit] log (exercises/ex3/README.md)
+    - [Exercise 3.1 - Audit Logging in CAP](exercises/ex3.1/README.md)
+    - [Exercise 3.2 - Setting up SAP Audit log](exercises/ex3.2/README.md)
 
-Otpional exercises :
+Optional exercises :
 - [Exercise 1.4 - Insecure Direct Object References (IDOR)](exercises/ex1/ex1.3/README.md)
     
 

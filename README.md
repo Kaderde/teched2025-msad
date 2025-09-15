@@ -64,7 +64,7 @@ This structure is designed to help you understand a vulnerability from an attack
     - [Exercise 1.1 - Horizontal Privilege Escalation](exercises/ex1/ex1.1/README.md)
     - [Exercise 1.2 - Vertical Privilege Escalation](exercises/ex1/ex1.2/README.md)
   
-- [Exercise 2 - SQL injection](exercises/ex2/)
+- [Exercise 2 - SQL injection](exercises/ex2/) (TBD)
 
 - [Exercise 3 - Security Logging and Monitoring Failures](exercises/ex3/)
     - [Exercise 3.1 - Audit Logging in CAP](exercises/ex3/ex3.1/README.md)

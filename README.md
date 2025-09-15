@@ -29,19 +29,10 @@ By completing the exercises, you will gain the practical skills to identify and 
 
 ## Requirements (TBD)
 
-The requirements to follow the exercises in this repository are active trial accounts for SAP BTP and for the SAP Cloud Identity Services. 
-
-**First you have to get your SAP BTP trial account. Follow these instructions and choose the region "US East (VA)":** 
-[Get a Free Account on SAP BTP Trial](https://developers.sap.com/tutorials/hcp-create-trial-account.html)
-
-**Then activate your SAP Cloud Identity Services trial. Follow the instructions in this blog:** 
-[SAP Cloud Identity Services offered as Trial Version](https://blogs.sap.com/2023/04/13/sap-cloud-identity-services-offered-as-trial-version/)
-💡Ensure that you choose the default domain "ondemand.com", as "cloud.sap" is currently not supported on the trial landscape.
-
-💡You should have access to your mailbox, which you used while registering for your BTP trial account in order to activate your SAP Cloud Identity Services trial account.
-
-**Finally, install a Time-based One-Time-Password (TOTP) authentication application (such as Google Authenticator or Microsoft Authenticator) on your mobile device and familiarize yourself with the process to create accounts in the app.**
-
+The requirements to follow the exercises in this repository are accounts for SAP BTP and for the SAP Cloud Identity Services. 
+.....
+....
+...
 Now you are ready to start the exercises.
 
 💡In some of the exercises you will be asked to switch from one user to another. This works more reliable if you use the Incognito mode of your browser. Without the Incognito mode, you may run into situations where you are authenticated automatically with the wrong user.

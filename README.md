@@ -58,7 +58,7 @@ Every exercise module is a self-contained lab focused on a specific vulnerabilit
 
 This structure is designed to help you understand a vulnerability from an attacker's perspective and a defender's, see how it can impact a CAP application, and learn actionable steps to mitigate it with BTP best practices. 
 
-- [Getting Started](exercises/ex0/)
+- [Getting Started](exercises/ex0/) (TBD)
 
 - [Exercise 1 - Broken Access Control](exercises/ex1/)
     - [Exercise 1.1 - Horizontal Privilege Escalation](exercises/ex1/ex1.1/README.md)

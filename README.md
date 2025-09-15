@@ -66,11 +66,10 @@ This structure is designed to help you understand a vulnerability from an attack
   
 - [Exercise 2 - SQL injection](exercises/ex2/)
 
-- [Exercise 3 - SQL injection](exercises/ex2/)
+- [Exercise 3 - Security Logging and Monitoring Failures](exercises/ex3/)
 
 - [Exercise 1.4 - Insecure Direct Object References (IDOR)](exercises/ex1/ex1.3/README.md)
     
-
 
 **IMPORTANT**
 

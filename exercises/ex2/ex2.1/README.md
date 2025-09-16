@@ -1,9 +1,9 @@
-# Exercise 1.3 - Insecure Direct Object References (IDOR)
-Vulnerability: Unauthorized Access to Credit Card Data via IDOR
+# Exercise 2.1 - Audit Logging for Sensitive Data Access
+Vulnerability: Security Logging and Monitoring Failures
 
 ## 📖  1. Overview :
 
-Insecure Direct Object References (IDOR) occur when an application exposes internal object references(e.g., database keys, filenames, or user IDs) without proper access controls, allowing attackers to manipulate these references to access unauthorized data. In our Incident Management system, we will demonstrate how a support user can exploit IDOR to access credit card numbers stored in the Customers entity.
+This exercise highlights how the absence of audit logging for sensitive data access creates blind spots in enterprise applications. In the Incident Management system, customer records include highly sensitive fields such as credit card numbers. As a result, users can access or exfiltrate regulated data without detection. This undermines both security monitoring and compliance obligations (e.g., PCI DSS, GDPR).
 
 **Business Rules:**
 

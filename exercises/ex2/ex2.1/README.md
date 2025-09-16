@@ -3,8 +3,7 @@ Vulnerability: Security Logging and Monitoring Failures
 
 ## 📖  1. Overview :
 
-This exercise highlights how the absence of audit logging for sensitive data access creates blind spots in enterprise applications. In the Incident Management system, customer records include highly sensitive fields such as credit card numbers. As a result, users can access or exfiltrate regulated data without detection. This undermines both security monitoring and compliance obligations (e.g., PCI DSS, GDPR).
-
+This exercise highlights how the absence of audit logging for sensitive data access creates blind spots in enterprise applications. In the Incident Management system, customer records include highly sensitive fields such as credit card numbers. As a result, users can access or exfiltrate regulated data without detection.
 **Business Rules:**
 
 * Support Users:

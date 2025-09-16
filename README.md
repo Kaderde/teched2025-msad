@@ -68,7 +68,7 @@ This structure is designed to help you understand a vulnerability from an attack
     - [Exercise 2.1 - Audit Logging for Sensitive Data Access](exercises/ex2/ex2.1/README.md)
     - [Exercise 2.2 - Security Event Monitoring in SAP BTP Production Environment](exercises/ex2/ex2.2/README.md)
   
-- [Exercise 2 - SQL injection](exercises/ex2/) (TBD)
+- [Exercise 3 - SQL injection](exercises/ex3/README.md) (TBD)
 
     
 

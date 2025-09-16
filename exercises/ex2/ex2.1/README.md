@@ -472,4 +472,5 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 
 ## 📌 Summary: (TBD)
     
-Continue to - [Exercise 1.4 - SQl Injection](./ex2/README.md)
+Continue to -  [Exercise 2.2 - Security Event Monitoring in SAP BTP Production Environment](./ex2.2/README.md)
+

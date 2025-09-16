@@ -121,31 +121,6 @@ module.exports = { ProcessorService }
 
 ```
 
-**File**: `package.json`
-```
-{
-  "dependencies": {
-    "@sap/cds": "^7",
-    "@sap/cds-hana": "^2"
-    // ❌ MISSING: "@cap-js/audit-logging"- Required for IDOR detection
-  }
-}
-
-```
-
-**File**: `mta.yaml`
-```
-modules:
-  - name: incident-management-srv
-    requires:
-   //   ❌ MISSING: audit-log
-
-resources:
-  // ❌ MISSING: audit-log
-  # Add this resource
-  
-```
-
 **Why This is Vulnerable:**
 
 - ❌ **No object-level validation:** A support user can manipulate customers IDs in the API to access other customer's data, including credit card numbers.
@@ -363,7 +338,7 @@ This section evaluates the implementation of audit logging and data protection i
   - Confirming role-based access controls are enforced.
   - Verifying that audit logs record all API interactions, such as SensitiveDataRead, PersonalDataModified, and SecurityEvent.
 
-Testing is performed both locally in SAP Business Application Studio and in SAP BTP environments to validate that logs are correctly generated, masked, and compliant with enterprise security standards.
+Testing is performed both locally in SAP Business Application Studio and in SAP BTP production environments to validate that logs are correctly generated, masked, and compliant with enterprise security standards.
 
 ### Local Environment Setup
 
@@ -491,11 +466,6 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 - ✅ Audit logs generate a **SecurityEvent** entry for the unauthorized write attempt.
 - ✅ No PersonalDataModified entry is created.
 
-
-### Cloud Foundry Environment Setup (TBD)
-
-
-  
 
 ### 📌 Verification Summary: (TBD)
 

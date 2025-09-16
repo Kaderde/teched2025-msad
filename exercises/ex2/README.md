@@ -8,7 +8,8 @@ Security Logging and Monitoring Failures is a critical web application security 
 - Delayed Detection and Alerting.
 - Insufficient Log Retention and Analysis.
 
-## CAP Security Concept: CAP provides a comprehensive audit logging framework:
+## CAP Security Concept: 
+  CAP provides a comprehensive audit logging framework:
 
 - **Personal Data Protection:** Automatic audit logging for GDPR compliance using @PersonalData annotations
 - **Automated Audit Events:** Built-in logging for critical operations (SensitiveDataRead, PersonalDataModified, SecurityEvent)

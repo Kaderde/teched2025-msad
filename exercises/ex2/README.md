@@ -10,11 +10,10 @@ Security Logging and Monitoring Failures is a critical web application security 
 
 ## CAP Security Concept: CAP provides a comprehensive audit logging framework:
 
-- Personal Data Protection: Automatic audit logging for GDPR compliance using @PersonalData annotations
-- Automated Audit Events: Built-in logging for critical operations (SensitiveDataRead, PersonalDataModified, SecurityEvent)
-- Enterprise Integration: SAP BTP Audit Log Service with tamper-proof storage and regulatory compliance
-- Custom Security Logging: Programmatic audit event generation via @cap-js/audit-logging with SIEM integration
+- **Personal Data Protection:** Automatic audit logging for GDPR compliance using @PersonalData annotations
+- **Automated Audit Events:** Built-in logging for critical operations (SensitiveDataRead, PersonalDataModified, SecurityEvent)
+- **Enterprise Integration:** SAP BTP Audit Log Service with tamper-proof storage and regulatory compliance
+- **Custom Security Logging:** Programmatic audit event generation via @cap-js/audit-logging.
 
-## [Exercise 1.1 - Horizontal Privilege Escalation](./ex1.1/README.md)
-## [Exercise 1.2 - Vertical Privilege Escalation](./ex1.2/README.md)
-## [Exercise 1.3 - Insecure Direct Object References (IDOR)](./ex1.3/README.md)
+## [Exercise 1.1 - Local Development Environment - Log Generation Analysis](./ex2.1/README.md)
+## [Exercise 1.2 - SAP BTP Production Environment - Enterprise Log Validation](./ex2.2/README.md)

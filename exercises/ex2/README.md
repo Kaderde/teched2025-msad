@@ -15,5 +15,5 @@ Security Logging and Monitoring Failures is a critical web application security 
 - **Enterprise Integration:** SAP BTP Audit Log Service with tamper-proof storage and regulatory compliance
 - **Custom Security Logging:** Programmatic audit event generation via @cap-js/audit-logging.
 
-## [Exercise 1.1 - Local Development Environment - Log Generation Analysis](./ex2.1/README.md)
-## [Exercise 1.2 - SAP BTP Production Environment - Enterprise Log Validation](./ex2.2/README.md)
+## [Exercise 2.1 - Local Development Environment - Log Generation Analysis](./ex2.1/README.md)
+## [Exercise 2.2 - SAP BTP Production Environment - Enterprise Log Validation](./ex2.2/README.md)

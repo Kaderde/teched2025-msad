@@ -16,12 +16,6 @@ This exercise highlights how the absence of audit logging for sensitive data acc
   - ✅ Can view all customer data.
   - ⚠️ All operations, including access to sensitive fields, are logged for audit compliance.
 
-### Why This Matters
-
-* **Business Impact:** Unauthorized access to sensitive data (e.g., credit card numbers) could lead to data breaches, financial fraud, and loss of customer trust.
-* **Compliance Risk:** Violates [PCI-DSS requirements](https://www.pcisecuritystandards.org/standards/) for protecting payment card information and the principle of least privilege.
-* **Security Risk:** Support users can manipulate customer IDs in the UI/API to access restricted data.
-
 ### Objective:
 
 The objective of this exercise is to implement **object-level authorization**, **data masking**, and **audit logging** to ensure users only access customer data they are authorized to view. By enforcing these security controls, we will restrict data visibility appropriately and maintain comprehensive records of access, thereby protecting sensitive information and mitigating unauthorized data exposure risks.

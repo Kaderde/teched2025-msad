@@ -6,7 +6,7 @@ After addressing [horizontal privilege escalation in Exercise 1.1](../ex1.1/READ
 In our Incident Management system, this means a support user could perform actions that are reserved for administrators, such as closing high-urgency incidents, modifying closed incidents, or deleting incidents. 
 This violates critical business rules and poses significant risks to the integrity and compliance of the system.
 
-**Business Rules:**
+### 📐 Business Rules
 
 * Support Users:
   - ✅ Can view and create incidents.
@@ -20,10 +20,13 @@ This violates critical business rules and poses significant risks to the integri
   - ✅ Can close all incidents, including high-urgency incidents.
   - ✅ Can modify or delete closed incidents.
 
-### Objective:
-The objective of this exercise is to identify and remediate vulnerabilities that allow support users to perform actions reserved for administrators. By enforcing strict access controls, we will ensure that only authorized users can perform sensitive operations, thereby reinforcing business logic and mitigating security risks.
+### 🎯 Key Learning Objectives :
+  - Identify vulnerabilities that allow support users to perform actions reserved for administrators
+  - Remediate these vulnerabilities by enforcing strict access controls
+  - Ensure only authorized users can perform sensitive operations
+  - Reinforce business logic to mitigate security risks
 
-## 🚨 2. Vulnerable Code :
+## 🚨 2. Vulnerable Code
 we will use exactly the [remediated code from Exercise 1.1.](../ex1.1#%EF%B8%8F-4-remediation), It correctly prevents support users from touching other users’ incidents, but it does not yet enforce admin‑only rules (e.g. closing high‑urgency incidents, modifying closed incidents, deleting any incident).
 
 **File**: `srv/services.cds`
@@ -83,7 +86,7 @@ class ProcessorService extends cds.ApplicationService {
   - ❌ No check for incident urgency when a support user tries to close an incident.
   - ❌ Admin privileges are not enforced at both service (ProcessorService) and CRUD operation level.
     
-## 💥 3. Exploitation: (TBD with screenshots)
+## 💥 3. Exploitation (TBD with screenshots)
 
 ### Step 1: Login as Alice (Support User) :
 - Access SAP Build Work Zone.
@@ -117,7 +120,7 @@ class ProcessorService extends cds.ApplicationService {
   - Admin role when modifying closed incidents.
 - ❌ Silent errors for admins reduce transparency and hinder operations.
 
-## 🛡️ 4. Remediation:
+## 🛡️ 4. Remediation
 The fixes follow the principle of least privilege, ensuring support users are blocked from unauthorized actions while admins retain elevated permissions.
 
 ### Key Remediation Steps
@@ -264,7 +267,7 @@ cf deploy mta_archives/incident-management_1.0.0.mtar
 - ✅ The system allows both operations.
 - ✅ This confirms admins bypass restrictions applied to support users.
 
-### 📌 Verification Summary:
+### 📌 Verification Summary
 
 The remediation successfully addresses Vertical Privilege Escalation by:
 
@@ -283,7 +286,7 @@ The remediation successfully addresses Vertical Privilege Escalation by:
   - Imperative Security: services.js handlers (e.g., onModify) validate business rules.
   - Defense in Depth: Combined CDS annotations and JavaScript logic prevent bypasses.
 
-## 📌 Summary:
+## 📌 Summary
 
 In these exercises, you have learned how to:
   - Mitigate Vertical Privilege Escalation by explicitly defining admin-only operations in @restrict rules.

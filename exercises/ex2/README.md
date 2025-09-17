@@ -11,7 +11,7 @@ Security Logging and Monitoring Failures is a critical web application security 
 ## Why This Matters
 
 * **Business Impact:** Undetected attacks lead to data breaches, financial loss, and loss of customer trust.
-* **Compliance Risk:** Failure to log and monitor violates regulations, leading to fines and penalties.
+* **Compliance Risk:** Failure to log and monitor violates regulations such [PCI-DSS requirements](https://www.pcisecuritystandards.org/standards/) for protecting payment card information and the principle of least privilege.
 * **Security Risk:** Attackers can operate unnoticed, and incidents cannot be properly investigated.
 
 ## 🔐 CAP Security Concept: 

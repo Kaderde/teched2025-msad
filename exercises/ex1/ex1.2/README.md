@@ -299,4 +299,4 @@ In these exercises, you have learned how to:
     * JavaScript Handlers (e.g., onModify) for fine-grained business logic enforcement.
   - Test Security Rules by validating both allowed and denied operations for each role.
     
-👉 Next up: [Exercise 2 - Security Logging and Monitoring Failures](../../ex2/README.md), where we address critical OWASP A09 risks by implementing CAP's audit logging framework to detect unauthorized data access, track sensitive information flow, and ensure regulatory compliance through comprehensive security monitoring in enterprise environments.
+👉 Next up: [Exercise 2 - Security Logging and Monitoring Failures](../../ex2/README.md), where we address critical  [OWASP Top 10 2021 list (A09)](https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/ risk by implementing CAP's audit logging framework to detect unauthorized data access, track sensitive information flow, and ensure regulatory compliance through comprehensive security monitoring in enterprise environments.

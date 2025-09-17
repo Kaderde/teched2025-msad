@@ -7,6 +7,12 @@ Broken Access Control  is the most critical web application security risk, accor
 - Vertical Privilege Escalation.
 - Insecure Direct Object References (IDOR).
 
+## Why This Matters
+
+* **Business Impact:** Unauthorized modifications could lead to incorrect incident handling, data tampering, and workflow disruption.
+* **Compliance Risk:** Violates OWASP Top 10 A01: Broken Access Control and the principle of least privilege.
+* **Security Risk:** malicious or careless users could alter other agents' work, close tickets improperly, or delete evidence.
+
 ## 🔐 CAP Security Concept: 
 
 CAP provides a multi-layered security approach:

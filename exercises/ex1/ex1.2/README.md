@@ -299,4 +299,4 @@ In these exercises, you have learned how to:
     * JavaScript Handlers (e.g., onModify) for fine-grained business logic enforcement.
   - Test Security Rules by validating both allowed and denied operations for each role.
     
-Continue to - [Exercise 2 - Security Logging and Monitoring Failures](../ex2/README.md)
+Continue to - [Exercise 2 - Security Logging and Monitoring Failures](../../ex2/README.md)

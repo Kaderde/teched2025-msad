@@ -7,7 +7,7 @@ Broken Access Control  is the most critical web application security risk, accor
 - Vertical Privilege Escalation.
 - Insecure Direct Object References (IDOR).
 
-## CAP Security Concept: 
+## 🔐 CAP Security Concept: 
 
 CAP provides a multi-layered security approach:
 

@@ -20,12 +20,6 @@ This violates critical business rules and poses significant risks to the integri
   - ✅ Can close all incidents, including high-urgency incidents.
   - ✅ Can modify or delete closed incidents.
 
-### Why This Matters
-
-* **Business Impact:** Unauthorized closures could lead to critical incidents being ignored or improperly resolved.
-* **Compliance Risk:** Violates the OWASP Top 10 A01 and the principle of least privilege, a fundamental security concept
-* **Security Risk:** Support users could close critical incidents, modify closed ones, or delete evidence without approval.
-
 ### Objective:
 The objective of this exercise is to identify and remediate vulnerabilities that allow support users to perform actions reserved for administrators. By enforcing strict access controls, we will ensure that only authorized users can perform sensitive operations, thereby reinforcing business logic and mitigating security risks.
 

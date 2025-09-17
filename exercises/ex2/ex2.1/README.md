@@ -467,10 +467,19 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 - ✅ No PersonalDataModified entry is created.
 
 
-### 📌 Verification Summary: (TBD)
-
-
-## 📌 Summary: (TBD)
+### 📌 Verification Summary: 
+Verification confirmed that:
+  * All sensitive fields (e.g., creditCardNo) are annotated with @PersonalData, masked in API responses, and tracked in audit logs.
+  * Role-based access controls enforce least-privilege, effectively blocking unauthorized data exposure.
+  * Audit logs  capture every critical event (SensitiveDataRead, PersonalDataModified, SecurityEvent) with full contextual details.
     
-Continue to -  [Exercise 2.2 - Security Event Monitoring in SAP BTP Production Environment](../ex2.2/README.md)
+## 📌 Summary:
+In these exercise, you have learned how:
+* To implement data masking and audit logging for sensitive fields (e.g., creditCardNo) using @PersonalData annotations and @cap-js/audit-logging plugin.
+* To enforce strict role-based access controls that prevent unauthorized data exposure while ensuring all administrator operations are audited.
+* To generate comprehensive security event logs for unauthorized access attempts, enabling regulatory compliance with PCI-DSS and GDPR requirements.
+
+
+👉 Next up: Exercise 2.2 – [Exercise 2.2 - Security Event Monitoring in SAP BTP Production Environment](../ex2.2/README.md), where we take these audit logs beyond local testing and validate them in a production-grade enterprise environment.
+    
 

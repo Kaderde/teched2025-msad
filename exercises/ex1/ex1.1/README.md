@@ -1,10 +1,10 @@
 # Exercise 1.1 - Horizontal Privilege Escalation
 
-## 📖  1. Overview :
+## 📖  1. Overview
 
 Horizontal Privilege Escalation occurs when a user accesses resources belonging to another user at the same privilege level. In our Incident Management system, this means a support user could modify incidents assigned to other support users, violating critical business rules.
 
-### Business Rules for Support Users:
+### Business Rules for Support Users
 
   - ✅ Can view and create incidents.
   - ✅ Can update or delete incidents assigned to them or unassigned incidents.
@@ -18,7 +18,7 @@ Horizontal Privilege Escalation occurs when a user accesses resources belonging 
 - Reinforce business logic by preventing unauthorized actions.  
 - Mitigate security risks through proper authorization checks.
 
-## 🚨 2. Vulnerable Code :
+## 🚨 2. Vulnerable Code
 
 **File**: `db/schema.cds`
 ```cds

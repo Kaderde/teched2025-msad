@@ -16,9 +16,12 @@ This exercise highlights how the absence of audit logging for sensitive data acc
   - ✅ Can view all customer data.
   - ⚠️ All operations, including access to sensitive fields, are logged for audit compliance.
 
-### Objective:
+### 🎯 Key Learning Objectives
 
-The objective of this exercise is to implement **object-level authorization**, **data masking**, and **audit logging** to ensure users only access customer data they are authorized to view. By enforcing these security controls, we will restrict data visibility appropriately and maintain comprehensive records of access, thereby protecting sensitive information and mitigating unauthorized data exposure risks.
+* Implement object-level authorization, data masking, and audit logging
+* Ensure users only access customer data they are authorized to view
+* Maintain comprehensive records of access
+* Protect sensitive information and mitigate unauthorized data exposure risks
 
 ## 🚨 2. Vulnerable Code :
 We'll build upon the code from previous [Exercise 1.2](../../ex1/ex1.2/#%EF%B8%8F-4-remediation), which handles core data operations but still contains an Insecure Direct Object Reference (IDOR) vulnerability. 

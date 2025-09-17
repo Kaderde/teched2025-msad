@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-In this exercise you will extend the local audit-logging setup from [Exercise 2.1](./ex2.1/README.md) into a production-grade SAP BTP environment. You will:
+In this exercise you will extend the local audit-logging setup from [Exercise 2.1](../ex2.1/README.md) into a production-grade SAP BTP environment. You will:
 
   * Deploy the Incident Management service to SAP BTP Cloud Foundry Runtime
   * Provision and bind the managed SAP Audit Log Service to your application

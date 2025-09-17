@@ -8,7 +8,7 @@ Security Logging and Monitoring Failures is a critical web application security 
 - Delayed Detection and Alerting.
 - Insufficient Log Retention and Analysis.
 
-## Why This Matters
+## ⚠️ Why This Matters
 
 * **Business Impact:** Undetected attacks lead to data breaches, financial loss, and loss of customer trust.
 * **Compliance Risk:** Failure to log and monitor violates regulations such [PCI-DSS requirements](https://www.pcisecuritystandards.org/standards/) for protecting payment card information and the principle of least privilege.

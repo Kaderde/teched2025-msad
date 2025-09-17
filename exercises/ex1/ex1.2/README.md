@@ -300,3 +300,5 @@ In these exercises, you have learned how to:
   - Test Security Rules by validating both allowed and denied operations for each role.
     
 Continue to - [Exercise 2 - Security Logging and Monitoring Failures](../../ex2/README.md)
+
+👉 Next up: [Exercise 2 - Security Logging and Monitoring Failures](../../ex2/README.md), where we address critical OWASP A09 risks by implementing CAP's audit logging framework to detect unauthorized data access, track sensitive information flow, and ensure regulatory compliance through comprehensive security monitoring in enterprise environments.

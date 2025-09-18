@@ -273,7 +273,7 @@ annotate my.Incidents with @PersonalData: {
 ```
 
 - Result:
-  - ✅ Sensitive fields like creditCardNo are marked as @PersonalData: #Sensitive for compliance.
+  - ✅ Sensitive fields like creditCardNo and conversation message are marked as @PersonalData: #Sensitive for compliance.
   - ✅ Audit logs automatically include these fields in tracking, ensuring data privacy and regulatory adherence.
 
 - Copy the complete code from this link: [data-privacy.cds](./srv/data-privacy.cds) in /srv directory.

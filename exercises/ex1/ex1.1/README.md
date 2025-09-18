@@ -70,23 +70,12 @@ annotate AdminService with @(requires: 'admin');
 
 ## 💥 3. Exploitation: (TBD with screenshots)
 
-### Step 1: User and Role configuration Incident Management:
-
-- Create users in your custom SAP Identity Service:
-     - bob.support@company.com (Support user).
-     - alice.support@company.com (Support user).
-     - david.admin@company.com (Admin user).
-
-- Configure User Roles in BTP cockpit
-    - Assign bob.support and alice.support to role collection 'Incident Management Support' (TBD with screenshots).
-    - Assign david.admin to role collection 'Incident Management Admin' (TBD with screenshots).
-
-### Step 2: Login as Alice (Support User) :
+### Step 1: Login as Alice (Support User) :
 - Access SAP Build Work Zone.
 - Login with alice.support@company.com.
 - Navigate to Incident Management application.
 
-### Step 3: Exploit Modifying an Incident
+### Step 2: Exploit Modifying an Incident
 - Action:
   - View the incidents list - Alice can see all incidents.
   - Click on any non-closed incident (e.g., "No current on a sunny day").
@@ -100,7 +89,7 @@ annotate AdminService with @(requires: 'admin');
   - ❌ The system allows Alice to modify and save ANY non-closed incident.
   - ❌ Root Cause: No 'assignedTo' field,  means no ownership tracking possible.
  
-### Step 4: Attempt Updating a Closed Incident
+### Step 3: Attempt Updating a Closed Incident
 - Action:
   - Navigate to a closed incident (e.g., one with status "C").
   - Click "Edit".
@@ -111,7 +100,7 @@ annotate AdminService with @(requires: 'admin');
   - 👉 This is due to the existing check in services.js, which blocks updates on closed incidents regardless of user role.
   - ❌ However, this does not mitigate the core Horizontal Privilege Escalation issue, as Alice can still update non-closed incidents not assigned to her.
 
-### Step 5: Exploit Deleting an Incident
+### Step 4: Exploit Deleting an Incident
 - Action:
   - Navigate to any incident.
   - Click "Delete" (or select the incident and click the Delete button).
@@ -120,7 +109,7 @@ annotate AdminService with @(requires: 'admin');
   - ❌ The system allows Alice to delete ANY incident.
   - ❌ Root Cause: No 'assignedTo' field, means no ownership tracking possible.
     
-### Step 6: Test with Another User
+### Step 5: Test with Another User
 - Action:
   - Log out as Alice and log in as bob.support@company.com (another support user).
   - Repeat the update and delete actions on any incidents.

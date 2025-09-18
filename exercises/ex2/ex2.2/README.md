@@ -17,6 +17,9 @@ In this exercise you will extend the local audit-logging setup from [Exercise 2.
 * mbt & Cloud Foundry CLI installed
 * Postman or Insomnia for HTTP/OAuth testing
 * SAP Work Zone launchpad configured in your BTP subaccount
+* Subscribe to the SAP Audit Log Viewer service
+
+
 
 
   

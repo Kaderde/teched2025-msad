@@ -249,11 +249,26 @@ annotate my.Addresses with @PersonalData: {
 
   // Annotating the fields with PersonalData attributes to differentiate between different types of data:
 
-  customer    @PersonalData.FieldSemantics: 'DataSubjectID';  // Identifier for the data subject, can also be used to generate audit logs
-  city        @PersonalData.IsPotentiallyPersonal;            // Personal data that can potentially identify a person : customer, city,postcode,streetAdress
-  postCode    @PersonalData.IsPotentiallyPersonal;            
+  customer      @PersonalData.FieldSemantics: 'DataSubjectID';  // Identifier for the data subject, can also be used to generate audit logs
+  city          @PersonalData.IsPotentiallyPersonal;            // Personal data that can potentially identify a person : customer, city,postcode,streetAdress
+  postCode      @PersonalData.IsPotentiallyPersonal;            
   streetAddress @PersonalData.IsPotentiallyPersonal;          
-}
+};
+
+// Annotating the my.Incidents entity with @PersonalData to enable data privacy
+annotate my.Incidents with @PersonalData: {
+  EntitySemantics: 'DataSubjectDetails',                       // Incidents relate to data subjects (customers)  
+  ID            @PersonalData.FieldSemantics: 'DataSubjectID',   // Link to customer  
+  title         @PersonalData.IsPotentiallyPersonal,             // May contain PII  
+  status_code   @PersonalData.IsPotentiallyPersonal,
+  urgency_code  @PersonalData.IsPotentiallyPersonal,
+  assignedTo    @PersonalData.IsPotentiallyPersonal
+  conversation  @PersonalData: {  
+    message     @PersonalData.IsPotentiallySensitive  // Messages may include sensitive details  
+  };
+
+};
+
 ```
 
 - Result:

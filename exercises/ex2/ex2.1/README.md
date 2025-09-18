@@ -355,16 +355,24 @@ Testing is performed both locally in SAP Business Application Studio and in SAP 
 
 ### Local Environment Setup
 
-####  Step 1: Generate HTTP Test Files
-- Action:
-  - To create HTTP request templates for testing your services, run the following commands in your terminal from the project root:
-  ```
+####  Step 1: HTTP Test Files (Pre-configured)
+
+The project already includes pre-configured HTTP request templates for testing your services. You'll find the following files in your project:
+
+  - test/http/AdminService.http 
+  - test/http/ProcessorService.http 
+
+These files were previously generated using the following command:
+ ```
     cds add http --filter ProcessorService --plan default
     cds add http --filter AdminService --plan default
-  ```
+ ```
+**Note:** When you run these commands, the `mta.yaml` file is also updated to include the `audit-logging` service instead of the `auditlog-management` service. This is because the `cds add http` command automatically configures the application to use the `audit-logging` service for local development.
 
 - Results:
   - ✅ The AdminService.http and Processor.http  files are generated with sample GET, POST, and PATCH requests for testing.
+  - ✅ These files include pre-configured authentication headers and request bodies for different user roles (alice).
+  - ✅ Ready to use with SAP Business Application Studio's REST Client extension.
 
 #### Step 2: Set Up Local Server
 - Action:

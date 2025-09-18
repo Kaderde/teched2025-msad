@@ -2,6 +2,17 @@
 
 After you have activated your trial account for SAP BTP with access to the BTP Cockpit and the SAP Cloud Identity Services trial with access to the SAP Cloud Identity Services administration console you are set for the next steps.
 
+### Step 1: User and Role configuration Incident Management:
+
+- Create users in your custom SAP Identity Service:
+     - bob.support@company.com (Support user).
+     - alice.support@company.com (Support user).
+     - david.admin@company.com (Admin user).
+
+- Configure User Roles in BTP cockpit
+    - Assign bob.support and alice.support to role collection 'Incident Management Support' (TBD with screenshots).
+    - Assign david.admin to role collection 'Incident Management Admin' (TBD with screenshots).
+
 We expect that you have created a **trial subaccount** in your SAP BTP trial account cockpit.
 
 We also expect that you have enabled the **Cloud Foundry Environment**.

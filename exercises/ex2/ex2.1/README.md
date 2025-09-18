@@ -9,19 +9,20 @@ This exercise highlights how the absence of audit logging for sensitive data acc
 
 * Support Users:
   - ✅ Can view customer data.
+  - ✅ Can view, create, update, and delete incidents (with restrictions on closed/high-urgency incidents).
   - ❌ Cannot access customers sensitive data (e.g., credit card numbers).
-  - ⚠️ All access attempts logged to SAP Audit Log Service
+  - ⚠️ All access attempts must be logged (e.g., who accessed/modified which incident, when.
 
 * Administrators:
-  - ✅ Can view all customer data.
+  - ✅ Full access to customer and incidents data.
   - ⚠️ All operations, including access to sensitive fields, are logged for audit compliance.
 
 ### 🎯 Key Learning Objectives
 
 * Implement object-level authorization, data masking, and audit logging
-* Ensure users only access customer data they are authorized to view
-* Maintain comprehensive records of access
-* Protect sensitive information and mitigate unauthorized data exposure risks
+* Ensure users only access customer data they are authorized to view.
+* Maintain comprehensive records of access.
+* Protect sensitive information and mitigate unauthorized data exposure risks.
 
 ## 🚨 2. Vulnerable Code :
 We'll build upon the code from previous [Exercise 1.2](../../ex1/ex1.2/#%EF%B8%8F-4-remediation), which handles core data operations but still contains an Insecure Direct Object Reference (IDOR) vulnerability. 

@@ -151,7 +151,7 @@ entity Incidents : cuid, managed {
     message   : String;
   };
 }
-...
+... // Other entity
 ```
 Copy the contents of [schema.cds](./schema.cds) into your project’s db/schema.cds file.
 
@@ -206,7 +206,7 @@ using { sap.capire.incidents as my } from '../db/schema';
     annotate ProcessorService.Incidents with @odata.draft.enabled; 
     annotate ProcessorService with @(requires: ['support']);
 
-...
+... // Other methods
 ```
 Copy the contents of [services.cds](./services.cds) into your project’s srv/services.cds file.
 
@@ -333,7 +333,7 @@ UI.FieldGroup #GeneratedGroup : {
       assignedTo, 
   ],
 
-...
+... // Other methods
 ```
 Copy the contents of [annotations.cds](./annotations.cds) into your project’s app/incidents/annotations.cds file.
 

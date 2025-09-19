@@ -267,6 +267,7 @@ annotate my.Incidents:conversation with @PersonalData {
 - Copy the contents of [data-privacy.cds](./srv/data-privacy.cds) into your project’s /srv/data-privacy.cds file.
 
 ### Step 3: Create server.js with Custom 403 Handler
+
 As part of audit logs, there can be cases where you want to genereate custom audit logs. For example if you want to log 403 - Forbidden events when an user is not having roles but is still trying to access certain data. This can be achieved by adding custom handlers in a CAP application.
 
 - Action :
@@ -327,8 +328,7 @@ As part of audit logs, there can be cases where you want to genereate custom aud
     - cds.on('bootstrap'): Monitors HTTP response status codes for non-batch requests and triggers audit logging when a 403 error occurs.
     - cds.on('serving'): Captures 403 errors within OData batch operations and logs them appropriately for service-specific events.
    
-- Copy the complete code from this link: [server.js](./server.js) in root directory.
-
+- Copy the contents of [server.js](./server.js) into your project’s server.js file.
 
 ## ✅ 5. Verification:
 

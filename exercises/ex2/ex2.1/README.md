@@ -411,31 +411,31 @@ This section evaluates the implementation of audit logging and data protection i
 - Action:
   - Open test/http/AdminService.http file.
   - Change the username to 'incident.support@tester.sap.com' (admin role), password : 'initial'.
+  - Go to Line 25 and replace the value of the "creditCardNo" field with "1234567890123456".
   - Go to Line 12 and and click on 'Send Request' to run 'POST {{server}}/odata/v4/admin/Customers' request.
  
   Results:
   - ✅ Here is a sample audit log **PersonalDataModified** for one customer entity. In your log, the timestamp matches the current timestamp.
 ```
-    [odata] - POST /odata/v4/admin/Customers 
-    [cds] - connect to audit-log > audit-log-to-console 
-    [audit-log] - PersonalDataModified: {
-      data_subject: {
-        id: { ID: 'Customers-2582449' },
-        role: 'Customer',
-        type: 'AdminService.Customers'
-      },
-      object: { type: 'AdminService.Customers', id: { ID: 'Customers-2582449' } },
-      attributes: (
-        { name: 'firstName', new: 'Bob' },
-        { name: 'lastName', new: 'lastName-2582449' },
-        { name: 'email', new: 'bob.builder@example.com' },
-        { name: 'phone', new: 'phone-2582449' },
-        { name: 'creditCardNo', new: '***' }
-      ),
-      uuid: 'eac3b4ca-4b7d-4123-a1d5-6f788a1ac617',
-      tenant: undefined,
-      user: 'carol',
-      time: 2025-08-29T10:37:21.191Z
+[odata] - POST /odata/v4/admin/Customers 
+[audit-log] - PersonalDataModified: {
+  data_subject: {
+    id: { ID: 'Customers-3328541' },
+    role: 'Customer',
+    type: 'AdminService.Customers'
+  },
+  object: { type: 'AdminService.Customers', id: { ID: 'Customers-3328541' } },
+  attributes: [
+    { name: 'firstName', new: 'firstName-3328538' },
+    { name: 'lastName', new: 'lastName-3328538' },
+    { name: 'email', new: 'email-3328538' },
+    { name: 'phone', new: 'phone-3328538' },
+    { name: 'creditCardNo', new: '***' }
+  ],
+  uuid: 'dfef4d88-1d68-49e2-aa16-e198228ea14d',
+  tenant: undefined,
+  user: 'incident.support@tester.sap.com',
+  time: 2025-09-19T21:57:09.944Z
 }
 ```
 - ✅ Audit logs generate **PersonalDataModified** entries for changes to annotated fields with @PersonalData.

@@ -210,9 +210,10 @@ To address the identified IDOR vulnerabilities and data privacy risks, this sect
   npm add @cap-js/audit-logging
   ```
 Result:
-  - ✅ Get automatic audit logging, for personal data.
-  - ✅ CRUD operation logging.
-  - ✅ GDPR-compliant audit trails.
+  - ✅ **Updates package.json** – The @cap-js/audit-logging dependency is automatically added to your project’s package.json file.
+  - ✅ **Enables Automatic Audit Logging** – All access and modifications to personal data are logged in real-time.
+  - ✅ **Tracks CRUD Operations** – Every Create, Read, Update, and Delete operation is captured for full traceability.
+  - ✅ **Generates GDPR-Compliant Audit Trails** – Logs are formatted to meet regulatory requirements, simplifying compliance reporting.
 
 ### Step 2: Annotate Personal Data
 

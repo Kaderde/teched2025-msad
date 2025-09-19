@@ -130,7 +130,7 @@ The fixes follow the principle of least privilege, ensuring support users are bl
 * **Improve UI Error Handling:** Modify the frontend to display meaningful error messages for forbidden actions.
 
 ### Step 1: Update Services.cds
-The updated version for this exercise introduces vertical privilege escalation protections, explicitly defining admin privileges for Processorservice while maintaining the horizontal controls from [Exercise 1.1]((../ex1.1/README.md))
+The updated version for this exercise introduces vertical privilege escalation protections, explicitly defining admin privileges for Processorservice while maintaining the horizontal controls from [Exercise 1.1 - Horizontal Privilege Escalation]((../ex1.1/README.md))
 
 
 ```
@@ -156,7 +156,7 @@ annotate ProcessorService with @(requires: ['support', 'admin']);  // ✅ NEW: A
 ...
 
 ```
-Copy the complete code from this link: [services.cds](./services.cds).
+Copy the contents of [services.cds](./services.cds) into your project’s srv/services.cds file.
 
 Key Changes:
 
@@ -206,7 +206,7 @@ Here is the updated services.js with added checks to enforce the admin-only rule
 module.exports = { ProcessorService }
 
 ```
-Copy the complete code from this link: [services.js](./services.js).
+Copy the contents of [services.js](./services.js) into your project’s srv/services.js file.
 
 Key Changes:
 

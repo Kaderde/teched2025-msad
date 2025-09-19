@@ -1,7 +1,7 @@
 [![REUSE status](https://api.reuse.software/badge/github.com/sap-samples/teched2023-XP185v)](https://api.reuse.software/info/github.com/sap-samples/teched2023-XP185v)
 
 
-# Mastering Secure Application Development in SAP BTP : A Practical Workshop
+# Mastering Secure Application Development in SAP BTP: A Practical Workshop
 
 ## Description
 

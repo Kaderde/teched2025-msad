@@ -272,7 +272,7 @@ class ProcessorService extends cds.ApplicationService {
 
 module.exports = { ProcessorService }
 ```
-Copy the complete code from this link: [services.js]([./services.js).
+Copy the complete code from this link: [services.js](./services.js).
 
 ### Step 4: Update UI to Show Assignment
 To make the new assignedTo field visible and usable in your Fiori Elements application, you need to

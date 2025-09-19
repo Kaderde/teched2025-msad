@@ -222,61 +222,49 @@ Result:
 using { sap.capire.incidents as my } from './services';
 
 // Annotating the my.Customers entity with @PersonalData to enable data privacy
-
-annotate my.Customers with @PersonalData: {
-  // Setting the EntitySemantics to 'DataSubject', which means it represents an individual or a group subject to data privacy regulations.
-  // The DataSubjectRole is set to 'Customer'  for this specific entity.
-
-  EntitySemantics: 'DataSubject',
-  DataSubjectRole: 'Customer'
-
-  // Annotating the fields with PersonalData attributes to differentiate between different types of data:
-
-  ID          @PersonalData.FieldSemantics: 'DataSubjectID';  // Identifier for the data subject, can also be used to generate audit logs
-  firstName   @PersonalData.IsPotentiallyPersonal;            // Personal data that can potentially identify a person (firstName,lastname,email,phone)
-  lastName    @PersonalData.IsPotentiallyPersonal;            
-  email       @PersonalData.IsPotentiallyPersonal;            
-  phone       @PersonalData.IsPotentiallyPersonal;            
-  creditCardNo @PersonalData.IsPotentiallySensitive           // Sensitive personal data requiring special treatment and access restrictions
+annotate my.Customers with @PersonalData : {
+  EntitySemantics : 'DataSubject',
+  DataSubjectRole : 'Customer'
+} {
+  ID            @PersonalData.FieldSemantics : 'DataSubjectID';     // Identifier for the data subject, can also be used to generate audit logs
+  firstName     @PersonalData.IsPotentiallyPersonal;                // Personal data that can potentially identify a person (firstName,lastname,email,phone)
+  lastName      @PersonalData.IsPotentiallyPersonal;
+  email         @PersonalData.IsPotentiallyPersonal;
+  phone         @PersonalData.IsPotentiallyPersonal;
+  creditCardNo  @PersonalData.IsPotentiallySensitive;               // Sensitive personal data requiring special treatment and access restrictions
 }
 
 // Annotating the my.Addresses entity with @PersonalData to enable data privacy
-
-annotate my.Addresses with @PersonalData: {
-  
-  // Setting the EntitySemantics to 'DataSubjectDetails', which means this entity holds details related to the data subject
-  
-  EntitySemantics: 'DataSubjectDetails'
-
-  // Annotating the fields with PersonalData attributes to differentiate between different types of data:
-
-  customer      @PersonalData.FieldSemantics: 'DataSubjectID';  // Identifier for the data subject, can also be used to generate audit logs
-  city          @PersonalData.IsPotentiallyPersonal;            // Personal data that can potentially identify a person : customer, city,postcode,streetAdress
-  postCode      @PersonalData.IsPotentiallyPersonal;            
-  streetAddress @PersonalData.IsPotentiallyPersonal;          
-};
+annotate my.Addresses with @PersonalData : {
+  EntitySemantics : 'DataSubjectDetails'
+} {
+  customer      @PersonalData.FieldSemantics : 'DataSubjectID';
+  city          @PersonalData.IsPotentiallyPersonal;
+  postCode      @PersonalData.IsPotentiallyPersonal;
+  streetAddress @PersonalData.IsPotentiallyPersonal;
+}
 
 // Annotating the my.Incidents entity with @PersonalData to enable data privacy
-annotate my.Incidents with @PersonalData: {
-  EntitySemantics: 'DataSubjectDetails',                       // Incidents relate to data subjects (customers)  
-  ID            @PersonalData.FieldSemantics: 'DataSubjectID',   // Link to customer  
-  title         @PersonalData.IsPotentiallyPersonal,             // May contain PII  
-  status_code   @PersonalData.IsPotentiallyPersonal,
-  urgency_code  @PersonalData.IsPotentiallyPersonal,
-  assignedTo    @PersonalData.IsPotentiallyPersonal
-  conversation  @PersonalData: {  
-    message     @PersonalData.IsPotentiallySensitive  // Messages may include sensitive details  
-  };
+annotate my.Incidents with @PersonalData : {
+  EntitySemantics : 'DataSubjectDetails'                            // Incidents relate to data subjects (customers)
+} {
+  customer        @PersonalData.FieldSemantics : 'DataSubjectID';   // Link to customer
+  title           @PersonalData.IsPotentiallyPersonal;              // May contain PII
+  urgency         @PersonalData.IsPotentiallyPersonal;
+  status          @PersonalData.IsPotentiallyPersonal;
+  assignedTo      @PersonalData.IsPotentiallyPersonal;              // Email of assigned support user
+}
 
+// Annotate the conversation element of Incidents
+annotate my.Incidents:conversation with @PersonalData {
+  message @PersonalData.IsPotentiallySensitive;  // Messages may include sensitive details
 };
-
 ```
-
 - Result:
   - ✅ Sensitive fields like creditCardNo and conversation message are marked as @PersonalData: #Sensitive for compliance.
   - ✅ Audit logs automatically include these fields in tracking, ensuring data privacy and regulatory adherence.
 
-- Copy the complete code from this link: [data-privacy.cds](./srv/data-privacy.cds) in /srv directory.
+- Copy the contents of [data-privacy.cds](./srv/data-privacy.cds) into your project’s /srv/data-privacy.cds file.
 
 ### Step 3: Create server.js with Custom 403 Handler
 As part of audit logs, there can be cases where you want to genereate custom audit logs. For example if you want to log 403 - Forbidden events when an user is not having roles but is still trying to access certain data. This can be achieved by adding custom handlers in a CAP application.

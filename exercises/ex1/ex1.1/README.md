@@ -207,7 +207,6 @@ using { sap.capire.incidents as my } from '../db/schema';
     annotate ProcessorService with @(requires: ['support']);
 
 ...
-
 ```
 Copy the contents of [services.cds](./services.cds) into your project’s srv/services.cds file.
 
@@ -335,7 +334,6 @@ UI.FieldGroup #GeneratedGroup : {
   ],
 
 ...
-
 ```
 Copy the contents of [annotations.cds](./annotations.cds) into your project’s app/incidents/annotations.cds file.
 

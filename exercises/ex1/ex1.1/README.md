@@ -153,7 +153,7 @@ entity Incidents : cuid, managed {
 }
 ...
 ```
-Copy the complete code from this link: [schema.cds](./schema.cds).
+Copy the contents of [schema.cds](./schema.cds) into your project’s db/schema.cds file.
 
 ### Step 2: Update Test Data with Assignments
 
@@ -168,7 +168,7 @@ ID,customer_ID,title,urgency_code,status_code,assignedTo,assignedAt,assignedBy
 3ccf474c-3881-44b7-99fb-59a2a4668418,1004161,Strange noise when switching off Inverter,M,N,alice.support@company.com
 3583f982-d7df-4aad-ab26-301d4a157cd7,1004100,Solar panel broken,H,I,alice.support@company.com
 ```
-Copy the complete file from this link: [sap.capire.incidents-Incidents.csv](./sap.capire.incidents-Incidents.csv).
+Copy the contents of [sap.capire.incidents-Incidents.csv](./sap.capire.incidents-Incidents.csv) into your project’s db/data/sap.capire.incidents-Incidents.csv file.
 
 ### Step 3: Implement Service-Level Security
 
@@ -209,7 +209,7 @@ using { sap.capire.incidents as my } from '../db/schema';
 ...
 
 ```
-Copy the complete code from this link: [services.cds](./services.cds).
+Copy the contents of [services.cds](./services.cds) into your project’s srv/services.cds file.
 
 >**Note:**  
 > In SAP CAP, the `@restrict` annotations in `services.cds` are processed **before** the `services.js` logic and generate system-level errors (e.g., `403 Forbidden`) directly at the database query layer.  
@@ -272,7 +272,7 @@ class ProcessorService extends cds.ApplicationService {
 
 module.exports = { ProcessorService }
 ```
-Copy the complete code from this link: [services.js](./services.js).
+Copy the contents of [services.js](./services.js) into your project’s srv/services.js file.
 
 ### Step 4: Update UI to Show Assignment
 To make the new assignedTo field visible and usable in your Fiori Elements application, you need to
@@ -337,7 +337,7 @@ UI.FieldGroup #GeneratedGroup : {
 ...
 
 ```
-Copy the complete code from this link: [annotations.cds](./annotations.cds).
+Copy the contents of [annotations.cds](./annotations.cds) into your project’s app/incidents/annotations.cds file.
 
 **File**: app/incidents/webapp/i18n.properties
 
@@ -348,7 +348,7 @@ Copy the complete code from this link: [annotations.cds](./annotations.cds).
 AssignedTo=Assigned To
 
 ```
-Copy the complete code from this link: [i18n.properties](./i18n.properties).
+Copy the contents of [i18n.properties](./i18n.properties) into your project’s app/incidents/webapp/i18n.properties file.
 
 ## ✅ 5. Verification:
 This section outlines the steps to confirm that the remediation for the Horizontal Privilege Escalation vulnerability has been successfully implemented. The goal is to verify that support users can only modify or delete incidents assigned to them or unassigned incidents, and that updates or deletions on closed incidents are blocked.

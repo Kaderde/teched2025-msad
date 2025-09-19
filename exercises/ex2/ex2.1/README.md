@@ -37,7 +37,7 @@ entity Customers : managed {
   email         : EMailAddress;
   phone         : PhoneNumber;
   incidents     : Association to many Incidents on incidents.customer = $self;
-  creditCardNo  : String(16) @assert.format: '^[1-9]\d{15}$';  // ❌ No access control or masking
+  creditCardNo  : String(16) @assert.format: '^[1-9]\d{15}$';  // ❌ No access control or data masking
   addresses     : Composition of many Addresses on addresses.customer = $self;
 }
 
@@ -129,13 +129,13 @@ module.exports = { ProcessorService }
 - ❌ **Compliance Gap:** Lacks detailed audit records required by regulations like GDPR, SOX, and industry standards.
 
 ## 💥 3. Exploitation: (TBD with screenshots)
-In this lab, a Security Logging and Monitoring Failures vulnerability is exploited via API calls in a local development environment (SAP Business Application Studio with cds watch). Unlike production, key security measures such as real authentication flows, OAuth2 tokens, and data isolation are inactive, allowing ethical hackers to safely simulate attacks, validate vulnerabilities without risking live systems, and rapidly iterate fixes before deploying to production.
+In this lab, a **Security Logging and Monitoring Failures** vulnerability is exploited via API calls in a local development environment **(SAP Business Application Studio with cds watch)**. Unlike production, key security measures such as real authentication flows, OAuth2 tokens, and data isolation are inactive, allowing ethical hackers to safely simulate attacks, validate vulnerabilities without risking live systems, and rapidly iterate fixes before deploying to production.
 
 ### Step 1: Start Local Development Server
 
-Action :
+Action : Run the following command in your terminal (within SAP Business Application Studio or your local environment):
 ```
-user: incident-management $ cds watch 
+ cds watch 
 
 ```
 Results :

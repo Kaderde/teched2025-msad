@@ -6,7 +6,6 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "@cap-js/audit-logging": "^1.1.0",
     "@cap-js/hana": "^2",
     "@sap/cds": "^9",
     "@sap/xssec": "^4.8.0",
@@ -54,13 +53,7 @@
       },
       "[production]": {
         "db": "hana",
-        "auth": "xsuaa",
-        "audit-log": {
-          "kind": "audit-log",
-          "vcap": {
-            "label": "auditlog-management"
-          }
-        }
+        "auth": "xsuaa"
       },
       "destinations": true,
       "html5-runtime": true,

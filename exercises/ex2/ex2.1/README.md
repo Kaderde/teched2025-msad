@@ -344,22 +344,24 @@ This section evaluates the implementation of audit logging and data protection i
 
 ### Local Environment Setup
 
-####  Step 1: HTTP Test Files (Pre-configured)
+####  Step 1: Generate HTTP Test Files
 
-The project already includes pre-configured HTTP request templates for testing your services. You'll find the following files in your project:
-
-  - test/http/AdminService.http 
-  - test/http/ProcessorService.http 
-
-These files were previously generated using the following command:
+- Action: Run the following commands in your terminal from the project root to generate HTTP files for specific services:
  ```
     cds add http --filter ProcessorService --plan default
     cds add http --filter AdminService --plan default
  ```
+- Results:
+  - ✅ The AdminService.http and Processor.http  files are generated under test folder with sample GET, POST, and PATCH requests for testing.
+  - ✅ These files include pre-configured authentication headers and request bodies for different user roles (alice).
+  - ✅ Ready to use with SAP Business Application Studio's REST Client extension.
+
+✅ The AdminService.http and Processor.http files are generated with sample GET, POST, and PATCH requests for testing.
+
 **Note:** When you run these commands, the `mta.yaml` file is also updated to include the `audit-logging` service instead of the `auditlog-management` service. This is because the `cds add http` command automatically configures the application to use the `audit-logging` service for local development.
 
 - Results:
-  - ✅ The AdminService.http and Processor.http  files are generated with sample GET, POST, and PATCH requests for testing.
+  - ✅ The AdminService.http and Processor.http  files are generated under test folder with sample GET, POST, and PATCH requests for testing.
   - ✅ These files include pre-configured authentication headers and request bodies for different user roles (alice).
   - ✅ Ready to use with SAP Business Application Studio's REST Client extension.
 

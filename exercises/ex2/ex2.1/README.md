@@ -356,14 +356,10 @@ This section evaluates the implementation of audit logging and data protection i
   - ✅ These files include pre-configured authentication headers and request bodies for different user roles (alice).
   - ✅ Ready to use with SAP Business Application Studio's REST Client extension.
 
-✅ The AdminService.http and Processor.http files are generated with sample GET, POST, and PATCH requests for testing.
-
 **Note:** When you run these commands, the `mta.yaml` file is also updated to include the `audit-logging` service instead of the `auditlog-management` service. This is because the `cds add http` command automatically configures the application to use the `audit-logging` service for local development.
 
-- Results:
-  - ✅ The AdminService.http and Processor.http  files are generated under test folder with sample GET, POST, and PATCH requests for testing.
-  - ✅ These files include pre-configured authentication headers and request bodies for different user roles (alice).
-  - ✅ Ready to use with SAP Business Application Studio's REST Client extension.
+- Copy the contents of [server.js](./mta.yaml) into your project’s mta.yaml file.
+
 
 #### Step 2: Set Up Local Server
 - Action:

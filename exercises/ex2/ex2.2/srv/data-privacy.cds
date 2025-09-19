@@ -30,7 +30,7 @@ annotate my.Incidents with @PersonalData: {
   urgency_code  @PersonalData.IsPotentiallyPersonal,
   assignedTo    @PersonalData.IsPotentiallyPersonal
   conversation  @PersonalData: {  
-    message     @PersonalData.IsPotentiallySensitive              // Messages may include sensitive details  
+    message     @PersonalData.IsPotentiallySensitive             // Messages may include sensitive details  
   };
 
 };

@@ -18,6 +18,8 @@ modules:
     parameters:
       instances: 1
       buildpack: nodejs_buildpack
+      memory: 256M # add this
+      disk-quota: 256M
     build-parameters:
       builder: npm-ci
     provides:
@@ -28,13 +30,13 @@ modules:
       - name: incident-management-destination
       - name: incident-management-db
       - name: incident-management-auth
-      - name: incident-management-auditlog
-
   - name: incident-management-db-deployer
     type: hdb
     path: gen/db
     parameters:
       buildpack: nodejs_buildpack
+      memory: 64M
+      disk-quota: 256M
     requires:
       - name: incident-management-db
 
@@ -96,6 +98,44 @@ modules:
               ServiceInstanceName: incident-management-auth
               ServiceKeyName: incident-management-auth-key
               sap.cloud.service: incidentmanagement.service
+
+  - name: incident-management-app-deployer
+    type: com.sap.application.content
+    path: gen
+    requires:
+      - name: incident-management-auth
+      - name: srv-api
+      - name: incident-management-html5-repo-host
+        parameters:
+          content-target: true
+          config:
+            HTML5Runtime_enabled: true
+    build-parameters:
+      build-result: app/
+      requires:
+        - name: incidentmanagementincidents
+          artifacts:
+            - incidents.zip
+          target-path: app/
+    parameters:
+      config:
+        HTML5Runtime_enabled: true
+        init_data:
+          instance:
+            existing_destinations_policy: update
+            destinations:
+              - Name: srv-api
+                URL: ~{srv-api/srv-url}
+                Authentication: NoAuthentication
+                Type: HTTP
+                ProxyType: Internet
+                HTML5.ForwardAuthToken: true
+                HTML5.DynamicDestination: true
+              - Name: ui5
+                URL: https://ui5.sap.com
+                Authentication: NoAuthentication
+                Type: HTTP
+                ProxyType: Internet
 resources:
   - name: incident-management-destination
     type: org.cloudfoundry.managed-service
@@ -132,6 +172,8 @@ resources:
     parameters:
       service: hana
       service-plan: hdi-shared
+      config:
+        database_id: abbd14fa-1f67-408e-a9da-3f688addcae0
 
   - name: incident-management-html5-repo-host
     type: org.cloudfoundry.managed-service
@@ -161,8 +203,3 @@ resources:
             description: 'generated'
             role-template-references:
               - '$XSAPPNAME.admin'
-  - name: incident-management-auditlog
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: auditlog
-      service-plan: premium

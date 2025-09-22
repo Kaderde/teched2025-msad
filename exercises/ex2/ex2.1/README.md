@@ -358,17 +358,24 @@ This section evaluates the implementation of audit logging and data protection i
 
 **Note:** When you run these commands, the `mta.yaml` file is also updated to include the `audit-logging` service instead of the `auditlog-management` service. This is because the `cds add http` command automatically configures the application to use the `audit-logging` service for local development.
 
-- Copy the contents of [server.js](./mta.yaml) into your project’s mta.yaml file.
+-The snippet below (auditlog-management) is already present in the mta.yaml file that ships with this tutorial branch, —no further edit is required
+ ```
+  - name: incident-management-auditlog
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: auditlog-management
+    service-plan: default
+ ```
 
+- Copy the contents of [mta.yaml](./mta.yaml) into your project’s mta.yaml file.
 
 #### Step 2: Set Up Local Server
 - Action:
-  - Start the CDS server in watch mode from SAP Business Application Studio command line:
+   - Start the CDS server in watch mode from SAP Business Application Studio command line:
     ```
     cds watch
     ```
- 
-- Results:
+ - Results:
   - ✅ The server is running, and the Rest Extension is ready for testing.
   - ✅ Audit logs are enabled and accessible via the terminal.   
 

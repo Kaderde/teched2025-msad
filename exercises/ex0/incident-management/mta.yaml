@@ -29,7 +29,8 @@ modules:
     requires:
       - name: incident-management-destination
       - name: incident-management-db
-      - name: incident-management-auth-default
+      - name: incident-management-auth
+      - name: incident-management-auditlog
   - name: incident-management-db-deployer
     type: hdb
     path: gen/db
@@ -70,10 +71,10 @@ modules:
   - name: incident-management-destinations
     type: com.sap.application.content
     requires:
-      - name: incident-management-auth-default
+      - name: incident-management-auth
         parameters:
           service-key:
-            name: incident-management-auth-default-key
+            name: incident-management-auth-key
       - name: incident-management-html5-repo-host
         parameters:
           service-key:
@@ -93,17 +94,17 @@ modules:
               ServiceInstanceName: incident-management-html5-repo-host
               ServiceKeyName: incident-management-html5-repo-host-key
               sap.cloud.service: incidentmanagement.service
-            - Name: incident-management-auth-default
+            - Name: incident-management-auth
               Authentication: OAuth2UserTokenExchange
-              ServiceInstanceName: incident-management-auth-default
-              ServiceKeyName: incident-management-auth-default-key
+              ServiceInstanceName: incident-management-auth
+              ServiceKeyName: incident-management-auth-key
               sap.cloud.service: incidentmanagement.service
 
   - name: incident-management-app-deployer
     type: com.sap.application.content
     path: gen
     requires:
-      - name: incident-management-auth-default
+      - name: incident-management-auth
       - name: srv-api
       - name: incident-management-html5-repo-host
         parameters:
@@ -185,7 +186,7 @@ resources:
     parameters:
       service: html5-apps-repo
       service-plan: app-runtime
-  - name: incident-management-auth-default
+  - name: incident-management-auth
     type: org.cloudfoundry.managed-service
     parameters:
       service: xsuaa
@@ -203,3 +204,10 @@ resources:
             description: 'generated'
             role-template-references:
               - '$XSAPPNAME.admin'
+
+  - name: incident-management-auditlog
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: auditlog-management
+      service-plan: default
+  

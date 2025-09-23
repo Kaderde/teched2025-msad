@@ -344,10 +344,15 @@ This section evaluates the implementation of audit logging and data protection i
 
 ### Local Environment Setup
 
-####  Step 1: Generate HTTP Test Files
+####  Step 1:  HTTP Test Files (Pre-configured)
 
-- Action: Run the following commands in your terminal from the project root to generate HTTP files for specific services:
- ```
+The project already includes pre-configured HTTP request templates for testing your services. You'll find the following files in your /test/http project folder:
+  
+  - test/http/AdminService.http 
+  - test/http/ProcessorService.http 
+
+These files were previously generated using the following command:
+   ```
     cds add http --filter ProcessorService --plan default
     cds add http --filter AdminService --plan default
  ```
@@ -356,18 +361,20 @@ This section evaluates the implementation of audit logging and data protection i
   - ✅ These files include pre-configured authentication headers and request bodies for different user roles (alice).
   - ✅ Ready to use with SAP Business Application Studio's REST Client extension.
 
-**Note:** When you run these commands, the `mta.yaml` file is also updated to include the `audit-logging` service instead of the `auditlog-management` service. This is because the `cds add http` command automatically configures the application to use the `audit-logging` service for local development.
 
--The snippet below (auditlog-management) is already present in the mta.yaml file that ships with this tutorial branch, —no further edit is required
- ```
-  - name: incident-management-auditlog
-  type: org.cloudfoundry.managed-service
-  parameters:
-    service: auditlog-management
-    service-plan: default
- ```
+**Note:** When you run these commands, the mta.yaml file is also updated with several changes:
+  - ✅ Audit logging service configuration: The commands automatically add the auditlog service configuration instead of the auditlog-management service.
+  
+    -The snippet below (auditlog-management) is already present in the mta.yaml file that ships with this tutorial branch, —no further edit is required
+     ```
+     - name: incident-management-auditlog
+      type: org.cloudfoundry.managed-service
+      parameters:
+        service: auditlog-management
+        service-plan: default
+     ```
 
-- Copy the contents of [mta.yaml](./mta.yaml) into your project’s mta.yaml file.
+  - ⚠️ Service plan warning: The commands may also add the incident-management-auth-default resource with the 'default' service plan for the xsuaa service. This plan is deprecated and should be changed to 'application' plan to avoid deployment failures.
 
 #### Step 2: Set Up Local Server
 - Action:

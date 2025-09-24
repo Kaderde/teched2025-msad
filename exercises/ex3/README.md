@@ -1,4 +1,4 @@
-# Exercise 2.1 - SQL injection
+# Exercise 3 - SQL injection
 Vulnerability: A03:2021-Injection
 
 ## 📖  1. Overview :

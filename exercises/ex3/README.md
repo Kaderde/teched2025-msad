@@ -12,9 +12,9 @@ This exercise demonstrates how unsanitized user inputs can be exploited to perfo
 
 ### ⚠️ Why This Matters
 
-  -**Business Impact:** Successful SQL Injection attacks can compromise the integrity and confidentiality of critical data, leading to unauthorized data disclosure, manipulation, or deletion.
-  -**Compliance Risk:** Violates OWASP Top 10 A03 and GDPR/PCI DSS requirements for input validation.
-  -**Security Risk:** Malicious actors could exfiltrate sensitive data (e.g., credit card numbers) or bypass authorization controls.
+ * **Business Impact:** Successful SQL Injection attacks can compromise the integrity and confidentiality of critical data, leading to unauthorized data disclosure, manipulation, or deletion.
+ * **Compliance Risk:** Violates OWASP Top 10 A03 and GDPR/PCI DSS requirements for input validation.
+ * **Security Risk:** Malicious actors could exfiltrate sensitive data (e.g., credit card numbers) or bypass authorization controls.
 
 ### 🎯 Key Learning Objectives
 

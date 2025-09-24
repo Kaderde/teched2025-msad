@@ -23,4 +23,4 @@ This exercise demonstrates how unsanitized user inputs can be exploited to perfo
 - Ensure that application data remains secure, protecting sensitive information from unauthorized access or alteration.
 
 ## 🚨 2. Vulnerable Code :
-We’ll build upon [Exercise 2.2 - Security Event Monitoring](../../ex2.2/README.md)  by introducing a critical security flaw in how user input is handled when querying the Customers entity. The lack of input sanitization creates a severe SQL Injection vulnerability.
+We’ll build upon [Exercise 2.2 - Security Event Monitoring](../../ex2/ex2.2/README.md)  by introducing a critical security flaw in how user input is handled when querying the Customers entity. The lack of input sanitization creates a severe SQL Injection vulnerability.

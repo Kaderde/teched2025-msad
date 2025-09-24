@@ -21,3 +21,6 @@ This exercise demonstrates how unsanitized user inputs can be exploited to perfo
 - Understand the mechanics of SQL Injection and how unsanitized inputs can be exploited.
 - Learn to implement secure coding practices, such as parameterized queries, to mitigate SQL Injection vulnerabilities.
 - Ensure that application data remains secure, protecting sensitive information from unauthorized access or alteration.
+
+## 🚨 2. Vulnerable Code :
+We’ll build upon [Exercise 2.2 - Security Event Monitoring](../../ex2.2/README.md)  by introducing a critical security flaw in how user input is handled when querying the Customers entity. The lack of input sanitization creates a severe SQL Injection vulnerability.

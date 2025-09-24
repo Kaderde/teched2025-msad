@@ -1,5 +1,7 @@
 # Exercise 2.2 – Security Event Monitoring in SAP BTP Production Environment
 
+Vulnerability: A09:2021-Security Logging and Monitoring Failures
+
 ## 1. Overview
 
 In this exercise you will extend the local audit-logging setup from [Exercise 2.1](../ex2.1/README.md) into a production-grade SAP BTP environment. You will:

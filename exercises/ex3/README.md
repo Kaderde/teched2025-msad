@@ -51,6 +51,9 @@ service AdminService {
 
 annotate AdminService with @(requires: 'admin');
 
+```
+
+
 File srv/services.js
 
 ```

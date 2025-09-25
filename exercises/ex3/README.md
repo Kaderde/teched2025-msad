@@ -25,8 +25,32 @@ This exercise demonstrates how unsanitized user inputs can be exploited to perfo
 ## 🚨 2. Vulnerable Code :
 We’ll build upon [Exercise 2.2 - Security Event Monitoring](../ex2/ex2.2/README.md)  by introducing an SQL Injection vulnerability resulting from unsanitized user input.
 
-Here's the modified services.js file with an added SQL Injection vulnerability demonstration. 
-The vulnerability is introduced in a new fetchIncident method that directly concatenates user input into a raw SQL query:
+Here's the modified services.cds and services.js files with an added SQL Injection vulnerability demonstration. 
+The vulnerability is introduced in a new fetchcustomer method that directly concatenates user input into a raw SQL query:
+
+File srv/services.cds
+
+```
+... Other methods
+nnotate ProcessorService.Incidents with @odata.draft.enabled; 
+annotate ProcessorService with @(requires: ['support', 'admin']);  // ✅ NEW: Allow both roles support and admin at service level.
+
+/**
+ * Service used by administrators to manage customers and incidents.
+ */
+service AdminService {
+    entity Customers as projection on my.Customers;
+    entity Incidents as projection on my.Incidents;
+  
+  // ✅ Add fetchCustomer to AdminService - Custom Vulnerable Operation
+  @restrict: { grant: 'admin' } // Only admins can execute this
+  @description: 'Fetch customer by ID (Admin-only) VULNERABLE to SQL Injection'
+  function fetchCustomer(customerID: String) returns array of Customers;
+    }
+annotate AdminService with @(requires: 'admin');```
+
+
+File srv/services.js
 
 ```
 const cds = require('@sap/cds');
@@ -51,6 +75,9 @@ class AdminService extends cds.ApplicationService {
 }
 
 ```
+
+
+
 **Why this is vulnerable:**
 ❌ **No Input Validation:** The user-supplied customerID is concatenated directly into the SQL query without validation, making it possible for an attacker to inject malicious SQL code.
 ❌ **Lack of Parameterized Queries:** The raw SQL query does not use parameter binding or prepared statements, leaving the query structure exposed to manipulation.

@@ -32,7 +32,8 @@ File srv/services.cds
 
 ```
 ... Other methods
-nnotate ProcessorService.Incidents with @odata.draft.enabled; 
+
+annotate ProcessorService.Incidents with @odata.draft.enabled; 
 annotate ProcessorService with @(requires: ['support', 'admin']);  // ✅ NEW: Allow both roles support and admin at service level.
 
 /**
@@ -47,8 +48,8 @@ service AdminService {
   @description: 'Fetch customer by ID (Admin-only) VULNERABLE to SQL Injection'
   function fetchCustomer(customerID: String) returns array of Customers;
     }
-annotate AdminService with @(requires: 'admin');```
 
+annotate AdminService with @(requires: 'admin');
 
 File srv/services.js
 

@@ -1,4 +1,4 @@
-# Exercise 3 - SQL injection
+# Exercise 2 - SQL injection
 Vulnerability: A03:2021-Injection
 
 ## 📖  1. Overview :
@@ -23,12 +23,19 @@ This exercise demonstrates how unsanitized user inputs can be exploited to perfo
 - Ensure that application data remains secure, protecting sensitive information from unauthorized access or alteration.
 
 ## 🚨 2. Vulnerable Code :
-We’ll build upon [Exercise 1.2 - Security Event Monitoring](../ex1/ex1.2/README.md)  by introducing an SQL Injection vulnerability resulting from unsanitized user input.
+We’ll build upon [Exercise 1.2 - Vertical Privilege Escalation](../ex1/ex1.2/README.md)  by introducing an SQL Injection vulnerability resulting from unsanitized user input.
 
 Here's the modified services.cds and services.js files with an added SQL Injection vulnerability demonstration. 
 The vulnerability is introduced in a new fetchcustomer method that directly concatenates user input into a raw SQL query:
 
-File srv/services.cds
+### What We're Adding
+
+1. **CDS Service Definition (srv/services.cds):** A new fetchCustomer function in AdminService that accepts unvalidated input
+2. **Vulnerable Implementation (srv/services.js):** Raw SQL with direct string interpolation (the injection point)
+3. **Attack Surface:** HTTP POST endpoint that any admin user can exploit
+
+**Updated File:** srv/services.cds
+Add this vulnerable fetchCustomer function to your existing AdminService definition:
 
 ```
 ... Other methods
@@ -53,8 +60,10 @@ service AdminService {
 annotate AdminService with @(requires: 'admin');
 
 ```
+Copy the contents of [services.cds](./services.cds) into your project’s srv/services.cds file.
 
-File srv/services.js
+**Updated File:**srv/services.js
+Add The fetchCustomer function handler in services.js
 
 ```
 const cds = require('@sap/cds');
@@ -81,7 +90,7 @@ class AdminService extends cds.ApplicationService {
 module.exports = {ProcessorService, AdminService
 };
 ```
-
+Copy the contents of [services.js](./services.js) into your project’s srv/services.js file.
 
 
 **Why this is vulnerable:**

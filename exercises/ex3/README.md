@@ -68,7 +68,7 @@ class AdminService extends cds.ApplicationService {
     this.on('fetchCustomer', async (req) => {
       const { customerID } = req.data;
       
-      // ❌ VULNERABLE CODE: Direct string interpolation in query
+      // ❌ VULNERABLE CODE: SQL query uses direct string insertion
       const query = `SELECT * FROM sap.capire.incidents.Customers WHERE ID = '${customerID}'`;
       const results = await cds.run(query);
       return results;

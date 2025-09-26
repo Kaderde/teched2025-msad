@@ -97,11 +97,3 @@ Copy the contents of [services.js](./services.js) into your project’s srv/serv
 - ❌ **No Input Validation:** The user-supplied customerID is concatenated directly into the SQL query without validation, making it possible for an attacker to inject malicious SQL code.
 - ❌ **Lack of Parameterized Queries:** The raw SQL query does not use parameter binding or prepared statements, leaving the query structure exposed to manipulation.
 
-
-
-
-
-
-
-    
-  }

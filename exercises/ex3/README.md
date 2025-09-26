@@ -23,7 +23,7 @@ This exercise demonstrates how unsanitized user inputs can be exploited to perfo
 - Ensure that application data remains secure, protecting sensitive information from unauthorized access or alteration.
 
 ## 🚨 2. Vulnerable Code :
-We’ll build upon [Exercise 2.2 - Security Event Monitoring](../ex2/ex2.2/README.md)  by introducing an SQL Injection vulnerability resulting from unsanitized user input.
+We’ll build upon [Exercise 1.2 - Security Event Monitoring](../ex1/ex1.2/README.md)  by introducing an SQL Injection vulnerability resulting from unsanitized user input.
 
 Here's the modified services.cds and services.js files with an added SQL Injection vulnerability demonstration. 
 The vulnerability is introduced in a new fetchcustomer method that directly concatenates user input into a raw SQL query:

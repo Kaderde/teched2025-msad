@@ -44,15 +44,15 @@ service AdminService {
     entity Incidents as projection on my.Incidents;
   
   // ✅ Add fetchCustomer to AdminService - Custom Vulnerable Operation
-  @restrict: { grant: 'admin' } // Only admins can execute this
-  @description: 'Fetch customer by ID (Admin-only) VULNERABLE to SQL Injection'
-  function fetchCustomer(customerID: String) returns array of Customers;
-    }
+  // ✅ Custom Vulnerable Operation: fetchIncident
+  // Exposed via HTTP POST /ProcessorService/fetchIncident with JSON body
+    @tags: ['security', 'vulnerable']
+    @summary: 'Returns incident data using unvalidated input (for testing only)'
+    function fetchCustomer(customerID: String) returns array of Customers;
 
 annotate AdminService with @(requires: 'admin');
 
 ```
-
 
 File srv/services.js
 
@@ -77,7 +77,9 @@ class AdminService extends cds.ApplicationService {
     return super.init();
   }
 }
-
+// Export both services
+module.exports = {ProcessorService, AdminService
+};
 ```
 
 

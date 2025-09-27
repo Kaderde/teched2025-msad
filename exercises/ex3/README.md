@@ -29,7 +29,6 @@ We’ll build upon [Exercise 1.2 - Vertical Privilege Escalation](../ex1/ex1.2/R
 
 1. **CDS Service Definition (srv/services.cds):** A new fetchCustomer function in AdminService that accepts unvalidated input
 2. **Vulnerable Implementation (srv/services.js):** Raw SQL query with direct string insertion
-3. **Attack Surface:** HTTP POST endpoint that any admin user can exploit
 
 **Updated File:** srv/services.cds
 Add this vulnerable fetchCustomer function to your existing AdminService definition:

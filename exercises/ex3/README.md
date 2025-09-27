@@ -25,9 +25,6 @@ This exercise demonstrates how unsanitized user inputs can be exploited to perfo
 ## 🚨 2. Vulnerable Code :
 We’ll build upon [Exercise 1.2 - Vertical Privilege Escalation](../ex1/ex1.2/README.md)  by introducing an SQL Injection vulnerability resulting from unsanitized user input.
 
-Here's the modified services.cds and services.js files with an added SQL Injection vulnerability demonstration. 
-The vulnerability is introduced in a new fetchcustomer method that directly concatenates user input into a raw SQL query:
-
 ### What We're Adding
 
 1. **CDS Service Definition (srv/services.cds):** A new fetchCustomer function in AdminService that accepts unvalidated input
@@ -62,7 +59,8 @@ annotate AdminService with @(requires: 'admin');
 ```
 Copy the contents of [services.cds](./services.cds) into your project’s srv/services.cds file.
 
-**Updated File:**srv/services.js
+**Updated File:** srv/services.js
+
 Add The fetchCustomer function handler in services.js
 
 ```

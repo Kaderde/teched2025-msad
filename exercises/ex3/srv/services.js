@@ -60,13 +60,13 @@ class ProcessorService extends cds.ApplicationService {
 // AdminService Implementation
 class AdminService extends cds.ApplicationService {
   init() {
-    // ✅ VULNERABLE: fetchCustomer (SQL Injection)
+    // ✅ SECURE: Parameterized query using CAP’s fluent API
     this.on('fetchCustomer', async (req) => {
       const { customerID } = req.data;
       
-      // VULNERABLE CODE: Direct string interpolation in query
+    // ✅ Use parameterized query — input is automatically sanitized
     const query = SELECT.from('Customers') // Use the CDS entity name, not the full path
-      .where({ ID: customerID });      
+          .where({ ID: customerID });      
       const results = await cds.run(query);
       return results;
     });
@@ -74,7 +74,6 @@ class AdminService extends cds.ApplicationService {
     return super.init();
   }
 }
-
 // Export both services
 module.exports = {
   ProcessorService,

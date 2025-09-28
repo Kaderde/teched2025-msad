@@ -65,8 +65,7 @@ class AdminService extends cds.ApplicationService {
       const { customerID } = req.data;
       
     // VULNERABLE CODE: Direct string interpolation in query
-     const query = SELECT.from('Customers') // Use the CDS entity name, not the full path
-                  .where(`ID = '${customerID}'`);      
+     const query = `SELECT * FROM sap_capire_incidents_Customers WHERE ID = '${customerID}'`;
       const results = await cds.run(query);
       return results;
     });

@@ -284,7 +284,7 @@ Authorization: Basic incident.support@tester.sap.com:initial
 }
 ```
 - Result:
-  - ✅ The system returns a single customer record for ID 1004100.
+  - ✅ The system returns a single customer record for ID = 1004100.
   - ✅ This confirms that legitimate functionality remains intact after the fix.
 
 ### Step 2: Test SQL Injection Attempt (Malicious Input)
@@ -317,6 +317,49 @@ Result:
 - ✅ Empty array [] returned.
 - ✅ The malicious payload ' OR '1'='1 is treated as a literal string value rather than executable SQL.
 - ✅ This confirms that the SQL injection vulnerability has been successfully mitigated.
+
+### Step 3: Test Additional Malicious Payloads (Optional)
+- Action:
+  - Test other common SQL injection payloads to ensure robustness:
+
+```
+ ### Step 3: Test other common SQL injection payloads to ensure robustness
+ ### Action: Inject malicious payload multiple statements 'UNION SELECT * FROM Customers --" }
+ ### Expected: Returns empty array
+ ### Result: Full database exposure vulnerability
+
+  GET http://localhost:4004/odata/v4/admin/fetchCustomer
+  Content-Type: application/json
+  Authorization: Basic incident.support@tester.sap.com:initial
+
+{
+  "customerID": "1004100'; SELECT * from sap_capire_incidents_Customers;-- "
+}
+```
+- Result:
+- ✅ All malicious payloads fail to return unintended data or alter query behavior.
+- ✅ The application either returns no results or a validation error, confirming comprehensive protection.
+
+### 📌 Verification Summary
+The remediation successfully addresses the SQL Injection vulnerability by:
+- **Eliminating String Concatenation:** Replaced unsafe SQL string building with CAP’s parameterized query API (SELECT.from().where({...})).
+- **Neutralizing Malicious Inputs:** Attack payloads (e.g., ' OR '1'='1) are treated as data values, not executable code.
+- **Preserving Legitimate Functionality:** Valid requests continue to work as expected without disruption.
+- **Leveraging Framework Security:** CAP’s built-in query translation to CQN (Core Query Language) and parameter binding prevent SQL injection at runtime.
+
+## 📌 Summary
+In this exercise, you have learned how to:
+- **Identify SQL Injection Vulnerabilities:** Recognize unsafe patterns like direct string interpolation in queries.
+- **Implement Parameterized Queries:** Use CAP’s fluent API (SELECT.from().where()) to securely handle user input.
+- **Test Remediation:** Verify the fix via the HTTP endpoint by testing that valid inputs succeed and SQL injection attempts are blocked.
+- **Adopt Secure Coding Practices:** Prevent OWASP A03:2021–Injection risks by avoiding manual SQL string construction.
+
+👉 Next up: Continue to the next exercise to explore other critical security vulnerabilities and learn how to fortify your CAP applications against common threats.
+
+  
+    
+
+
 
 
   

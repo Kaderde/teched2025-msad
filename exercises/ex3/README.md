@@ -206,12 +206,10 @@ Copy the contents of [services.js](./services_vulnerable.js) into your project�
     ```
 
 ### 📌Critical Vulnerability Summary
-- ❌ Support users can close high-urgency incidents.
-- ❌ Admins are excluded entirely from modifying closed incidents due to misconfigured @requires.
-- ❌ No validation in services.js for:
-  - Admin role when closing high-urgency incidents.
-  - Admin role when modifying closed incidents.
-- ❌ Silent errors for admins reduce transparency and hinder operations.
+- ❌ **Complete Data Breach:** Any authenticated user can extract the entire contents of the customer table.
+- ❌ **Insecure SQL Concatenation:** The services.js code uses direct string concatenation ('${customerID}') to build an SQL query instead of using parameterized queries.
+- ❌ **Lack of Input Sanitization:** No validation or sanitization is performed on the customerID input parameter before it is used in the SQL query.
+
 
 
 

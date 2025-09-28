@@ -73,8 +73,8 @@ class AdminService extends cds.ApplicationService {
     // ❌ VULNERABLE: fetchCustomer (SQL Injection)
     this.on('fetchCustomer', async (req) => {
       const { customerID } = req.data;
-      
-      // ❌ VULNERABLE CODE: SQL query uses direct string insertion
+
+      // ❌ VULNERABLE CODE: // Direct string embedding in query
       const query = `SELECT * FROM sap.capire.incidents.Customers WHERE ID = '${customerID}'`;
       const results = await cds.run(query);
       return results;
@@ -84,10 +84,9 @@ class AdminService extends cds.ApplicationService {
   }
 }
 // Export both services
-module.exports = {ProcessorService, AdminService
-};
+module.exports = {ProcessorService, AdminService};
 ```
-Copy the contents of [services.js](./services.js) into your project’s srv/services.js file.
+Copy the contents of [services.js](./services_vulnerable.js) into your project’s srv/services.js file.
 
 
 **Why this is vulnerable:**

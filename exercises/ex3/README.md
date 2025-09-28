@@ -112,19 +112,17 @@ Copy the contents of [services.js](./services_vulnerable.js) into your project�
   GET {{server}}/odata/v4/admin/fetchCustomer
   Content-Type: application/json
   Authorization: Basic {{username}}:{{password}}
-  
   {
     "customerID": "1004100"
   }
   
-  ### Step 2: SQL Injection Tautology Attack
+  ### Step 2: SQL Injection True-Clause Attack
   ### Action: Inject malicious payload ' OR '1'='1
   ### Expected: Returns ALL customer records
   ### Result: Full database exposure vulnerability
   GET {{server}}/odata/v4/admin/fetchCustomer
   Content-Type: application/json
   Authorization: Basic {{username}}:{{password}}
-  
   {
     "customerID": "1004100' OR '1'='1"
   }
@@ -146,14 +144,13 @@ Copy the contents of [services.js](./services_vulnerable.js) into your project�
   - Navigates to a function in ###Step2 that looks up customer information and click on send request.
   
 ``` 
-    ### Step 2: SQL Injection Tautology Attack
+    ### Step 2: SQL Injection True-Clause Attack
     ### Action: Inject malicious payload ' OR '1'='1
     ### Expected: Returns ALL customer records
     ### Result: Full database exposure vulnerability
     GET {{server}}/odata/v4/admin/fetchCustomer
     Content-Type: application/json
     Authorization: Basic {{username}}:{{password}}
-    
     {
       "customerID": "1004100' OR '1'='1"
     }
@@ -220,7 +217,6 @@ Connection: close
 
 ✅ Exploitation Successful: The application returned the entire contents of the Customers table instead of just the record for customer ID 1004100.
 
-
     
 ### 📌Critical Vulnerability Summary
 - ❌ **Complete Data Breach:** Any authenticated user can extract the entire contents of the customer table.
@@ -264,6 +260,64 @@ This section outlines the steps to confirm that the remediation for the SQL Inje
 - Malicious SQL injection payloads are neutralized and no longer return unauthorized data.
 - Legitimate requests continue to function correctly and return expected results.
 - The application now correctly uses parameterized queries, preventing any manipulation of the query structure.
+
+### Step 1: Test Legitimate Request (Valid Input)
+- Action :
+  - Run the following commands from integrated terminal :
+
+```
+  cds build
+  cds deploy
+  cds watch
+```
+* 💡**Note:** Ensure the deployment includes the updated srv/services.js file with the secure parameterized query implementation.
+
+- Open the sql-injection-demo.http file.
+- Execute the Step 1: Legitimate Customer Lookup request:
+
+```
+GET http://localhost:4004/odata/v4/admin/fetchCustomer
+Content-Type: application/json
+Authorization: Basic incident.support@tester.sap.com:initial
+{
+  "customerID": "1004100"
+}
+```
+- Result:
+  - ✅ The system returns a single customer record for ID 1004100.
+  - ✅ This confirms that legitimate functionality remains intact after the fix.
+
+### Step 2: Test SQL Injection Attempt (Malicious Input)
+- Action:
+  - Execute the Step 2: SQL Injection True-Clause Attack request:
+```
+  GET http://localhost:4004/odata/v4/admin/fetchCustomer
+  Content-Type: application/json
+  Authorization: Basic incident.support@tester.sap.com:initial
+  {
+    "customerID": "1004100' OR '1'='1"
+  }
+```
+Result:
+```
+  HTTP/1.1 200 OK  
+  X-Powered-By: Express  
+  X-Correlation-ID: 5dea2017-7c3a-46cd-9e45-0b119edce4ff  
+  OData-Version: 4.0  
+  Content-Type: application/json; charset=utf-8  
+  Content-Length: 51  
+  Date: Sun, 28 Sep 2025 19:45:56 GMT  
+  Connection: close  
+  
+  {
+    "@odata.context": "$metadata#Customers",
+    "value": []
+  }
+```
+- ✅ Empty array [] returned.
+- ✅ The malicious payload ' OR '1'='1 is treated as a literal string value rather than executable SQL.
+- ✅ This confirms that the SQL injection vulnerability has been successfully mitigated.
+
 
   
 

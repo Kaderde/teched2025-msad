@@ -1,5 +1,5 @@
 # Exercise 2 - SQL injection
-Vulnerability: A03:2021-Injection
+Vulnerability: [A03:2021-Injection](https://owasp.org/Top10/A03_2021-Injection/)
 
 ## 📖  1. Overview :
 
@@ -49,7 +49,7 @@ service AdminService {
   // ✅ Add Custom Vulnerable Operation fetchCustomer to AdminService
   // ✅ Exposed via HTTP GET  {{server}}/odata/v4/admin/fetchCustomer with JSON body
     @tags: ['security', 'vulnerable']
-    @summary: 'Returns incident data using unvalidated input (for testing only)'
+    @summary: 'Returns customer data using unvalidated input (for testing only)'
     function fetchCustomer(customerID: String) returns array of Customers;
 }
 annotate AdminService with @(requires: 'admin');

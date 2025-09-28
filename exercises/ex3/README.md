@@ -354,23 +354,7 @@ In this exercise, you have learned how to:
 - **Test Remediation:** Verify the fix via the HTTP endpoint by testing that valid inputs succeed and SQL injection attempts are blocked.
 - **Adopt Secure Coding Practices:** Prevent OWASP A03:2021–Injection risks by avoiding manual SQL string construction.
 
-👉 Next up: Continue to the next exercise to explore other critical security vulnerabilities and learn how to fortify your CAP applications against common threats.
-
-  
-    
-
-
-
-
-  
-
-
-  
-
-  
-
-
-
+👉 Next up: Exercise 3 - Security Logging and Monitoring Failures, where we address critical [OWASP Top 10 2021 list (A09)](https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/) risks by implementing CAP's audit logging framework to detect unauthorized data access, track sensitive information flow, and ensure regulatory compliance through comprehensive security monitoring in enterprise environments.
 
 
 

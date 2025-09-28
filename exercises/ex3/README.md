@@ -74,7 +74,7 @@ class AdminService extends cds.ApplicationService {
       const { customerID } = req.data;
 
       // ❌ VULNERABLE CODE: // Direct string embedding in query
-      const query = `SELECT * FROM sap.capire.incidents.Customers WHERE ID = '${customerID}'`;
+      const query = `SELECT * FROM sap_capire_incidents_Customers WHERE ID = '${customerID}'`;
       const results = await cds.run(query);
       return results;
     });
@@ -95,51 +95,6 @@ Copy the contents of [services.js](./services_vulnerable.js) into your project�
 ## 💥 3. Exploitation (TBD with screenshots)
 
 ### Step 1: Create a Test File for HTTP Endpoint:
-- Action :
-  - Navigate to the `test/http` directory in your CAP project folder.
-  - Click on "Add New File" and name it "sql-injection-demo.http".
-  - Paste the following content into the file "sql-injection-demo.http":
-  
-  ```
-  @server=http://localhost:4004
-  @username=incident.support@tester.sap.com // admin role
-  @password=initial
-  
-  ### Step 1: Legitimate Customer Lookup
-  ### Action: Normal request with valid customer ID
-  ### Expected: Returns single customer record
-  ### Result: System returns data for customer ID 1004100
-  GET {{server}}/odata/v4/admin/fetchCustomer
-  Content-Type: application/json
-  Authorization: Basic {{username}}:{{password}}
-  
-  {
-    "customerID": "1004100"
-  }
-  
-  ### Step 2: SQL Injection Tautology Attack
-  ### Action: Inject malicious payload ' OR '1'='1
-  ### Expected: Returns ALL customer records
-  ### Result: Full database exposure vulnerability
-  GET {{server}}/odata/v4/admin/fetchCustomer
-  Content-Type: application/json
-  Authorization: Basic {{username}}:{{password}}
-  
-  {
-    "customerID": "1004100' OR '1'='1"
-  }
-  
-  ``` 
-  Copy the contents of [sql-injection-demo.http](../../test/http/sql-injection-demo.http) into your project’s test/http/sql-injection-demo.http file.
-
-- Result:
-  - The test/http/sql-injection-demo.http file is now created and ready for testing.
-  - This file contains two HTTP requests:
-    - Step 1: A legitimate request to fetch a specific customer.
-    - Step 2: A malicious request demonstrating SQL injection vulnerability.
-
-### Step 2: Exploit the SQL Injection Vulnerability:
-
 - Action :
   - Navigate to the `test/http` directory in your CAP project folder.
   - Click on "Add New File" and name it "sql-injection-demo.http".
@@ -204,11 +159,56 @@ Copy the contents of [services.js](./services_vulnerable.js) into your project�
     }
 
     ```
-
 ### 📌Critical Vulnerability Summary
 - ❌ **Complete Data Breach:** Any authenticated user can extract the entire contents of the customer table.
 - ❌ **Insecure SQL Concatenation:** The services.js code uses direct string concatenation ('${customerID}') to build an SQL query instead of using parameterized queries.
 - ❌ **Lack of Input Sanitization:** No validation or sanitization is performed on the customerID input parameter before it is used in the SQL query.
+
+## 🛡️ 4. Remediation:
+This section outlines the steps required to fix the SQL Injection vulnerability identified in the fetchCustomer function.
+
+### Key Remediation Steps:
+- **Replace SQL String Concatenation with Parameterized Queries:** Use CAP’s native query API to prevent injection.
+- **Implement Input Validation:** Validate and sanitize user inputs to block malicious payloads early.
+- **Leverage Framework Security Features:** Use built-in methods instead of manual SQL string construction.
+
+### Step 1: Update the Vulnerable Code in srv/services.js
+Replace the vulnerable fetchCustomer implementation with a secure version using CAP’s parameterized query API.
+
+```
+// ✅ SECURE: Parameterized query using CAP’s fluent API
+this.on('fetchCustomer', async (req) => {
+  const { customerID } = req.data;
+
+  // ✅ Use parameterized query — input is automatically sanitized
+const query = SELECT.from('Customers') // Use the CDS entity name, not the full path
+      .where({ ID: customerID });      
+
+  return results;
+});
+
+```
+Copy the contents of [services.js](./services.js) into your project’s srv/services.js file.
+
+### Key Changes:
+  - ✅ Replaced raw SQL string concatenation with CAP’s SELECT.from().where() syntax.
+  - ✅ Input is automatically parameterized and sanitized by the framework.
+  - ✅ Eliminates the risk of SQL injection.
+
+## ✅ 5. Verification:
+This section outlines the steps to confirm that the remediation for the SQL Injection vulnerability has been successfully implemented. The goal is to verify that:
+
+- Malicious SQL injection payloads are neutralized and no longer return unauthorized data.
+- Legitimate requests continue to function correctly and return expected results.
+- The application now correctly uses parameterized queries, preventing any manipulation of the query structure.
+
+  
+
+
+  
+
+  
+
 
 
 

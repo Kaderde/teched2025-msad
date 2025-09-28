@@ -46,17 +46,16 @@ service AdminService {
     entity Customers as projection on my.Customers;
     entity Incidents as projection on my.Incidents;
   
-  // ✅ Add fetchCustomer to AdminService - Custom Vulnerable Operation
-  // ✅ Custom Vulnerable Operation: fetchIncident
-  // Exposed via HTTP POST /ProcessorService/fetchIncident with JSON body
+  // ✅ Add Custom Vulnerable Operation fetchCustomer to AdminService
+  // ✅ Exposed via HTTP GET  {{server}}/odata/v4/admin/fetchCustomer with JSON body
     @tags: ['security', 'vulnerable']
     @summary: 'Returns incident data using unvalidated input (for testing only)'
     function fetchCustomer(customerID: String) returns array of Customers;
-
+}
 annotate AdminService with @(requires: 'admin');
 
 ```
-Copy the contents of [services.cds](./services.cds) into your project’s srv/services.cds file.
+Copy the contents of [services.cds](./srv/services.cds) into your project’s srv/services.cds file.
 
 **Updated File:** srv/services.js
 

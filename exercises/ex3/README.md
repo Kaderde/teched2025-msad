@@ -31,7 +31,7 @@ We’ll build upon [Exercise 1.2 - Vertical Privilege Escalation](../ex1/ex1.2/R
 2. **Vulnerable Implementation (srv/services.js):** Raw SQL query with direct string insertion
 
 **Updated File:** srv/services.cds
-- Add this vulnerable fetchCustomer function to your existing AdminService definition:
+- The updated services.cds file now includes a new function called fetchCustomer in the AdminService.This function is intentionally designed to be vulnerable to SQL injection for demonstration purposes.
 
 ```
 ... Other methods
@@ -58,7 +58,7 @@ annotate AdminService with @(requires: 'admin');
 Copy the contents of [services.cds](./srv/services.cds) into your project’s srv/services.cds file.
 
 **Updated File:** srv/services.js
-- Add The fetchCustomer function handler in services.js
+- The updated services.js file now includes a new function handler for fetchCustomer in the AdminService class.
 
 ```
 const cds = require('@sap/cds');

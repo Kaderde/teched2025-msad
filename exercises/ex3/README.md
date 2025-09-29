@@ -127,7 +127,7 @@ Copy the contents of [services_vulnerable.js](./srv/services_vulnerable.js) into
   }
   
 ``` 
-  Copy the contents of [sql-injection-demo.http](../test/http/sql-injection-demo.http) into your project’s test/http/sql-injection-demo.http file.
+  Copy the contents of [sql-injection-demo.http](./test/http/sql-injection-demo.http) into your project’s test/http/sql-injection-demo.http file.
 
 - Result:
   - The test/http/sql-injection-demo.http file is now created and ready for testing.

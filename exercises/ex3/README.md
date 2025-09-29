@@ -263,10 +263,10 @@ This section outlines the steps to confirm that the remediation for the SQL Inje
   cds deploy
   cds watch
 ```
-* 💡**Note:** Ensure the deployment includes the updated srv/services.js file with the secure parameterized query implementation.
+* 💡**Note:** Ensure the deployment includes the updated [services.js](./srv/services.js) file with the secure parameterized query implementation.
 
 - Open the sql-injection-demo.http file.
-- Execute the Step 1: Legitimate Customer Lookup request:
+- Execute the **Test 1: Legitimate Customer Lookup request:**
 
 ```
 GET http://localhost:4004/odata/v4/admin/fetchCustomer
@@ -282,7 +282,7 @@ Authorization: Basic incident.support@tester.sap.com:initial
 
 ### Step 2: Test SQL Injection Attempt (Malicious Input)
 - Action:
-  - Execute the Step 2: SQL Injection True-Clause Attack request:
+  - Execute the **Test 2: SQL Injection True-Clause Attack request:**
 ```
   GET http://localhost:4004/odata/v4/admin/fetchCustomer
   Content-Type: application/json
@@ -291,7 +291,7 @@ Authorization: Basic incident.support@tester.sap.com:initial
     "customerID": "1004100' OR '1'='1"
   }
 ```
-Result:
+- Result:
 ```
   HTTP/1.1 200 OK  
   X-Powered-By: Express  
@@ -313,20 +313,18 @@ Result:
 
 ### Step 3: Test Additional Malicious Payloads (Optional)
 - Action:
-  - Test other common SQL injection payloads to ensure robustness:
+  - - Execute the **Test 3: SQL Injection - multiple sql statements payloads to ensure robustness:**
 
 ```
- ### Step 3: Test other common SQL injection payloads to ensure robustness
- ### Action: Inject malicious payload multiple statements 'UNION SELECT * FROM Customers --" }
- ### Expected: Returns empty array
- ### Result: Full database exposure vulnerability
-
-  GET http://localhost:4004/odata/v4/admin/fetchCustomer
+  ### Test 3: SQL Injection -  multiple sql statements
+  ### Payload: 'UNION SELECT * FROM Customers --"   (multiple sql statements)
+  ### Expected: Returns empty array
+  GET  {{server}}/odata/v4/admin/fetchCustomer
   Content-Type: application/json
-  Authorization: Basic incident.support@tester.sap.com:initial
+  Authorization: Basic {{username}}:{{password}}
 
 {
-  "customerID": "1004100'; SELECT * from sap_capire_incidents_Customers;-- "
+     "customerID": "1004100'; SELECT * from sap_capire_incidents_Customers;-- "
 }
 ```
 - Result:

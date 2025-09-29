@@ -130,10 +130,10 @@ Copy the contents of [services_vulnerable.js](./srv/services_vulnerable.js) into
   
 - Result:
   - The test/http/sql-injection-demo.http file is now created and ready for testing.
-  - This file contains two HTTP requests:
-    - Test 1: A legitimate request to fetch a specific customer.
-    - Test 2: A malicious request demonstrating SQL injection vulnerability.
-    - Test 3:  an SQL Injection with multiple sql statements.
+  - This file contains three HTTP requests:
+    - Test 1: A legitimate request to retrieve a specific customer.
+    - Test 2: A malicious request that demonstrates a SQL injection vulnerability.
+    - Test 3: A SQL injection using multiple SQL statements.
 
 ### Step 2: Exploit the SQL Injection Vulnerability
 

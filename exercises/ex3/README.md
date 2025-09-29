@@ -58,8 +58,7 @@ annotate AdminService with @(requires: 'admin');
 Copy the contents of [services.cds](./srv/services.cds) into your project’s srv/services.cds file.
 
 **Updated File:** srv/services.js
-
-Add The fetchCustomer function handler in services.js
+- Add The fetchCustomer function handler in services.js
 
 ```
 const cds = require('@sap/cds');

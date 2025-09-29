@@ -97,7 +97,7 @@ Copy the contents of [services_vulnerable.js](./srv/services_vulnerable.js) into
 - Action :
   - Navigate to the `test/http` directory in your CAP project folder.
   - Click on "Add New File" and name it "sql-injection-demo.http".
-  - Paste the following content into the file "sql-injection-demo.http":
+  - Copy the contents of [sql-injection-demo.http](./test/http/sql-injection-demo.http) into your project’s test/http/sql-injection-demo.http file:
   
 ```
   @server=http://localhost:4004
@@ -125,10 +125,9 @@ Copy the contents of [services_vulnerable.js](./srv/services_vulnerable.js) into
   {
     "customerID": "1004100' OR '1'='1"
   }
-  
+  ... other method
 ``` 
-  Copy the contents of [sql-injection-demo.http](./test/http/sql-injection-demo.http) into your project’s test/http/sql-injection-demo.http file.
-
+  
 - Result:
   - The test/http/sql-injection-demo.http file is now created and ready for testing.
   - This file contains two HTTP requests:

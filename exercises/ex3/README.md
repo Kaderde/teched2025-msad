@@ -31,7 +31,7 @@ We’ll build upon [Exercise 1.2 - Vertical Privilege Escalation](../ex1/ex1.2/R
 2. **Vulnerable Implementation (srv/services.js):** Raw SQL query with direct string insertion
 
 **Updated File:** srv/services.cds
-Add this vulnerable fetchCustomer function to your existing AdminService definition:
+- Add this vulnerable fetchCustomer function to your existing AdminService definition:
 
 ```
 ... Other methods

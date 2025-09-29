@@ -104,7 +104,7 @@ Copy the contents of [services_vulnerable.js](./srv/services_vulnerable.js) into
   @username=incident.support@tester.sap.com // admin role
   @password=initial
   
-  ### Step 1: Legitimate Customer Lookup
+  ### ✅ Step 1: Legitimate Customer Lookup
   ### Action: Normal request with valid customer ID
   ### Expected: Returns single customer record
   ### Result: System returns data for customer ID 1004100
@@ -115,7 +115,7 @@ Copy the contents of [services_vulnerable.js](./srv/services_vulnerable.js) into
     "customerID": "1004100"
   }
   
-  ### Step 2: SQL Injection True-Clause Attack
+  ### 🚨 Step 2: SQL Injection True-Clause Attack
   ### Action: Inject malicious payload ' OR '1'='1
   ### Expected: Returns ALL customer records
   ### Result: Full database exposure vulnerability
@@ -125,7 +125,7 @@ Copy the contents of [services_vulnerable.js](./srv/services_vulnerable.js) into
   {
     "customerID": "1004100' OR '1'='1"
   }
-
+  
 ``` 
   Copy the contents of [sql-injection-demo.http](../../test/http/sql-injection-demo.http) into your project’s test/http/sql-injection-demo.http file.
 

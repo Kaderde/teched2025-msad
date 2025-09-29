@@ -240,7 +240,7 @@ const query = SELECT.from('Customers') // Use the CDS entity name, not the full 
 });
 
 ```
-Copy the contents of [services.js](./services.js) into your project’s srv/services.js file.
+Copy the contents of [services.js](./srv/services.js) into your project’s srv/services.js file.
 
 ### Key Changes:
   - ✅ Replaced raw SQL string concatenation with CAP’s SELECT.from().where() syntax.

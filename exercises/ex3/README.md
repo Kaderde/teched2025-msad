@@ -224,13 +224,8 @@ Copy the contents of [services_vulnerable.js](./srv/services_vulnerable.js) into
 ## 🛡️ 4. Remediation:
 - This section outlines the steps required to fix the SQL Injection vulnerability identified in the fetchCustomer function.
 
-### Key Remediation Steps:
-- **Replace SQL String Concatenation with Parameterized Queries:** Use CAP’s native query API to prevent injection.
-- **Implement Input Validation:** Validate and sanitize user inputs to block malicious payloads early.
-- **Leverage Framework Security Features:** Use built-in methods instead of manual SQL string construction.
-
 ### Step 1: Update the Vulnerable Code in srv/services.js
-Replace the vulnerable fetchCustomer implementation with a secure version using CAP’s parameterized query API.
+- The updated services.js now includes a secure version of the fetchCustomer function. It replaces the vulnerable SQL string concatenation with CAP’s built-in parameterized query API (SELECT.from), which automatically sanitizes inputs and prevents SQL injection.
 
 ```
 // ✅ SECURE: Parameterized query using CAP’s fluent API

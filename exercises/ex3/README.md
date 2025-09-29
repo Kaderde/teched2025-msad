@@ -84,7 +84,7 @@ class AdminService extends cds.ApplicationService {
 // Export both services
 module.exports = {ProcessorService, AdminService};
 ```
-Copy the contents of [services.js](./srv/services_vulnerable.js) into your project’s srv/services.js file.
+Copy the contents of [services_vulnerable.js](./srv/services_vulnerable.js) into your project’s srv/services.js file.
 
 
 **Why this is vulnerable:**

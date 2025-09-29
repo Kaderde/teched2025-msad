@@ -222,7 +222,7 @@ Copy the contents of [services_vulnerable.js](./srv/services_vulnerable.js) into
 - ❌ **Lack of Input Sanitization:** No validation or sanitization is performed on the customerID input parameter before it is used in the SQL query.
 
 ## 🛡️ 4. Remediation:
-This section outlines the steps required to fix the SQL Injection vulnerability identified in the fetchCustomer function.
+- This section outlines the steps required to fix the SQL Injection vulnerability identified in the fetchCustomer function.
 
 ### Key Remediation Steps:
 - **Replace SQL String Concatenation with Parameterized Queries:** Use CAP’s native query API to prevent injection.

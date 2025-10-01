@@ -22,11 +22,24 @@ By completing the exercises, you will gain the practical skills to identify and 
 -	**Validate** the effectiveness of security fixes through practical testing.
 
 <p align="center">
-  <img src="img/top10-owasp.png" alt="Top 10 OWASP Vulnerabilities" width="900"/>
+  <img src="img/top10-owasp.png" alt="Top 10 OWASP Vulnerabilities - Leaky Bucket Diagram" usemap="#owasp-map" style="max-width: 100%; height: auto;">
+  <map name="owasp-map">
+    <!-- Clickable areas for each vulnerability (adjust coords as needed: format for rect is x1,y1,x2,y2) -->
+    <area shape="rect" coords="50,50,200,100" href="https://owasp.org/Top10/A03_2021-Injection/" alt="Injection Flaws" title="OWASP A03: Injection" target="_blank">
+    <area shape="rect" coords="100,150,250,200" href="https://owasp.org/Top10/A01_2021-Broken_Access_Control/" alt="Broken Access Control" title="OWASP A01: Broken Access Control" target="_blank">
+    <area shape="rect" coords="200,250,350,300" href="https://owasp.org/Top10/A02_2021-Cryptographic_Failures/" alt="Cryptographic Failures" title="OWASP A02: Cryptographic Failures" target="_blank">
+    <area shape="rect" coords="300,350,450,400" href="https://owasp.org/Top10/A04_2021-Insecure_Design/" alt="Insecure Design" title="OWASP A04: Insecure Design" target="_blank">
+    <area shape="rect" coords="400,450,550,500" href="https://owasp.org/Top10/A05_2021-Security_Misconfiguration/" alt="Security Misconfiguration" title="OWASP A05: Security Misconfiguration" target="_blank">
+    <area shape="rect" coords="500,550,650,600" href="https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/" alt="Vulnerable and Outdated Components" title="OWASP A06: Vulnerable and Outdated Components" target="_blank">
+    <area shape="rect" coords="600,650,750,700" href="https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/" alt="Identification and Authentication Failures" title="OWASP A07: Identification and Authentication Failures" target="_blank">
+    <area shape="rect" coords="700,750,850,800" href="https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/" alt="Software and Data Integrity Failures" title="OWASP A08: Software and Data Integrity Failures" target="_blank">
+    <area shape="rect" coords="800,850,950,900" href="https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/" alt="Security Logging and Monitoring Failures" title="OWASP A09: Security Logging and Monitoring Failures" target="_blank">
+    <area shape="rect" coords="900,950,1050,1000" href="https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29/" alt="Server-Side Request Forgery" title="OWASP A10: Server-Side Request Forgery (SSRF)" target="_blank">
+  </map>
   <br>
-  <b>Top 10 OWASP Vulnerabilities</b>
+  <h3>Top 10 OWASP Vulnerabilities</h3>
+  <p>Click on each vulnerability in the diagram to learn more from the official OWASP Top 10 documentation.</p>
 </p>
-
 ## Requirements (TBD)
 
 The requirements to follow the exercises in this repository are active trial accounts for SAP BTP and for the SAP Cloud Identity Services. 

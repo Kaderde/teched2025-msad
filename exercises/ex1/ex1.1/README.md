@@ -204,7 +204,7 @@ using { sap.capire.incidents as my } from '../db/schema';
 }
 
     annotate ProcessorService.Incidents with @odata.draft.enabled; 
-    annotate ProcessorService with @(requires: ['support']);
+    annotate ProcessorService with @(requires: ('support'));
 
 ... // Other methods
 ```
